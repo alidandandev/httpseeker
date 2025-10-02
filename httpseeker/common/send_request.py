@@ -298,6 +298,7 @@ class SendRequests:
             try:
                 json_data = encryption_filter.decrypt_response_data(json_data)
                 log.info('✓ 响应数据解密完成')
+                log.info(f'解密后的响应数据: {json_data}')
             except Exception as e:
                 log.warning(f'响应数据解密失败，保留原始数据: {e}')
 

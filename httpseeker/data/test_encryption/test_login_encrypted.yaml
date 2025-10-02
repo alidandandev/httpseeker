@@ -40,16 +40,16 @@ test_steps:
     - extract:
         key: "login_token"
         type: "cache"
-        jsonpath: "$.data.data"
+        jsonpath: "$.json.data.data"
 
     - assert:
         check: "验证登录成功"
         type: "eq"
         value: 20000
-        jsonpath: "$.data.code"
+        jsonpath: "$.json.data.code"
 
     - assert:
         check: "验证token不为空"
         type: "not_eq"
         value: null
-        jsonpath: "$.data.data"
+        jsonpath: "$.json.data.data"

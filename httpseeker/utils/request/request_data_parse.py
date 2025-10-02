@@ -430,6 +430,8 @@ class RequestDataParse:
                     bearer_token = {'Authorization': f'Bearer {auth.bearer_token}'}
                 elif auth.auth_type == AuthType.TOKEN_CUSTOM:
                     bearer_token = {'Authorization': f'Bearer {auth.bearer_token_custom}'}
+                elif auth.auth_type == AuthType.TK:
+                    bearer_token = {'tk': auth.tk}
                 if headers is not None:
                     headers.update(bearer_token)  # type: ignore
                 else:
