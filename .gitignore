@@ -1,0 +1,12 @@
+__pycache__/
+dist/
+.pytest_cache/
+.pdm-build/
+.pdm-python
+.venv/
+venv/
+httpseeker/report/
+httpseeker/log/
+.idea/
+httpseeker/data/online*
+.ruff_cache/

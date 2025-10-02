@@ -1,0 +1,55 @@
+# 加密登录接口测试用例
+config:
+  allure:
+    epic: "加密接口测试"
+    feature: "用户认证"
+    story: "登录接口加密测试"
+    severity: "critical"
+
+  request:
+    env: "test.env"  # 需要在run_env目录下创建test.env文件
+    headers:
+      Content-Type: "application/json"
+    timeout: 30
+    verify: false
+    # 加密配置
+    encryption_enabled: true
+    encryption_key: "your-32-byte-secure-aes-key-1234"  # 32字节的AES密钥
+
+  module: "encryption_test"
+
+test_steps:
+  name: "测试登录接口加密功能"
+  case_id: "ENC_LOGIN_001"
+  description: "验证登录接口的请求加密和响应解密功能"
+
+  request:
+    method: "POST"
+    url: "/cdb/api/auth/login_v1"  # 需要配合test.env中的host使用
+    params: null
+    headers: null
+    cookies: null
+    body_type: "json"
+    body:
+      account: "18818881888"
+      pwd: "O4zAs9Mz4aoYOirIST4Xyg=="
+      internationalCode: "86"
+    files: null
+
+  teardown:
+    - extract:
+        key: "login_token"
+        type: "cache"
+        jsonpath: "$.data.data"
+
+    - assert:
+        check: "验证登录成功"
+        type: "eq"
+        value: 20000
+        jsonpath: "$.data.code"
+
+    - assert:
+        check: "验证token不为空"
+        type: "not_eq"
+        value: null
+        jsonpath: "$.data.data"

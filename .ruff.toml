@@ -1,0 +1,76 @@
+line-length = 120
+cache-dir = "./httpseeker/.ruff_cache"
+unsafe-fixes = true
+target-version = "py310"  # 代码风格版本
+
+[lint]
+select = [
+    "E",
+    "F",
+    "I",
+    "W",
+    "N",
+    "FA",
+    "TCH",
+    "T20",
+    "FURB",
+    # UP
+    "UP004",
+    "UP006",
+    "UP007",
+    "UP008",
+    "UP034",
+    "UP037",
+    "UP039",
+    # ANN
+    "ANN001",
+    "ANN201",
+    "ANN202",
+    "ANN204",
+    "ANN205",
+    "ANN206",
+    # PIE
+    "PIE810",
+    # PT
+    "PT018",
+    # SIM
+    "SIM101",
+    "SIM114",
+    # PGH
+    "PGH004",
+    # PRF
+    "PERF101",
+    "PERF102",
+    # RUF
+    "RUF100",
+    "RUF013",
+    "RUF027",
+]
+preview = true
+ignore = ["FURB101"]
+
+[lint.flake8-pytest-style]
+mark-parentheses = false
+parametrize-names-type = "list"
+parametrize-values-row-type = "list"
+parametrize-values-type = "tuple"
+
+[lint.flake8-unused-arguments]
+ignore-variadic-names = true
+
+[lint.isort]
+lines-between-types = 1
+order-by-type = true
+
+[lint.flake8-annotations]
+mypy-init-return = true
+
+[lint.per-file-ignores]
+"httpseeker/testcases/test_*.py" = ["ANN"]
+"httpseeker/conftest.py" = ["ANN"]
+"httpseeker/cli.py" = ["E402"]
+"httpseeker/run.py" = ["E402"]
+
+[format]
+quote-style = "single"
+docstring-code-format = true

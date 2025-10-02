@@ -1,0 +1,484 @@
+#!/usr/bin/env python
+# _*_ coding:utf-8 _*_
+import time
+
+from json import JSONDecodeError
+
+import allure
+import httpx
+import requests
+import stamina
+
+from _pytest.outcomes import Skipped
+from httpx import Response as HttpxResponse
+from requests import Response as RequestsResponse
+
+from httpseeker.common.errors import AssertError, SendRequestError
+from httpseeker.common.log import log
+from httpseeker.core.get_conf import httpseeker_config
+from httpseeker.db.mysql import mysql_client
+from httpseeker.enums.query_fetch_type import QueryFetchType
+from httpseeker.enums.request.body import BodyType
+from httpseeker.enums.request.engin import EnginType
+from httpseeker.enums.setup_type import SetupType
+from httpseeker.enums.teardown_type import TeardownType
+from httpseeker.utils.allure_control import allure_attach_file, allure_step
+from httpseeker.utils.assert_control import asserter
+from httpseeker.utils.enum_control import get_enum_values
+from httpseeker.utils.relate_testcase_executor import exec_setup_testcase
+from httpseeker.utils.request.hook_executor import hook_executor
+from httpseeker.utils.request.request_data_parse import RequestDataParse
+from httpseeker.utils.request.vars_extractor import var_extractor
+from httpseeker.utils.time_control import get_current_time
+from httpseeker.utils.encryption_filter import EncryptionFilter
+
+
+class SendRequests:
+    """发送请求"""
+
+    @property
+    def init_response_metadata(self) -> dict:
+        """
+        :return: 响应元数据
+        """
+        response_metadata = {
+            'url': None,
+            'status_code': 200,
+            'elapsed': 0,
+            'headers': None,
+            'cookies': None,
+            'json': None,
+            'content': None,
+            'text': None,
+            'stat': {
+                'execute_time': None,
+            },
+            'request': None,
+        }
+        return response_metadata
+
+    @staticmethod
+    def _requests_engin(**kwargs) -> RequestsResponse:
+        """
+        requests 引擎
+
+        :param kwargs:
+        :return:
+        """
+        kwargs['timeout'] = kwargs['timeout'] or httpseeker_config.REQUEST_TIMEOUT
+        kwargs['verify'] = kwargs['verify'] or httpseeker_config.REQUEST_VERIFY
+        kwargs['proxies'] = kwargs['proxies'] or httpseeker_config.REQUEST_PROXIES_REQUESTS
+        kwargs['allow_redirects'] = kwargs['allow_redirects'] or httpseeker_config.REQUEST_REDIRECTS
+        request_retry = kwargs['retry'] or httpseeker_config.REQUEST_RETRY
+        del kwargs['retry']
+        # 消除安全警告
+        requests.packages.urllib3.disable_warnings()  # type: ignore
+        log.info('开始发送请求...')
+        try:
+            for attempt in stamina.retry_context(on=requests.HTTPError, attempts=request_retry):
+                with attempt:
+                    if attempt.num > 1:
+                        log.warning('请求响应异常重试...')
+                    response = requests.session().request(**kwargs)
+                    response.raise_for_status()
+        except Exception as e:
+            log.error(f'发送 requests 请求响应异常: {e}')
+            raise SendRequestError(e.__str__())
+        else:
+            log.info('请求完成')
+            return response  # type: ignore
+
+    @staticmethod
+    def _httpx_engin(**kwargs) -> HttpxResponse:
+        """
+        httpx 引擎
+
+        :param kwargs:
+        :return:
+        """
+        kwargs['timeout'] = kwargs['timeout'] or httpseeker_config.REQUEST_TIMEOUT
+        verify = kwargs['verify'] or httpseeker_config.REQUEST_VERIFY
+        proxies = kwargs['proxies'] or httpseeker_config.REQUEST_PROXIES_HTTPX
+        redirects = kwargs['allow_redirects'] or httpseeker_config.REQUEST_REDIRECTS
+        request_retry = kwargs['retry'] or httpseeker_config.REQUEST_RETRY
+        del kwargs['verify']
+        del kwargs['proxies']
+        del kwargs['allow_redirects']
+        del kwargs['retry']
+        log.info('开始发送请求...')
+        try:
+            with httpx.Client(verify=verify, proxies=proxies, follow_redirects=redirects) as client:  # type: ignore
+                for attempt in stamina.retry_context(on=httpx.HTTPError, attempts=request_retry):
+                    with attempt:
+                        if attempt.num > 1:
+                            log.warning('请求响应异常重试...')
+                        response = client.request(**kwargs)
+                        response.raise_for_status()
+        except Exception as e:
+            log.error(f'发送 httpx 请求响应异常: {e}')
+            raise SendRequestError(e.__str__())
+        else:
+            log.info('请求完成')
+            return response  # type: ignore
+
+    def send_request(
+        self,
+        request_data: dict,
+        *,
+        request_engin: EnginType = EnginType.requests,
+        log_data: bool = True,
+        relate_log: bool = False,
+        **kwargs,
+    ) -> dict:
+        """
+        发送请求
+
+        :param request_data: 请求数据
+        :param request_engin: 请求引擎
+        :param log_data: 日志记录数据
+        :param relate_log: 关联测试用例
+        :return: response
+        """
+        if request_engin not in get_enum_values(EnginType):
+            raise SendRequestError('请求发起失败，请使用合法的请求引擎')
+
+        # 获取解析后的请求数据
+        log.info('开始解析用例数据...' if not relate_log else '开始解析关联用例数据...')
+        try:
+            request_data_parse = RequestDataParse(request_data, request_engin)
+            parsed_data = request_data_parse.get_request_data_parsed(relate_log)
+        except Skipped as e:
+            raise e
+        except Exception as e:
+            if not relate_log:
+                log.error(f'用例数据解析失败: {e}')
+            raise e
+        log.info('用例数据解析完成' if not relate_log else '关联用例数据解析完成')
+
+        # 记录请求前置数据; 此处数据中如果包含关联用例变量, 不会被替换为结果记录, 因为替换动作还未发生
+        setup = parsed_data['setup']
+        if log_data:
+            if parsed_data['is_setup']:
+                self.log_request_setup(setup)
+
+        # 前置处理
+        if parsed_data['is_setup']:
+            log.info('开始处理请求前置...')
+            try:
+                for item in setup:
+                    for key, value in item.items():
+                        if value is not None:
+                            if key == SetupType.TESTCASE:
+                                relate_parsed_data = exec_setup_testcase(parsed_data, value)
+                                if relate_parsed_data:
+                                    parsed_data = relate_parsed_data
+                            elif key == SetupType.SQL:
+                                setup_sql = var_extractor.vars_replace({'sql': value}, parsed_data['env'])
+                                sql_fetch = QueryFetchType.ALL
+                                if isinstance(setup_sql, dict):
+                                    sql = setup_sql.get('sql')
+                                    sql_fetch = setup_sql.get('fetch')
+                                else:
+                                    sql = setup_sql
+                                mysql_client.exec_case_sql(sql, sql_fetch, parsed_data['env'])  # type: ignore
+                            elif key == SetupType.HOOK:
+                                hook_executor.exec_hook_func(value)
+                            elif key == SetupType.WAIT_TIME:
+                                time.sleep(value)
+                                log.info(f'执行请求前等待：{value} s')
+            except Exception as e:
+                log.error(f'请求前置处理异常: {e}')
+                raise e
+            log.info('请求前置处理完成')
+
+        # allure 记录动态数据
+        self.allure_dynamic_data(parsed_data)
+
+        # 整理请求参数
+        request_conf = {
+            'timeout': parsed_data['timeout'],
+            'verify': parsed_data['verify'],
+            'proxies': parsed_data['proxies'],
+            'allow_redirects': parsed_data['redirects'],
+            'retry': parsed_data['retry'],
+        }
+        request_data_parsed = {
+            'method': parsed_data['method'],
+            'url': parsed_data['url'],
+            'params': parsed_data['params'],
+            'headers': parsed_data['headers'],
+            'cookies': parsed_data['cookies'],
+            'body': parsed_data['body'],
+            'files': parsed_data['files'],
+        }
+        try:
+            request_data_parsed: dict = var_extractor.vars_replace(request_data_parsed, parsed_data['env'])  # type: ignore # noqa: ignore
+            body = request_data_parsed.pop('body')
+
+            # 加密处理：如果启用加密且body不为空
+            encryption_enabled = parsed_data.get('encryption_enabled', False)
+            encryption_key = parsed_data.get('encryption_key')
+
+            if encryption_enabled and body is not None:
+                log.info('开始加密请求体...')
+                encryption_filter = EncryptionFilter(
+                    encryption_enabled=True,
+                    encryption_key=encryption_key
+                )
+
+                # 加密请求体（仅JSON类型）
+                if parsed_data['body_type'] == BodyType.JSON or parsed_data['body_type'] == BodyType.GraphQL:
+                    encrypted_body, extra_headers = encryption_filter.encrypt_request_body(body)
+                    body = encrypted_body
+
+                    # 添加加密标识头
+                    if request_data_parsed.get('headers') is None:
+                        request_data_parsed['headers'] = {}
+                    request_data_parsed['headers'].update(extra_headers)
+
+                    log.info('✓ 请求体加密完成')
+
+            # 设置请求体
+            if parsed_data['body_type'] == BodyType.JSON or parsed_data['body_type'] == BodyType.GraphQL:
+                request_data_parsed.update({'json': body})
+            elif parsed_data['body_type'] == BodyType.binary:
+                if request_engin == EnginType.httpx:
+                    request_data_parsed.update({'content': body})
+            else:
+                request_data_parsed.update({'data': body})
+            parsed_data.update(
+                body=request_data_parsed.get('json')
+                or request_data_parsed.get('data')
+                or request_data_parsed.get('content')
+            )
+        except Exception as e:
+            log.error(e)
+            raise e
+
+        # 日志记录请求数据
+        if log_data:
+            self.log_request_up(parsed_data)
+            self.allure_request_up(parsed_data)
+            log.info('<发送请求>')
+
+        # 发送请求
+        response_data = self.init_response_metadata
+        response_data['stat']['execute_time'] = get_current_time()
+        if request_engin == EnginType.requests:
+            response = self._requests_engin(**request_conf, **request_data_parsed, **kwargs)
+        elif request_engin == EnginType.httpx:
+            response = self._httpx_engin(**request_conf, **request_data_parsed, **kwargs)
+        else:
+            raise SendRequestError('请求发起失败，请使用合法的请求引擎：requests / httpx')
+
+        # 序列化响应数据
+        res_headers = dict(response.headers)
+        res_content_type = res_headers.get('Content-Type')
+        try:
+            if res_content_type and 'application/json' in res_content_type:
+                json_data = response.json()
+            else:
+                json_data = {}
+        except JSONDecodeError:
+            err_msg = '响应数据解析失败，响应数据不是有效的 json 格式'
+            log.warning(err_msg)
+            raise SendRequestError(err_msg)
+
+        # 解密处理：如果启用加密且响应中包含加密数据
+        encryption_enabled = parsed_data.get('encryption_enabled', False)
+        encryption_key = parsed_data.get('encryption_key')
+
+        if encryption_enabled and json_data:
+            log.info('开始解密响应数据...')
+            encryption_filter = EncryptionFilter(
+                encryption_enabled=True,
+                encryption_key=encryption_key
+            )
+
+            try:
+                json_data = encryption_filter.decrypt_response_data(json_data)
+                log.info('✓ 响应数据解密完成')
+            except Exception as e:
+                log.warning(f'响应数据解密失败，保留原始数据: {e}')
+
+        # 记录响应数据
+        response_data['url'] = str(response.url)
+        response_data['status_code'] = int(response.status_code)
+        response_data['elapsed'] = response.elapsed.microseconds / 1000.0
+        response_data['headers'] = res_headers
+        response_data['cookies'] = dict(response.cookies)
+        response_data['json'] = json_data
+        response_data['content'] = response.content
+        response_data['text'] = response.text
+        response_data['request'] = request_data_parsed
+
+        # 日志记录响应数据
+        teardown = parsed_data['teardown']
+        if log_data:
+            self.log_request_down(response_data)
+            self.allure_request_down(response_data)
+            if parsed_data['is_teardown']:
+                self.log_request_teardown(teardown)
+
+        # 后置处理
+        if parsed_data['is_teardown']:
+            log.info('开始处理请求后置...')
+            try:
+                for item in teardown:
+                    for key, value in item.items():
+                        if value is not None:
+                            if key == TeardownType.SQL:
+                                teardown_sql = var_extractor.vars_replace(value, parsed_data['env'])
+                                sql_fetch = QueryFetchType.ALL
+                                if isinstance(teardown_sql, dict):
+                                    sql = teardown_sql.get('sql')
+                                    sql_fetch = teardown_sql.get('fetch')
+                                else:
+                                    sql = teardown_sql
+                                mysql_client.exec_case_sql(sql, sql_fetch, parsed_data['env'])  # type: ignore
+                            if key == TeardownType.HOOK:
+                                hook_executor.exec_hook_func(value)
+                            if key == TeardownType.EXTRACT:
+                                var_extractor.teardown_var_extract(response_data, value, parsed_data['env'])
+                            if key == TeardownType.ASSERT:
+                                assert_text = var_extractor.vars_replace(value, env=parsed_data['env'])
+                                asserter.exec_asserter(response_data, assert_text)
+                            elif key == TeardownType.WAIT_TIME:
+                                log.info(f'执行请求后等待：{value} s')
+                                time.sleep(value)
+            except AssertionError as e:
+                log.error(f'断言失败: {e}')
+                raise AssertError(f'断言失败: {e}')
+            except Exception as e:
+                log.error(f'请求后置处理异常: {e}')
+                raise e
+            log.info('请求后置处理完成')
+
+        return response_data
+
+    def log_request_setup(self, setup: list) -> None:
+        log.info('<请求前置>')
+        for item in setup:
+            for key, value in item.items():
+                if key == SetupType.TESTCASE:
+                    log.info(f'前置 setup_testcase: {value}')
+                    self.allure_request_setup({'setup_testcase': value})
+                elif key == SetupType.SQL:
+                    log.info(f'前置 setup_sql: {value}')
+                    self.allure_request_setup({'setup_sql': value})
+                elif key == SetupType.HOOK:
+                    log.info(f'前置 setup_hook: {value}')
+                    self.allure_request_setup({'setup_hook': value})
+                elif key == SetupType.WAIT_TIME:
+                    log.info(f'前置 setup_wait_time: {value}')
+                    self.allure_request_setup({'setup_wait_time': value})
+
+    @staticmethod
+    def log_request_up(parsed_data: dict) -> None:
+        log.info('<数据参数>')
+        log.info(f'用例 env: {parsed_data["env"]}')
+        log.info(f'用例 module: {parsed_data["module"]}')
+        log.info(f'用例 name: {parsed_data["name"]}')
+        log.info(f'用例 description: {parsed_data["description"]}')
+
+        log.info('<请求参数>')
+        log.info(f'请求 method: {parsed_data["method"]}')
+        log.info(f'请求 url: {parsed_data["url"]}')
+        log.info(f'请求 params: {parsed_data["params"]}')
+        log.info(f'请求 headers: {parsed_data["headers"]}')
+        log.info(f'请求 body_type：{parsed_data["body_type"]}')
+        log.info(f'请求 body：{parsed_data["body"]}')
+        log.info(f'请求 files: {parsed_data["files_no_parse"]}')
+
+    def log_request_teardown(self, teardown: list) -> None:
+        log.info('<请求后置>')
+        for item in teardown:
+            for key, value in item.items():
+                if key == TeardownType.SQL:
+                    log.info(f'后置 teardown_sql: {value}')
+                    self.allure_request_teardown({'teardown_sql': value})
+                elif key == TeardownType.HOOK:
+                    log.info(f'后置 teardown_hook: {value}')
+                    self.allure_request_teardown({'teardown_hook': value})
+                elif key == TeardownType.EXTRACT:
+                    log.info(f'后置 teardown_extract: {value}')
+                    self.allure_request_teardown({'teardown_extract': value})
+                elif key == TeardownType.ASSERT:
+                    log.info(f'后置 teardown_assert: {value}')
+                    self.allure_request_teardown({'teardown_assert': value})
+                elif key == TeardownType.WAIT_TIME:
+                    log.info(f'后置 teardown_wait_time: {value}')
+                    self.allure_request_teardown({'teardown_wait_time': value})
+
+    @staticmethod
+    def log_request_down(response_data: dict) -> None:
+        log.info(f'请求发送时间: {response_data["stat"]["execute_time"]}')
+        str_status_code = str(response_data['status_code'])
+        if str_status_code.startswith(('4', '5')):
+            log.error(f'响应状态码: {response_data["status_code"]}')
+        else:
+            log.info(f'响应状态码: {response_data["status_code"]}')
+        log.info(f'响应时间: {response_data["elapsed"]} ms')
+
+    @staticmethod
+    def allure_request_setup(setup_log: dict) -> None:
+        allure_step('请求前置', setup_log)
+
+    @staticmethod
+    def allure_request_up(parsed_data: dict) -> None:
+        allure_step(
+            '请求数据',
+            {
+                'env': parsed_data['env'],
+                'module': parsed_data['module'],
+                'name': parsed_data['name'],
+                'case_id': parsed_data['case_id'],
+                'description': parsed_data['description'],
+                'method': parsed_data['method'],
+                'url': parsed_data['url'],
+                'params': parsed_data['params'],
+                'headers': parsed_data['headers'],
+                'body_type': parsed_data['body_type'],
+                'body': parsed_data['body'],
+                'files': parsed_data['files_no_parse'],
+            },
+        )
+
+    @staticmethod
+    def allure_request_teardown(teardown_log: dict) -> None:
+        allure_step('请求后置', teardown_log)
+
+    @staticmethod
+    def allure_request_down(response_data: dict) -> None:
+        allure_step(
+            '响应数据',
+            {
+                'status_code': response_data['status_code'],
+                'elapsed': response_data['elapsed'],
+                'json': response_data['json'],
+            },
+        )
+
+    @staticmethod
+    def allure_dynamic_data(parsed_data: dict) -> None:
+        allure.dynamic.parameter('case_data', {'module': parsed_data['module'], 'id': parsed_data['case_id']})
+        allure.dynamic.id(parsed_data['case_id'])
+        allure.dynamic.tag(parsed_data['module'])
+        allure.dynamic.epic(parsed_data['allure_epic'])
+        allure.dynamic.feature(parsed_data['allure_feature'])
+        allure.dynamic.story(parsed_data['allure_story'])
+        allure.dynamic.title(parsed_data['name'])
+        allure.dynamic.description(parsed_data['description'])
+        allure.dynamic.link(parsed_data['url'])
+        if parsed_data['allure_severity'] is not None:
+            allure.dynamic.severity(parsed_data['allure_severity'])
+        if parsed_data['files_no_parse'] is not None:
+            for v in parsed_data['files_no_parse'].values():
+                if isinstance(v, list):
+                    for path in v:
+                        allure_attach_file(path)
+                else:
+                    allure_attach_file(v)
+
+
+send_request = SendRequests()

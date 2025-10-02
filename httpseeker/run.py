@@ -1,0 +1,257 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+from __future__ import annotations
+
+import os
+import shutil
+import subprocess
+import sys
+
+from typing import Literal
+
+import pytest
+
+from httpseeker.utils.cli.version import get_version
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from httpseeker.common.log import log
+from httpseeker.common.yaml_handler import read_yaml
+from httpseeker.core.get_conf import httpseeker_config
+from httpseeker.core.path_conf import httpseeker_path
+from httpseeker.db.redis import redis_client
+from httpseeker.utils.case_auto_generator import auto_generate_testcases
+from httpseeker.utils.request import case_data_parse as case_data
+from httpseeker.utils.send_report.dingding import DingDing
+from httpseeker.utils.send_report.email import SendEmail
+from httpseeker.utils.send_report.feishu import FeiShu
+from httpseeker.utils.send_report.wechat import WeChat
+from httpseeker.utils.time_control import get_current_time
+
+
+def startup(
+    *args,
+    log_level: Literal['-q', '-s', '-v', '-vv'],
+    case_path: str | None,
+    html_report: bool,
+    allure: bool,
+    allure_clear: bool,
+    allure_serve: bool,
+    maxfail: int,
+    x: bool,
+    strict_markers: bool,
+    capture: bool,
+    disable_warnings: bool,
+    **kwargs,
+) -> None:
+    """运行启动程序"""
+
+    run_args = [log_level]
+
+    default_case_path = os.sep.join([httpseeker_path.testcase_dir, httpseeker_config.PROJECT_NAME])
+    if case_path:
+        if '::' not in case_path:
+            raise ValueError(
+                '用例收集失败, 请检查路径参数 \n'
+                '类用例说明: \n'
+                '\t1. 项目目录下没有多级目录: case_path = "文件名::类名" \n'
+                '\t2. 项目目录下有多级目录: case_path = "目录名/.../文件名::类名" \n'
+                '函数用例说明: \n'
+                '\t1. 项目目录下没有多级目录: case_path = "文件名::类名::函数名" \n'
+                '\t2. 项目目录下有多级目录: case_path = "目录名/.../文件名::函数名"'
+            )
+        sep = os.path.sep
+        case_path = case_path.replace('/', sep)
+        run_path = os.sep.join([default_case_path, case_path])
+    else:
+        run_path = default_case_path
+    run_args.append(run_path)
+
+    html_report_filename = f'{httpseeker_config.PROJECT_NAME}_{get_current_time("%Y-%m-%d %H_%M_%S")}.html'
+    if html_report:
+        if not os.path.exists(httpseeker_path.html_report_dir):
+            os.makedirs(httpseeker_path.html_report_dir)
+        run_args.extend(
+            (
+                f'--html={os.path.join(httpseeker_path.html_report_dir, html_report_filename)}',
+                '--self-contained-html',
+            )
+        )
+
+    if allure:
+        run_args.append(f'--alluredir={httpseeker_path.allure_report_dir}')
+        if allure_clear:
+            run_args.append('--clean-alluredir')
+
+    if maxfail != 0:
+        run_args.append(f'--maxfail {maxfail}')
+
+    if x:
+        run_args.append('-x')
+
+    if strict_markers:
+        run_args.append('--strict-markers')
+
+    if capture:
+        run_args.append('--capture=tee-sys')
+
+    if disable_warnings:
+        run_args.append('--disable-warnings')
+
+    if len(args) > 0:
+        for i in args:
+            if i not in run_args:
+                run_args.append(i)
+    if len(kwargs) > 0:
+        for k, v in kwargs.items():
+            for i in run_args:
+                if '=' in i and k in i:
+                    run_args.remove(i)
+                    run_args.append(f'{k}={v}')
+    format_run_args = []
+    for i in run_args:
+        if '=' in i:
+            i_split = i.split('=')
+            new_i = i.replace(i_split[1], f'"{i_split[1]}"')
+            format_run_args.append(new_i)
+        else:
+            format_run_args.append(i)
+    run_pytest_command_args = ' '.join(
+        i if os.path.isdir(i) or i.startswith('-') else f'"{i}"' for i in format_run_args
+    )
+
+    log.info(
+        f'开始运行项目：{httpseeker_config.PROJECT_NAME}' if run_path == default_case_path else f'开始运行：\n{run_path}'
+    )
+    log.info(f'当前执行 Pytest CLI: pytest {run_pytest_command_args}')
+    log.info('🚀 START')
+    pytest.main(run_args)
+    log.info('🏁 FINISH')
+
+    yaml_report_files = os.listdir(httpseeker_path.yaml_report_dir)
+    yaml_report_files.sort()
+    test_result = read_yaml(httpseeker_path.yaml_report_dir, filename=yaml_report_files[-1])
+
+    if html_report and httpseeker_config.EMAIL_SEND:
+        SendEmail(test_result, html_report_filename).send_report()
+
+    if httpseeker_config.DINGDING_SEND:
+        DingDing(test_result).send()
+
+    if httpseeker_config.FEISHU_SEND:
+        FeiShu(test_result).send()
+
+    if httpseeker_config.WECHAT_SEND:
+        WeChat(test_result).send()
+
+    if allure:
+        if os.path.exists(httpseeker_path.allure_report_dir):
+            if not os.path.exists(httpseeker_path.allure_report_env_file):
+                shutil.copyfile(httpseeker_path.allure_env_file, httpseeker_path.allure_report_env_file)
+
+        if allure_serve:
+            subprocess.run(
+                [
+                    'allure',
+                    'generate',
+                    f'{httpseeker_path.allure_report_dir}',
+                    '-o',
+                    f'{httpseeker_path.allure_html_report_dir} --clean',
+                ]
+            )
+            subprocess.run(['allure', 'serve', f'{httpseeker_path.allure_report_dir}'])
+
+
+def run(
+    *args,
+    # auto testcases
+    testcase_generate: bool = True,
+    testcase_re_generation: bool = False,
+    # init
+    clean_cache: bool = False,
+    pydantic_verify: bool = True,
+    # log level
+    log_level: Literal['-q', '-s', '-v', '-vv'] = '-s',
+    # case path
+    case_path: str | None = None,
+    # html report
+    html_report: bool = True,
+    # allure
+    allure: bool = True,
+    allure_clear: bool = True,
+    allure_serve: bool = False,
+    # extra
+    maxfail: int = 0,
+    x: bool = False,
+    strict_markers: bool = False,
+    capture: bool = True,
+    disable_warnings: bool = True,
+    **kwargs,
+) -> None:
+    """
+    运行入口
+
+    :param args: pytest 运行参数
+    :param testcase_generate: 自动生成测试用例（跳过同名文件），建议通过 CLI 手动执行，默认关闭
+    :param testcase_re_generation: 覆盖生成同名文件测试用例，建议通过 CLI 手动指定，默认开启
+    :param clean_cache: 清理 redis 缓存数据，对于脏数据，这很有用，默认关闭
+    :param pydantic_verify: 用例数据完整架构 pydantic 快速检测, 默认开启
+    :param args: pytest 运行参数
+    :param log_level: 控制台打印输出级别, 默认"-s"
+    :param case_path: 指定当前项目下的测试用例函数, 默认为空，如果指定，则执行指定用例，否则执行全部
+    :param html_report: 生成 HTML 测试报告, 默认开启
+    :param allure: 生成 allure 测试报告, 默认开启
+    :param allure_clear: 清空 allure 报告历史记录, 默认开启
+    :param allure_serve: 自动打开 allure 测试报告服务， 默认关闭
+    :param maxfail: 用例运行失败数量，到达数量上限后终止运行，默认为 0，即不终止
+    :param x: 用例运行失败, 终止运行, 默认关闭
+    :param strict_markers: markers 严格模式, 对于设置 marker 装饰器的用例, 如果 marker 未在 pytest.ini 注册, 用例将报错
+    :param capture: 避免在使用输出模式为"v"和"s"时，html报告中的表格日志为空的情况, 默认开启
+    :param disable_warnings: 关闭控制台警告信息, 默认开启
+    :param kwargs: pytest 运行关键字参数
+    :return:
+    """
+    try:
+        banner = f"""\n
+        ╦ ╦╔╦╗╔╦╗╔═╗  ╔═╗╔═╗╔═╗╦╔═╔═╗╦═╗
+        ╠═╣ ║  ║ ╠═╝  ╚═╗║╣ ║╣ ╠╩╗║╣ ╠╦╝
+        ╩ ╩ ╩  ╩ ╩    ╚═╝╚═╝╚═╝╩ ╩╚═╝╩╚═
+
+        Starting...
+        Version: {get_version(cli=False)}
+        """
+        log.info(banner)
+        redis_client.init()
+        case_data.clean_cache_data(clean_cache)
+        case_data.case_data_init(pydantic_verify)
+        case_data.case_id_unique_verify()
+        if testcase_generate:
+            if not testcase_re_generation:
+                auto_generate_testcases()
+            else:
+                auto_generate_testcases(rewrite=True)
+        startup(
+            *args,
+            testcase_generate=testcase_generate,
+            log_level=log_level,
+            case_path=case_path,
+            html_report=html_report,
+            allure=allure,
+            allure_clear=allure_clear,
+            allure_serve=allure_serve,
+            maxfail=maxfail,
+            x=x,
+            strict_markers=strict_markers,
+            capture=capture,
+            disable_warnings=disable_warnings,
+            **kwargs,
+        )
+    except Exception as e:
+        log.error(f'运行异常：{e}')
+        import traceback
+
+        SendEmail({'error': traceback.format_exc()}).send_error()
+
+
+if __name__ == '__main__':
+    run()

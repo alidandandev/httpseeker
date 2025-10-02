@@ -1,0 +1,69 @@
+# 测试项目
+[project]
+name = 'power_bank'
+
+# 测试报告
+[report]
+title = "power_bank接口自动化测试报告"
+tester_name = 'Rookie'
+# jenkins allure
+jenkins_url = 'https://foryourself'
+
+# mysql 数据库
+[mysql]
+host = '127.0.0.1'
+port = 6306
+user = 'root'
+password = '123456'
+database = 'test'
+charset = 'utf8mb4'
+
+# redis 数据库
+[redis]
+host = '127.0.0.1'
+port = 6379
+password = '123456'
+database = 0
+timeout = 10
+
+# 邮件
+[email]
+host = 'smtp.qq.com'
+port = 465
+user = '12345678@qq.com'
+password = '12345678'
+receiver = '87654321@qq.com'  # if more, use: [str]
+ssl = true
+send = false
+
+# 钉钉
+[dingding]
+webhook = ''
+proxies.http = ''
+proxies.https = ''
+send = false
+
+# 飞书
+[feishu]
+webhook = ''
+proxies.http = ''
+proxies.https = ''
+send = false
+
+# 企业微信
+[wechat]
+webhook = ''
+proxies.http = ''
+proxies.https = ''
+send = false
+
+
+# 请求发送
+[request]
+global_env = ''
+timeout = 10
+verify = false
+redirects = true
+proxies.http = ''
+proxies.https = ''
+retry = 3

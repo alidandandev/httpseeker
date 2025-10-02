@@ -1,0 +1,18 @@
+{
+  "exclude": [
+    "**/__pycache__",
+    "**/.*",
+    "venv/**",
+    "httpseeker/testcases/**",
+    "httpseeker/utils/data_manage/**.py",
+    "httpseeker/conftest.py"
+  ],
+  "ignore": [
+    "httpseeker/utils/auth_plugins.py"
+  ],
+  "reportUnusedImport": "error",
+  "reportOptionalMemberAccess": false,
+  "reportOptionalSubscript": false,
+  "reportUnnecessaryTypeIgnoreComment": "warning",
+  "pythonPlatform": "All"
+}
