@@ -38,18 +38,46 @@ class AuthPlugins:
 
     def request_auth(self) -> requests.Response:
         try:
+            from httpseeker.utils.encryption_filter import EncryptionFilter
+
             url = self.auth_data[f'{self.auth_type}']['url']
-            username = self.auth_data[f'{self.auth_type}']['username']
-            password = self.auth_data[f'{self.auth_type}']['password']
             headers = self.auth_data[f'{self.auth_type}']['headers']
+
+            # 构建请求体（支持不同的字段名）
+            auth_config = self.auth_data[f'{self.auth_type}']
+            body_data = {}
+
+            # 兼容不同的字段名配置
+            if 'account' in auth_config:
+                body_data['account'] = auth_config['account']
+                body_data['pwd'] = auth_config.get('pwd', '')
+                if 'internationalCode' in auth_config:
+                    body_data['internationalCode'] = auth_config['internationalCode']
+            else:
+                body_data['username'] = auth_config.get('username', '')
+                body_data['password'] = auth_config.get('password', '')
+
+            # 检查是否需要加密
+            encryption_enabled = auth_config.get('encryption_enabled', False)
+            if encryption_enabled:
+                encryption_key = auth_config.get('encryption_key')
+                encryption_filter = EncryptionFilter(
+                    encryption_enabled=True,
+                    encryption_key=encryption_key
+                )
+                encrypted_body, extra_headers = encryption_filter.encrypt_request_body(body_data)
+                body_data = encrypted_body
+                headers.update(extra_headers)
+
             request_data = {
                 'url': url,
-                'data': {'username': username, 'password': password},
+                'data': body_data,
                 'headers': headers,
                 'proxies': {'http': None, 'https': None},
             }
             if 'application/json' in str(headers):
                 request_data.update({'json': request_data.pop('data')})
+
             response = requests.post(**request_data)
             response.raise_for_status()
         except Exception as e:
@@ -95,6 +123,36 @@ class AuthPlugins:
                 f'{redis_client.cookie_prefix}:header_cookie', json.dumps(cookies, ensure_ascii=False), ex=self.timeout
             )
         return cookies
+
+    @property
+    def tk(self) -> str:
+        """自定义 tk token 认证"""
+        cache_tk_token = redis_client.get(f'{redis_client.token_prefix}:tk', logging=False)
+        if cache_tk_token:
+            token = cache_tk_token
+        else:
+            from httpseeker.utils.encryption_filter import EncryptionFilter
+
+            res = self.request_auth()
+            response_data = res.json()
+
+            # 检查是否需要解密响应
+            auth_config = self.auth_data[f'{self.auth_type}']
+            encryption_enabled = auth_config.get('encryption_enabled', False)
+            if encryption_enabled:
+                encryption_key = auth_config.get('encryption_key')
+                encryption_filter = EncryptionFilter(
+                    encryption_enabled=True,
+                    encryption_key=encryption_key
+                )
+                response_data = encryption_filter.decrypt_response_data(response_data)
+
+            jp_token = findall(self.auth_data[f'{self.auth_type}']['token_key'], response_data)
+            token = jp_token[0]
+            if not token:
+                raise AuthError('TK Token 获取失败，请检查登录接口响应或 token 提取表达式')
+            redis_client.set(f'{redis_client.token_prefix}:tk', token, ex=self.timeout)
+        return token
 
 
 auth = AuthPlugins()
