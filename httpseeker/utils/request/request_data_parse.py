@@ -205,26 +205,28 @@ class RequestDataParse:
 
     @property
     def encryption_enabled(self) -> bool | None:
-        """获取加密启用状态"""
+        """获取加密启用状态 - 优先从 case 读取，否则从全局配置读取"""
         try:
             encryption_enabled = self.request_data['config']['request']['encryption_enabled']
             if encryption_enabled is not None:
                 if not isinstance(encryption_enabled, bool):
                     raise RequestDataParseError(_error_msg('参数 config:request:encryption_enabled 不是有效的 bool 类型'))
         except _RequestDataParamGetError:
-            encryption_enabled = None
+            # 从全局配置读取
+            encryption_enabled = httpseeker_config.get('encryption', {}).get('enabled')
         return encryption_enabled
 
     @property
     def encryption_key(self) -> str | None:
-        """获取加密密钥"""
+        """获取加密密钥 - 优先从 case 读取，否则从全局配置读取"""
         try:
             encryption_key = self.request_data['config']['request']['encryption_key']
             if encryption_key is not None:
                 if not isinstance(encryption_key, str):
                     raise RequestDataParseError(_error_msg('参数 config:request:encryption_key 不是有效的 str 类型'))
         except _RequestDataParamGetError:
-            encryption_key = None
+            # 从全局配置读取
+            encryption_key = httpseeker_config.get('encryption', {}).get('key')
         return encryption_key
 
     @property
