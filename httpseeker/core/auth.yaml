@@ -19,7 +19,7 @@ tk:
   # jsonpath表达式，用于从响应中提取token
   token_key: $.data
   # token有效期，单位: 秒
-  timeout: 100000
+  timeout: 100
 ##
 ## bearer token 认证（自动登录获取）
 ##
