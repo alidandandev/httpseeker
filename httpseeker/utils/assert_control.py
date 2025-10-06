@@ -127,6 +127,8 @@ class Asserter:
         except KeyError as e:
             raise AssertSyntaxError(f'SQL 断言格式错误, 请检查: {e}')
         else:
+            if not mysql_client.is_enabled:
+                raise AssertSyntaxError('MySQL 未启用，无法执行 SQL 断言')
             if assert_sql.split(' ')[0].upper() != SqlType.select:
                 raise AssertSyntaxError(f'SQL 断言 {assert_check}:{assert_type} 执行失败，请检查 SQL 是否为 DQL 类型')
             sql_data = mysql_client.exec_case_sql(assert_sql, assert_fetch)

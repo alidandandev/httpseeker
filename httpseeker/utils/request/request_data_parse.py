@@ -12,6 +12,8 @@ import allure
 from _pytest.outcomes import Skipped
 from dirty_equals import IsUrl
 
+from glom import glom
+
 from httpseeker.common.env_handler import get_env_dict
 from httpseeker.common.errors import RequestDataParseError
 from httpseeker.common.log import log
@@ -213,7 +215,10 @@ class RequestDataParse:
                     raise RequestDataParseError(_error_msg('参数 config:request:encryption_enabled 不是有效的 bool 类型'))
         except _RequestDataParamGetError:
             # 从全局配置读取
-            encryption_enabled = httpseeker_config.get('encryption', {}).get('enabled')
+            try:
+                encryption_enabled = glom(httpseeker_config.settings, 'encryption.enabled', default=None)
+            except Exception:
+                encryption_enabled = None
         return encryption_enabled
 
     @property
@@ -226,7 +231,10 @@ class RequestDataParse:
                     raise RequestDataParseError(_error_msg('参数 config:request:encryption_key 不是有效的 str 类型'))
         except _RequestDataParamGetError:
             # 从全局配置读取
-            encryption_key = httpseeker_config.get('encryption', {}).get('key')
+            try:
+                encryption_key = glom(httpseeker_config.settings, 'encryption.key', default=None)
+            except Exception:
+                encryption_key = None
         return encryption_key
 
     @property
@@ -620,12 +628,14 @@ class RequestDataParse:
                             _error_msg(f'参数 test_steps:setup:sql[{index}] 不是有效的 str 类型')
                         )
                     if k == 'sql':
-                        mysql_client.sql_verify(v)
+                        if mysql_client.is_enabled:
+                            mysql_client.sql_verify(v)
             else:
                 if not isinstance(sql, str):
                     raise RequestDataParseError(_error_msg(f'参数 test_steps:setup:sql[{index}] 不是有效的 str 类型'))
                 else:
-                    mysql_client.sql_verify(sql)
+                    if mysql_client.is_enabled:
+                        mysql_client.sql_verify(sql)
         return sql
 
     @staticmethod
@@ -688,14 +698,16 @@ class RequestDataParse:
                             _error_msg(f'参数 test_steps:teardown:sql[{index}]:{k} 不是有效的 str 类型')
                         )
                     if k == 'sql':
-                        mysql_client.sql_verify(v)
+                        if mysql_client.is_enabled:
+                            mysql_client.sql_verify(v)
             else:
                 if not isinstance(sql, str):
                     raise RequestDataParseError(
                         _error_msg(f'参数 test_steps:teardown:sql[{index}] 不是有效的 str 类型')
                     )
                 else:
-                    mysql_client.sql_verify(sql)
+                    if mysql_client.is_enabled:
+                        mysql_client.sql_verify(sql)
         return sql
 
     @staticmethod

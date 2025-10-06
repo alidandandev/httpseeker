@@ -125,6 +125,24 @@ def case_id_unique_verify() -> None:
         redis_client.rset(f'{redis_client.prefix}:case_id_list', str(all_case_id))
 
 
+def _load_case_data_from_file(filename: str) -> dict:
+    """
+    从文件直接加载测试用例数据
+
+    :param filename: 文件名
+    :return: 测试用例数据
+    """
+    all_case_data_files = search_all_case_data_files()
+    for case_data_file in all_case_data_files:
+        if case_data_file.endswith(filename):
+            file_type = get_file_property(case_data_file)[2]
+            if file_type == CaseDataType.JSON:
+                return read_json_file(case_data_file)
+            else:
+                return read_yaml(case_data_file)
+    raise RequestDataParseError(f'未找到测试用例文件: {filename}')
+
+
 def get_testcase_data(*, filename: str) -> tuple[list, list]:
     """
     获取测试用例数据
@@ -132,7 +150,14 @@ def get_testcase_data(*, filename: str) -> tuple[list, list]:
     :param filename: 测试用例数据文件名称
     :return:
     """
-    case_data = json.loads(redis_client.get(f'{redis_client.case_data_prefix}:{filename}'))
+    # 优先从 Redis 读取缓存，如果 Redis 未启用则直接从文件读取
+    cached_data = redis_client.get(f'{redis_client.case_data_prefix}:{filename}') if redis_client.is_enabled else None
+    if cached_data:
+        case_data = json.loads(cached_data)
+    else:
+        # Redis 未启用或缓存不存在，从文件读取
+        log.info(f'Redis 缓存未命中或未启用，从文件读取: {filename}')
+        case_data = _load_case_data_from_file(filename)
     config_error = f'请求测试用例数据文件 {filename} 缺少 config 信息, 请检查测试用例文件内容'
     test_steps_error = f'请求测试用例数据文件 {filename} 缺少 test_steps 信息, 请检查测试用例文件内容'
 
