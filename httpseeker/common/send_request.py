@@ -173,6 +173,9 @@ class SendRequests:
                                 if relate_parsed_data:
                                     parsed_data = relate_parsed_data
                             elif key == SetupType.SQL:
+                                if not mysql_client.is_enabled:
+                                    log.warning('MySQL 未启用，跳过 setup SQL 执行')
+                                    continue
                                 setup_sql = var_extractor.vars_replace({'sql': value}, parsed_data['env'])
                                 sql_fetch = QueryFetchType.ALL
                                 if isinstance(setup_sql, dict):
@@ -329,6 +332,9 @@ class SendRequests:
                     for key, value in item.items():
                         if value is not None:
                             if key == TeardownType.SQL:
+                                if not mysql_client.is_enabled:
+                                    log.warning('MySQL 未启用，跳过 teardown SQL 执行')
+                                    continue
                                 teardown_sql = var_extractor.vars_replace(value, parsed_data['env'])
                                 sql_fetch = QueryFetchType.ALL
                                 if isinstance(teardown_sql, dict):
