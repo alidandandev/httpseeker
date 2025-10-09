@@ -149,16 +149,21 @@ def startup(
             if not os.path.exists(httpseeker_path.allure_report_env_file):
                 shutil.copyfile(httpseeker_path.allure_env_file, httpseeker_path.allure_report_env_file)
 
-        if allure_serve:
+            # 生成 Allure HTML 报告
+            log.info('生成 Allure HTML 报告...')
             subprocess.run(
                 [
                     'allure',
                     'generate',
                     f'{httpseeker_path.allure_report_dir}',
                     '-o',
-                    f'{httpseeker_path.allure_html_report_dir} --clean',
+                    f'{httpseeker_path.allure_html_report_dir}',
+                    '--clean',
                 ]
             )
+            log.info(f'Allure HTML 报告已生成: {httpseeker_path.allure_html_report_dir}')
+
+        if allure_serve:
             subprocess.run(['allure', 'serve', f'{httpseeker_path.allure_report_dir}'])
 
 
