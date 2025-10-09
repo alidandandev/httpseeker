@@ -1,0 +1,116 @@
+# 加密接口测试用例集合
+config:
+  allure:
+    epic: "加密接口测试"
+    feature: "任务管理"
+    story: "加密接口测试"
+    severity: "critical"
+
+  request:
+    env: "test.env"  # 需要在run_env目录下创建test.env文件
+    headers:
+      Content-Type: "application/json"
+    timeout: 30
+    verify: false
+
+  module: "encryption_test"
+
+test_steps:
+  - name: "测试获取任务密码接口"
+    case_id: "cdb_bofa_001"
+    description: "验证获取任务密码接口的加密响应解密功能"
+
+    request:
+      method: "GET"
+      url: "/cdb/api/taskOrder/getTaskPassword"
+      params: null
+      headers: null
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+  - name: "测试获取任务类型列表接口"
+    case_id: "ENC_TASK_002"
+    description: "验证获取任务类型列表接口的加密响应解密功能"
+
+    request:
+      method: "GET"
+      url: "/cdb/api/taskOrder/getLikeTaskTypeList"
+      params: null
+      headers: null
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+  - name: "测试加密启用状态接口"
+    case_id: "ENC_TASK_003"
+    description: "验证加密启用状态接口的加密响应解密功能"
+
+    request:
+      method: "GET"
+      url: "/cdb/api/auth/encryptionEnabled"
+      params: null
+      headers: null
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
