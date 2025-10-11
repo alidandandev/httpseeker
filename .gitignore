@@ -10,3 +10,4 @@ httpseeker/log/
 .idea/
 httpseeker/data/online*
 .ruff_cache/
+.auth_cache/

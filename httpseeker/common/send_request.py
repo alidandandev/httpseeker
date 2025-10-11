@@ -74,12 +74,15 @@ class SendRequests:
         # 消除安全警告
         requests.packages.urllib3.disable_warnings()  # type: ignore
         log.info('开始发送请求...')
+
+        response = None
         try:
+            # 使用 requests.request 而不是 session，避免 session 生命周期问题
             for attempt in stamina.retry_context(on=requests.HTTPError, attempts=request_retry):
                 with attempt:
                     if attempt.num > 1:
                         log.warning('请求响应异常重试...')
-                    response = requests.session().request(**kwargs)
+                    response = requests.request(**kwargs)
                     response.raise_for_status()
         except Exception as e:
             log.error(f'发送 requests 请求响应异常: {e}')
@@ -277,15 +280,42 @@ class SendRequests:
         # 序列化响应数据
         res_headers = dict(response.headers)
         res_content_type = res_headers.get('Content-Type')
-        try:
-            if res_content_type and 'application/json' in res_content_type:
+
+        # 记录响应基本信息用于调试
+        response_length = len(response.content)
+        response_text_length = len(response.text)
+        log.debug(f'响应 Content-Type: {res_content_type}')
+        log.debug(f'响应体长度: content={response_length} bytes, text={response_text_length} chars')
+
+        # 如果 content 为空但 text 不为空，记录警告
+        if response_length == 0 and response_text_length > 0:
+            log.warning(f'异常：response.content 为空但 response.text 不为空（长度: {response_text_length}）')
+            log.debug(f'response.text 内容（前200字符）: {response.text[:200]}')
+
+        # 检查响应体是否为空（基于 content 而不是 text，避免编码问题）
+        if response_length == 0 and response_text_length == 0:
+            log.debug('响应体为空（0字节），设置 json_data 为空字典')
+            json_data = {}
+        else:
+            # 尝试解析 JSON，不论 Content-Type 是什么
+            try:
                 json_data = response.json()
-            else:
-                json_data = {}
-        except JSONDecodeError:
-            err_msg = '响应数据解析失败，响应数据不是有效的 json 格式'
-            log.warning(err_msg)
-            raise SendRequestError(err_msg)
+                log.debug(f'✓ JSON 解析成功，数据类型: {type(json_data).__name__}')
+                if res_content_type and 'application/json' not in res_content_type:
+                    log.debug(f'注意: Content-Type 为 {res_content_type}，但成功解析为 JSON')
+            except (JSONDecodeError, ValueError) as e:
+                # JSON 解析失败
+                log.debug(f'JSON 解析失败: {e}')
+                if res_content_type and 'application/json' in res_content_type:
+                    # 如果声明是 JSON 但解析失败，这是错误
+                    err_msg = f'响应声明为 JSON 格式但解析失败: {e}'
+                    log.error(err_msg)
+                    log.error(f'响应内容（前500字符）: {response.text[:500]}')
+                    raise SendRequestError(err_msg)
+                else:
+                    # 不是 JSON 格式，设置为空字典
+                    json_data = {}
+                    log.debug(f'响应 Content-Type 为 {res_content_type}，不是有效的 JSON 格式，设置为空字典')
 
         # 解密处理：如果启用加密且响应中包含加密数据
         encryption_enabled = parsed_data.get('encryption_enabled', False)
