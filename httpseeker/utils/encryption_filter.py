@@ -125,7 +125,10 @@ class EncryptionFilter:
 
     def decrypt_response_data(self, response_json: dict) -> dict:
         """
-        解密响应数据
+        智能解密响应数据
+        策略：
+        1. 先尝试将整个响应体作为加密字符串解密
+        2. 如果失败，则尝试解密响应中的 data 字段
 
         Args:
             response_json: 响应JSON数据
@@ -137,22 +140,39 @@ class EncryptionFilter:
             return response_json
 
         try:
-            # 检查响应中是否包含加密的data字段
+            # 策略1: 尝试将整个响应体作为加密字符串解密
+            # 如果整个响应就是一个包含加密字符串的简单结构
+            if len(response_json) == 1 and isinstance(list(response_json.values())[0], str):
+                encrypted_full_response = list(response_json.values())[0]
+                try:
+                    decrypted_full = self.decrypt(encrypted_full_response)
+                    try:
+                        # 尝试解析为JSON对象
+                        decrypted_json = json.loads(decrypted_full)
+                        logger.info("✓ 整个响应体解密成功，解析为JSON对象")
+                        return decrypted_json
+                    except json.JSONDecodeError:
+                        # 不是JSON，返回原始响应
+                        logger.debug("整个响应体解密后不是JSON，尝试其他策略")
+                except Exception as e:
+                    logger.debug(f"整个响应体解密失败，尝试其他策略: {e}")
+
+            # 策略2: 检查响应中是否包含加密的data字段
             if "data" in response_json and isinstance(response_json["data"], str):
                 encrypted_data = response_json["data"]
 
-                # 尝试解密
+                # 尝试解密data字段
                 try:
                     decrypted_data = self.decrypt(encrypted_data)
 
                     # 尝试将解密后的数据解析为JSON
                     try:
                         response_json["data"] = json.loads(decrypted_data)
-                        logger.debug("✓ 响应数据解密成功，data字段是JSON对象")
+                        logger.info("✓ 响应data字段解密成功，解析为JSON对象")
                     except json.JSONDecodeError:
                         # 不是JSON，保留为字符串（可能是token等）
                         response_json["data"] = decrypted_data
-                        logger.debug("✓ 响应数据解密成功，data字段是字符串")
+                        logger.info("✓ 响应data字段解密成功，保留为字符串")
 
                 except Exception as e:
                     logger.warning(f"data字段解密失败，保留原始内容: {e}")
