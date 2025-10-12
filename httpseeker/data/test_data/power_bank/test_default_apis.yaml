@@ -1,0 +1,254 @@
+# 点赞博发web站点登录后默认API测试用例集合
+config:
+  allure:
+    epic: "点赞博发Web站点登陆之后默认调用api场景测试"
+    feature: "登录后默认API"
+    story: "默认API接口测试"
+    severity: "critical"
+
+  request:
+    env: "test.env"  # 需要在run_env目录下创建test.env文件
+    headers:
+      Content-Type: "application/json"
+    timeout: 30
+    verify: false
+
+  module: "default_apis_test"
+
+test_steps:
+  - name: "测试获取任务密码接口"
+    case_id: "cdb_bofa_001"
+    description: "验证获取任务密码接口功能"
+
+    request:
+      method: "GET"
+      url: "/cdb/api/taskOrder/getTaskPassword"
+      params: null
+      headers: null
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+  - name: "测试获取点赞任务类型列表接口"
+    case_id: "cdb_bofa_002"
+    description: "验证获取点赞任务类型列表接口功能"
+
+    request:
+      method: "GET"
+      url: "/cdb/api/taskOrder/getLikeTaskTypeList"
+      params: null
+      headers: null
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+  - name: "测试加密启用状态接口"
+    case_id: "cdb_bofa_003"
+    description: "验证加密启用状态接口功能"
+
+    request:
+      method: "GET"
+      url: "/cdb/api/auth/encryptionEnabled"
+      params: null
+      headers: null
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+  - name: "测试获取Banner内容接口"
+    case_id: "cdb_bofa_004"
+    description: "验证获取Banner内容接口功能"
+
+    request:
+      method: "GET"
+      url: "/cdb/api/content/banner"
+      params: null
+      headers: null
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+  - name: "测试获取活动信息接口"
+    case_id: "cdb_bofa_005"
+    description: "验证获取活动信息接口功能"
+
+    request:
+      method: "POST"
+      url: "/cdb/api/auth/getActivity"
+      params: null
+      headers: null
+      cookies: null
+      body_type: "json"
+      body: {}
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+  - name: "测试获取点赞任务列表接口"
+    case_id: "cdb_bofa_006"
+    description: "验证获取点赞任务列表接口功能"
+
+    request:
+      method: "POST"
+      url: "/cdb/api/taskOrder/getLikeTaskList"
+      params: null
+      headers: null
+      cookies: null
+      body_type: "json"
+      body:
+        data:
+          pageNo: 1
+          pageSize: 10
+          taskType: "經典電影"
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+  - name: "测试获取系统参数接口"
+    case_id: "cdb_bofa_007"
+    description: "验证获取系统参数接口功能"
+
+    request:
+      method: "POST"
+      url: "/cdb/api/content/sysParm"
+      params: null
+      headers: null
+      cookies: null
+      body_type: "json"
+      body:
+        language: "ZH_TW"
+        officialType: 11
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
