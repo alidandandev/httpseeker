@@ -193,10 +193,9 @@ test_steps:
       cookies: null
       body_type: "json"
       body:
-        data:
-          pageNo: 1
-          pageSize: 10
-          taskType: "經典電影"
+        pageNo: 1
+        pageSize: 10
+        taskType: "經典電影"
       files: null
 
     teardown:
