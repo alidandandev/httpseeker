@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import time
+import warnings
 
 from datetime import datetime
 
 import pytest
 
+# 抑制 py 模块的 DeprecationWarning，因为 pytest-html 依赖它
+warnings.filterwarnings('ignore', category=DeprecationWarning, module=r'py\._xmlgen')
 from py._xmlgen import html
 
 from httpseeker.common.log import log
@@ -79,7 +82,7 @@ def pytest_html_results_summary(prefix):
     prefix.extend([html.p(f'Tester: {httpseeker_config.TESTER_NAME}')])
 
 
-@pytest.mark.optionalhook
+@pytest.hookimpl(optionalhook=True)
 def pytest_html_report_title(report):
     """
     html报告标题配置
@@ -90,7 +93,7 @@ def pytest_html_report_title(report):
     report.title = f'{httpseeker_config.TEST_REPORT_TITLE}'
 
 
-@pytest.mark.optionalhook
+@pytest.hookimpl(optionalhook=True)
 def pytest_html_results_table_header(cells):
     """
     html报告表格列配置
@@ -103,7 +106,7 @@ def pytest_html_results_table_header(cells):
     cells.pop()
 
 
-@pytest.mark.optionalhook
+@pytest.hookimpl(optionalhook=True)
 def pytest_html_results_table_row(report, cells):
     """
     html报告表格列值配置
@@ -117,7 +120,7 @@ def pytest_html_results_table_row(report, cells):
     cells.pop()
 
 
-@pytest.mark.hookwrapper
+@pytest.hookimpl(hookwrapper=True)
 def pytest_runtest_makereport(item, call):
     """
     自动化获取用例描述, 解决测试用例参数包含中文问题

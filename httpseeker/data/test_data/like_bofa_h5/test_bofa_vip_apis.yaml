@@ -1,0 +1,456 @@
+# 点赞博发站点VIP购买流程测试
+config:
+  allure:
+    epic: "点赞博发Web站点VIP系统"
+    feature: "VIP购买流程"
+    story: "VIP信息查询和购买完整流程测试"
+    severity: "critical"
+
+  request:
+    env: "test.env"
+    headers:
+      Content-Type: "application/json;charset=UTF-8"
+    timeout: 30
+    verify: false
+
+  module: "vip_purchase"
+
+test_steps:
+  # ========== 步骤1: 获取VIP套餐列表 ==========
+  - name: "获取VIP套餐列表"
+    case_id: "bofa_vip_001"
+    description: "查询所有可用的VIP套餐信息并提取第一个VIP的idw"
+
+    request:
+      method: "GET"
+      url: "/cdb/api/content/vipMessage"
+      params: null
+      headers: null
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证状态码"
+          type: "eq"
+          value: 200
+          jsonpath: "$.status_code"
+
+      - assert:
+          check: "验证业务成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证VIP列表不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+      - extract:
+          key: "idw"
+          type: "cache"
+          jsonpath: "$.json.data[0].idw"
+
+  # ========== 步骤2: 检查加密状态 ==========
+  - name: "检查加密是否启用"
+    case_id: "bofa_vip_002"
+    description: "验证系统加密功能是否启用"
+
+    request:
+      method: "GET"
+      url: "/cdb/api/auth/encryptionEnabled"
+      params: null
+      headers: null
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证加密已启用"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.data"
+
+  # ========== 步骤3: 查询VIP详情 ==========
+  - name: "查询VIP套餐详细信息"
+    case_id: "bofa_vip_003"
+    description: "根据VIP ID查询具体套餐的详细信息（加密请求）"
+
+    request:
+      method: "POST"
+      url: "/cdb/api/content/vipMessageDetail"
+      params: null
+      headers: null
+      cookies: null
+      body_type: "json"
+      body:
+        idw: "${idw}"
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证HTTP状态码"
+          type: "eq"
+          value: 200
+          jsonpath: "$.status_code"
+
+      - assert:
+          check: "验证业务码"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证详情数据存在"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+  # ========== 步骤4: 再次检查加密状态 ==========
+  - name: "再次检查加密状态"
+    case_id: "bofa_vip_004"
+    description: "验证系统加密功能状态"
+
+    request:
+      method: "GET"
+      url: "/cdb/api/auth/encryptionEnabled"
+      params: null
+      headers: null
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+  # ========== 步骤5: 查询系统参数 ==========
+  - name: "查询系统参数配置"
+    case_id: "bofa_vip_005"
+    description: "获取系统参数配置信息（加密请求）"
+
+    request:
+      method: "POST"
+      url: "/cdb/api/content/sysParm"
+      params: null
+      headers: null
+      cookies: null
+      body_type: "json"
+      body:
+        language: "ZH_TW"
+        officialType: 9
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+  # ========== 步骤6: 检查VIP购买状态 ==========
+  - name: "检查用户是否已购买VIP"
+    case_id: "bofa_vip_006"
+    description: "查询用户是否已购买指定VIP套餐"
+
+    request:
+      method: "GET"
+      url: "/cdb/api/shop/isBuyVip"
+      params:
+        vipIdw: "${idw}"
+      headers: null
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证状态码"
+          type: "eq"
+          value: 200
+          jsonpath: "$.status_code"
+
+      - assert:
+          check: "验证业务成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+  # ========== 步骤7: 再次检查加密状态 ==========
+  - name: "第三次检查加密状态"
+    case_id: "bofa_vip_007"
+    description: "验证系统加密功能状态"
+
+    request:
+      method: "GET"
+      url: "/cdb/api/auth/encryptionEnabled"
+      params: null
+      headers: null
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+  # ========== 步骤8: 再次查询VIP详情 ==========
+  - name: "再次查询VIP套餐详细信息"
+    case_id: "bofa_vip_008"
+    description: "再次根据VIP ID查询具体套餐的详细信息（加密请求）"
+
+    request:
+      method: "POST"
+      url: "/cdb/api/content/vipMessageDetail"
+      params: null
+      headers: null
+      cookies: null
+      body_type: "json"
+      body:
+        idw: "${idw}"
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证HTTP状态码"
+          type: "eq"
+          value: 200
+          jsonpath: "$.status_code"
+
+      - assert:
+          check: "验证业务码"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+  # ========== 步骤9: 获取支付渠道 ==========
+  - name: "获取支付渠道列表"
+    case_id: "bofa_vip_009"
+    description: "查询可用的支付渠道（加密请求）"
+
+    request:
+      method: "POST"
+      url: "/cdb/api/content/payChannel"
+      params: null
+      headers: null
+      cookies: null
+      body_type: "json"
+      body: {}
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证支付渠道数据不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+  # ========== 步骤10: 检查渠道类型是否开放 ==========
+  - name: "检查支付渠道是否开放"
+    case_id: "bofa_vip_010"
+    description: "查询指定支付渠道类型是否开放（加密请求）"
+
+    request:
+      method: "POST"
+      url: "/cdb/api/auth/getChannelTypeIsopen"
+      params: null
+      headers: null
+      cookies: null
+      body_type: "json"
+      body: {}
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证状态码"
+          type: "eq"
+          value: 200
+          jsonpath: "$.status_code"
+
+      - assert:
+          check: "验证业务成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+  # ========== 步骤11: 检查支付密码状态 ==========
+  - name: "检查支付密码设置状态"
+    case_id: "bofa_vip_011"
+    description: "查询用户是否已设置支付密码"
+
+    request:
+      method: "GET"
+      url: "/cdb/api/auth/getPayPasswordStatus"
+      params: null
+      headers: null
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证success字段"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+  # ========== 步骤12: 查询用户余额 ==========
+  - name: "查询用户账户余额"
+    case_id: "bofa_vip_012"
+    description: "获取用户当前账户余额信息"
+
+    request:
+      method: "GET"
+      url: "/cdb/api/auth/getUserBalance"
+      params: null
+      headers: null
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+  # ========== 步骤13: 最后检查加密状态 ==========
+  - name: "购买前最后检查加密状态"
+    case_id: "bofa_vip_013"
+    description: "购买VIP前验证系统加密功能状态"
+
+    request:
+      method: "GET"
+      url: "/cdb/api/auth/encryptionEnabled"
+      params: null
+      headers: null
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+  # ========== 步骤14: 购买VIP ==========
+  - name: "购买VIP套餐"
+    case_id: "bofa_vip_014"
+    description: "执行VIP购买操作（加密请求）"
+    is_run: true  # 默认不执行购买操作，避免产生实际订单
+
+    setup:
+      - wait_time: 1  # 购买前等待1秒
+
+    request:
+      method: "POST"
+      url: "/cdb/api/shop/buyVip"
+      params: null
+      headers: null
+      cookies: null
+      body_type: "json"
+      body:
+        vipIdw: "${idw}"
+        paymentMethod: 1
+        paymentPassword: "vxw4MpZHWYpnD+SKJnbZZg=="
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证HTTP状态码"
+          type: "eq"
+          value: 200
+          jsonpath: "$.status_code"
+
+      - assert:
+          check: "验证购买结果"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证购买成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
