@@ -65,6 +65,36 @@ class HttpSeekerCLI:
             num_args=-1,
         ),
     ]
+    env: Annotated[
+        str | None,
+        cappa.Arg(
+            value_name='<ENV_FILE>',
+            long='--env',
+            default=None,
+            help='指定环境变量文件名 (例如: prod.env, test.env)',
+            required=False,
+        ),
+    ] = None
+    conf: Annotated[
+        str | None,
+        cappa.Arg(
+            value_name='<CONF_FILE>',
+            long='--conf',
+            default=None,
+            help='指定配置文件路径 (例如: /path/to/conf.toml)',
+            required=False,
+        ),
+    ] = None
+    auth: Annotated[
+        str | None,
+        cappa.Arg(
+            value_name='<AUTH_FILE>',
+            long='--auth',
+            default=None,
+            help='指定认证配置文件路径 (例如: /path/to/auth.yaml)',
+            required=False,
+        ),
+    ] = None
     subcmd: Subcommands[TestCaseCLI | ImportCLI | None] = None
 
     def __call__(self) -> None:
@@ -74,7 +104,19 @@ class HttpSeekerCLI:
             if self.version or self.subcmd:
                 console.print('\n❌ 暂不支持 -r/--run 命令与其他 CLI 命令同时使用')
                 raise cappa.Exit(code=1)
-            run(*self.run_test) if isinstance(self.run_test, list) else run()
+            # 构建额外参数字典
+            extra_kwargs = {}
+            if self.env is not None:
+                extra_kwargs['global_env'] = self.env
+            if self.conf is not None:
+                extra_kwargs['conf_path'] = self.conf
+            if self.auth is not None:
+                extra_kwargs['auth_path'] = self.auth
+
+            if isinstance(self.run_test, list):
+                run(*self.run_test, **extra_kwargs)
+            else:
+                run(**extra_kwargs)
 
 
 @cappa.command(name='testcase', help='Test case tools.')

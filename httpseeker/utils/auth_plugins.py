@@ -34,7 +34,15 @@ class AuthPlugins:
     @lru_cache
     def get_auth_data(self) -> dict:
         """获取授权数据"""
-        auth_data = read_yaml(httpseeker_path.auth_conf_dir, filename='auth.yaml')
+        # 检查是否通过环境变量指定了认证配置文件路径
+        auth_path = os.environ.get('HTTPSEEKER_AUTH_PATH')
+        if auth_path:
+            # 使用指定的认证配置文件路径
+            auth_file_path = Path(auth_path)
+            auth_data = read_yaml(str(auth_file_path.parent), filename=auth_file_path.name)
+        else:
+            # 使用默认路径
+            auth_data = read_yaml(httpseeker_path.auth_conf_dir, filename='auth.yaml')
         return auth_data
 
     def auth_type_verify(self) -> None:

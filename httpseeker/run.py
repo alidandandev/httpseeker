@@ -191,6 +191,10 @@ def run(
     strict_markers: bool = False,
     capture: bool = True,
     disable_warnings: bool = True,
+    # config files
+    global_env: str | None = None,
+    conf_path: str | None = None,
+    auth_path: str | None = None,
     **kwargs,
 ) -> None:
     """
@@ -213,10 +217,21 @@ def run(
     :param strict_markers: markers 严格模式, 对于设置 marker 装饰器的用例, 如果 marker 未在 pytest.ini 注册, 用例将报错
     :param capture: 避免在使用输出模式为"v"和"s"时，html报告中的表格日志为空的情况, 默认开启
     :param disable_warnings: 关闭控制台警告信息, 默认开启
+    :param global_env: 指定全局环境变量文件名，会覆盖 conf.toml 中的配置
+    :param conf_path: 指定配置文件路径，默认使用 httpseeker/core/conf.toml
+    :param auth_path: 指定认证配置文件路径，默认使用 httpseeker/core/auth.yaml
     :param kwargs: pytest 运行关键字参数
     :return:
     """
     try:
+        # 设置自定义配置文件路径到环境变量
+        if global_env is not None:
+            os.environ['HTTPSEEKER_GLOBAL_ENV'] = global_env
+        if conf_path is not None:
+            os.environ['HTTPSEEKER_CONF_PATH'] = conf_path
+        if auth_path is not None:
+            os.environ['HTTPSEEKER_AUTH_PATH'] = auth_path
+
         banner = f"""\n
         ╦ ╦╔╦╗╔╦╗╔═╗  ╔═╗╔═╗╔═╗╦╔═╔═╗╦═╗
         ╠═╣ ║  ║ ╠═╝  ╚═╗║╣ ║╣ ╠╩╗║╣ ╠╦╝
