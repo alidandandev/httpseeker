@@ -57,7 +57,8 @@ if __name__ == "__main__":
     # 加密例子
     data = {
 
-        "data": "tZZSPHk5YYhVMh1JSgcfQDZhRgQzCHIAm0wIF3LjHMWte5p8s/9qunZumNyw/4M4z0UQZj0icMmlcA0tr2oBPToFXDESKCDUzOT7KgbAHhQo/BVNGdLi9BZFOtDtw4Gv9vWh126chhTYn6AO/3EOyFrB7yfAwGnF+EFkZbm3/2w="
+            "data": "CEuDKEXyQcsDrBNRSUAwG6+4IY+KkQrx+lEeJVvnbQjesrGBmYSLPpy9cPkPLExNr45AXFFX0pqY5Dnce2Hbn5cQ0KfPx2XXkL2g8+lHVwgKQ47JkjEEt4j/Vz6I9t8o"
+
     }
     decrypt_response(data)
     data = {

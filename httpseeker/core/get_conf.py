@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import os
 from functools import lru_cache
 from pathlib import Path
 
@@ -13,7 +14,20 @@ __all__ = ['httpseeker_config']
 
 class HttpSeekerConfig:
     def __init__(self) -> None:
-        self.settings = read_toml(str(Path(__file__).resolve().parent), 'conf.toml')
+        # 检查是否通过环境变量指定了配置文件路径
+        conf_path = os.environ.get('HTTPSEEKER_CONF_PATH')
+        if conf_path:
+            # 使用指定的配置文件路径
+            conf_file_path = Path(conf_path)
+            self.settings = read_toml(str(conf_file_path.parent), conf_file_path.name)
+        else:
+            # 使用默认路径
+            self.settings = read_toml(str(Path(__file__).resolve().parent), 'conf.toml')
+
+        # 检查是否通过环境变量覆盖全局环境变量
+        global_env = os.environ.get('HTTPSEEKER_GLOBAL_ENV')
+        if global_env:
+            self.settings['request']['global_env'] = global_env
         try:
             # 项目目录名
             self.PROJECT_NAME = glom(self.settings, 'project.name')

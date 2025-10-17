@@ -1,7 +1,7 @@
 # 点赞博发站点VIP购买流程测试
 config:
   allure:
-    epic: "点赞博发Web站点VIP系统"
+    epic: "点赞博发Web站点VIP流程"
     feature: "VIP购买流程"
     story: "VIP信息查询和购买完整流程测试"
     severity: "critical"
