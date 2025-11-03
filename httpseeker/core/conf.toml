@@ -1,6 +1,6 @@
 # 测试项目
 [project]
-name = 'like_bofa_h5'
+name = 'bofa'
 
 # 测试报告
 [report]
