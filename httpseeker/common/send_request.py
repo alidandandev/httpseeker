@@ -221,11 +221,16 @@ class SendRequests:
             request_data_parsed: dict = var_extractor.vars_replace(request_data_parsed, parsed_data['env'])  # type: ignore # noqa: ignore
             body = request_data_parsed.pop('body')
 
+            # 保存原始body用于日志记录
+            original_body = None
+
             # 加密处理：如果启用加密且body不为空
             encryption_enabled = parsed_data.get('encryption_enabled', False)
             encryption_key = parsed_data.get('encryption_key')
 
             if encryption_enabled and body is not None:
+                # 保存原始body（加密前）
+                original_body = body
                 log.info('开始加密请求体...')
                 encryption_filter = EncryptionFilter(
                     encryption_enabled=True,
@@ -257,6 +262,9 @@ class SendRequests:
                 or request_data_parsed.get('data')
                 or request_data_parsed.get('content')
             )
+
+            # 保存原始body到parsed_data用于日志记录
+            parsed_data['original_body'] = original_body
         except Exception as e:
             log.error(e)
             raise e
@@ -424,7 +432,14 @@ class SendRequests:
         log.info(f'请求 params: {parsed_data["params"]}')
         log.info(f'请求 headers: {parsed_data["headers"]}')
         log.info(f'请求 body_type：{parsed_data["body_type"]}')
-        log.info(f'请求 body：{parsed_data["body"]}')
+
+        # 如果存在原始body（说明进行了加密），则分别打印加密前后的body
+        if parsed_data.get('original_body') is not None:
+            log.info(f'请求 body（加密前）：{parsed_data["original_body"]}')
+            log.info(f'请求 body（加密后）：{parsed_data["body"]}')
+        else:
+            log.info(f'请求 body：{parsed_data["body"]}')
+
         log.info(f'请求 files: {parsed_data["files_no_parse"]}')
 
     def log_request_teardown(self, teardown: list) -> None:
