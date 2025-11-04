@@ -4,7 +4,7 @@ config:
     epic: "注册登录"
     feature: "注册"
     story: "后台登录获取验证码，H5前端注册"
-    severity: "P0"
+    severity: "critical"
 
   request:
     env: "test_volt.env"

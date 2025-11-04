@@ -4,7 +4,7 @@ config:
     epic: "注册登录"
     feature: "登录"
     story: "使用注册好的账号，直接登录"
-    severity: "P0"
+    severity: "critical"
 
   request:
     env: "test_volt.env"
