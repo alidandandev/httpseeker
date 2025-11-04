@@ -1,6 +1,6 @@
 # 测试项目
 [project]
-name = 'bofa'
+name = 'test_volt_h5'
 
 # 测试报告
 [report]
@@ -70,5 +70,5 @@ retry = 3
 
 # 加密配置
 [encryption]
-enabled = true
+enabled = false
 key = "your-32-byte-secure-aes-key-1234"
