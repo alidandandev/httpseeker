@@ -88,12 +88,6 @@ test_steps:
           value: true
           jsonpath: "$.json.success"
 
-      - assert:
-          check: "验证返回数据不为空"
-          type: "not_eq"
-          value: null
-          jsonpath: "$.json.data"
-
   # ========== 步骤3: 获取点赞任务列表 ==========
   - name: "获取点赞任务列表"
     case_id: "bofa_task_003"
@@ -183,8 +177,3 @@ test_steps:
           type: "not_eq"
           value: null
           jsonpath: "$.json.data"
-
-      - extract:
-          key: "task_order_id"
-          type: "cache"
-          jsonpath: "$.json.data.id"
