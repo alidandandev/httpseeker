@@ -1,0 +1,179 @@
+# 点赞博发站点任务订单测试
+config:
+  allure:
+    epic: "点赞博发Web站点任务管理"
+    feature: "任务订单流程"
+    story: "任务订单添加和查询完整流程测试"
+    severity: "critical"
+
+  request:
+    env: "test.env"
+    headers:
+      Content-Type: "application/json;charset=UTF-8"
+    timeout: 30
+    verify: false
+
+  module: "task_order"
+
+test_steps:
+  # ========== 步骤1: 检查加密是否启用 ==========
+  - name: "检查加密是否启用"
+    case_id: "bofa_task_001"
+    description: "验证系统加密功能是否启用"
+
+    request:
+      method: "GET"
+      url: "/cdb/api/auth/encryptionEnabled"
+      params: null
+      headers: null
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证加密已启用"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.data"
+
+  # ========== 步骤2: 添加任务订单 ==========
+  - name: "添加任务订单"
+    case_id: "bofa_task_002"
+    description: "添加指定任务ID的任务订单"
+
+    request:
+      method: "POST"
+      url: "/cdb/api/taskOrder/addTaskOrder"
+      params: null
+      headers: null
+      cookies: null
+      body_type: "json"
+      body:
+        taskId: 1537
+        url: "15"
+        title: "lufei"
+        taskPassword: "cWDuJsDI"
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证HTTP状态码"
+          type: "eq"
+          value: 200
+          jsonpath: "$.status_code"
+
+      - assert:
+          check: "验证业务码"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+  # ========== 步骤3: 获取点赞任务列表 ==========
+  - name: "获取点赞任务列表"
+    case_id: "bofa_task_003"
+    description: "分页查询点赞任务列表，按任务类型筛选"
+
+    request:
+      method: "POST"
+      url: "/cdb/api/taskOrder/getLikeTaskList"
+      params: null
+      headers: null
+      cookies: null
+      body_type: "json"
+      body:
+        pageNo: 1
+        pageSize: 10
+        taskType: "經典電影"
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证HTTP状态码"
+          type: "eq"
+          value: 200
+          jsonpath: "$.status_code"
+
+      - assert:
+          check: "验证业务码"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证任务列表数据存在"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+      - extract:
+          key: "task_list"
+          type: "cache"
+          jsonpath: "$.json.data"
+
+  # ========== 步骤4: 一键领取任务 ==========
+  - name: "一键领取任务"
+    case_id: "bofa_task_004"
+    description: "按任务类型一键领取任务订单"
+
+    request:
+      method: "POST"
+      url: "/cdb/api/taskOrder/addTaskOrder"
+      params: null
+      headers: null
+      cookies: null
+      body_type: "json"
+      body:
+        taskPassword: "cWDuJsDI"
+        taskType: "經典電影"
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证HTTP状态码"
+          type: "eq"
+          value: 200
+          jsonpath: "$.status_code"
+
+      - assert:
+          check: "验证业务码"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证领取任务成功"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"

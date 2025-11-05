@@ -49,18 +49,18 @@ class HttpSeekerCLI:
             short='-V',
             long=True,
             default=False,
-            help='Print version information.',
+            help='打印版本信息',
         ),
     ]
     run_test: Annotated[
         list[str] | None,
         cappa.Arg(
-            value_name='<PYTEST ARGS / NONE>',
+            value_name='<PYTEST 参数 / 无>',
             short='-r',
             long='--run',
             default=None,
-            help='Run test cases, do not support use with other commands, but support custom pytest running parameters,'
-            ' default parameters see `httpseeker/run.py`.',
+            help='运行测试用例，不支持与其他命令同时使用，但支持自定义 pytest 运行参数，'
+            '默认参数请查看 `httpseeker/run.py`',
             parse=cmd_run_test_parse,
             num_args=-1,
         ),
@@ -68,30 +68,30 @@ class HttpSeekerCLI:
     env: Annotated[
         str | None,
         cappa.Arg(
-            value_name='<ENV_FILE>',
+            value_name='<环境文件>',
             long='--env',
             default=None,
-            help='指定环境变量文件名 (例如: prod.env, test.env)',
+            help='指定环境变量文件名 (例如: test.env, dev.env, pro.env)',
             required=False,
         ),
     ] = None
     conf: Annotated[
         str | None,
         cappa.Arg(
-            value_name='<CONF_FILE>',
+            value_name='<配置文件>',
             long='--conf',
             default=None,
-            help='指定配置文件路径 (例如: /path/to/conf.toml)',
+            help='指定配置文件路径，支持相对路径和绝对路径 (例如: httpseeker/core/conf.toml)',
             required=False,
         ),
     ] = None
     auth: Annotated[
         str | None,
         cappa.Arg(
-            value_name='<AUTH_FILE>',
+            value_name='<认证文件>',
             long='--auth',
             default=None,
-            help='指定认证配置文件路径 (例如: /path/to/auth.yaml)',
+            help='指定认证配置文件路径，支持相对路径和绝对路径 (例如: httpseeker/core/auth.yaml)',
             required=False,
         ),
     ] = None
@@ -109,9 +109,17 @@ class HttpSeekerCLI:
             if self.env is not None:
                 extra_kwargs['global_env'] = self.env
             if self.conf is not None:
-                extra_kwargs['conf_path'] = self.conf
+                # 支持相对路径：相对于当前工作目录
+                conf_path = self.conf
+                if not os.path.isabs(conf_path):
+                    conf_path = os.path.abspath(conf_path)
+                extra_kwargs['conf_path'] = conf_path
             if self.auth is not None:
-                extra_kwargs['auth_path'] = self.auth
+                # 支持相对路径：相对于当前工作目录
+                auth_path = self.auth
+                if not os.path.isabs(auth_path):
+                    auth_path = os.path.abspath(auth_path)
+                extra_kwargs['auth_path'] = auth_path
 
             if isinstance(self.run_test, list):
                 run(*self.run_test, **extra_kwargs)
@@ -119,17 +127,17 @@ class HttpSeekerCLI:
                 run(**extra_kwargs)
 
 
-@cappa.command(name='testcase', help='Test case tools.')
+@cappa.command(name='testcase', help='测试用例工具')
 @dataclass
 class TestCaseCLI:
     data_verify: Annotated[
         str,
         cappa.Arg(
-            value_name='<FILENAME / ALL>',
+            value_name='<文件名 / ALL>',
             short='-c',
             long=True,
             default='',
-            help='验证测试数据结构；当指定文件（文件名/绝对路径）时, 仅验证指定文件, 当指定 "all" 时, 验证所有文件.',
+            help='验证测试数据结构；当指定文件（文件名/绝对路径）时, 仅验证指定文件, 当指定 "all" 时, 验证所有文件',
             required=False,
         ),
     ]
@@ -139,7 +147,7 @@ class TestCaseCLI:
             short='-g',
             long=True,
             default=False,
-            help='自动生成测试用例.',
+            help='自动生成测试用例',
             required=False,
         ),
     ]
@@ -151,28 +159,28 @@ class TestCaseCLI:
             generate_testcases()
 
 
-@cappa.command(name='import', help='Import testcase data.')
+@cappa.command(name='import', help='导入测试数据')
 @dataclass
 class ImportCLI:
     openai: Annotated[
         tuple[str, str],
         cappa.Arg(
-            value_name='<JSONFILE / URL> <PROJECT>',
+            value_name='<JSON文件 / URL> <项目名>',
             short='-o',
             long='--import-openapi',
             default=(),
-            help='导入 openapi 数据到 yaml 数据文件; 支持 json 文件 / url 导入, 需要指定 project 项目名.',
+            help='导入 OpenAPI 数据到 YAML 数据文件；支持 JSON 文件或 URL 导入，需要指定项目名',
             required=False,
         ),
     ]
     apifox: Annotated[
         tuple[str, str],
         cappa.Arg(
-            value_name='<JSONFILE> <PROJECT>',
+            value_name='<JSON文件> <项目名>',
             short='-a',
             long='--import-apifox',
             default=(),
-            help='Beta: 导入 apifox 数据到 yaml 数据文件; 支持 json 文件导入, 需要指定 project 项目名.',
+            help='Beta：导入 Apifox 数据到 YAML 数据文件；支持 JSON 文件导入，需要指定项目名',
             required=False,
         ),
     ]
@@ -182,7 +190,7 @@ class ImportCLI:
             short='-h',
             long='--import-har',
             default=(),
-            help='TODO: Not started yet.',
+            help='待开发：导入 HAR 文件',
             required=False,
         ),
     ]
@@ -192,7 +200,7 @@ class ImportCLI:
             short='-j',
             long='--import-jmeter',
             default=(),
-            help='TODO: Not started yet.',
+            help='待开发：导入 JMeter 测试数据',
             required=False,
         ),
     ]
@@ -202,17 +210,17 @@ class ImportCLI:
             short='-p',
             long='--import-postman',
             default=(),
-            help='TODO: Not started yet.',
+            help='待开发：导入 Postman 测试数据',
             required=False,
         ),
     ]
     git: Annotated[
         str,
         cappa.Arg(
-            value_name='<GIT HTTPS>',
+            value_name='<GIT 地址>',
             long='--import-git',
             default='',
-            help='导入 git 仓库测试数据到本地.',
+            help='导入 Git 仓库测试数据到本地',
             required=False,
         ),
     ]
