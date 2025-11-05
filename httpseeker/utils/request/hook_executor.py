@@ -54,14 +54,15 @@ class HookExecutor:
             return target
 
         # hook 返回值替换
-        exec('from httpseeker.core.hooks import *')
+        # 创建命名空间字典，用于存储导入的函数
+        hook_namespace = {}
+        exec('from httpseeker.core.hooks import *', hook_namespace)
         for match in self.func_re.finditer(str_target):
             hook_key = match.group(1)
             try:
-                # locals() 获取到执行函数内所有变量并以字典形式返回
-                loc = locals()
-                exec(f'result = {hook_key}')
-                value = str(loc['result'])
+                # 使用相同的命名空间执行函数调用
+                exec(f'result = {hook_key}', hook_namespace)
+                value = str(hook_namespace['result'])
                 str_target = self.func_re.sub(value, str_target, 1)
                 log.info(f'请求数据函数 {hook_key} 返回值替换完成')
             except Exception as e:
@@ -91,9 +92,10 @@ class HookExecutor:
         """
         key = self.func_re.search(hook_var)
         func = key.group(1)
-        exec('from httpseeker.core.hooks import *')
+        hook_namespace = {}
+        exec('from httpseeker.core.hooks import *', hook_namespace)
         log.info(f'执行 hook：{func}')
-        exec(func)
+        exec(func, hook_namespace)
 
     @staticmethod
     def exec_any_code(code: str) -> bool:
