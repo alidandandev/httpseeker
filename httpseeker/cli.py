@@ -79,9 +79,9 @@ class HttpSeekerCLI:
         str | None,
         cappa.Arg(
             value_name='<配置文件>',
-            long='--conf',
+            long='--conf_toml',
             default=None,
-            help='指定配置文件路径，支持相对路径和绝对路径 (例如: httpseeker/core/conf.toml)',
+            help='指定配置文件路径，支持相对路径和绝对路径 (例如: httpseeker/core/conf_toml.toml)',
             required=False,
         ),
     ] = None

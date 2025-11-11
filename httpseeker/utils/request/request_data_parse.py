@@ -117,14 +117,14 @@ class RequestDataParse:
         env = httpseeker_config.REQUEST_GLOBAL_ENV
         if env:
             if not isinstance(env, str):
-                raise RequestDataParseError(_error_msg('配置文件参数 conf.toml:request:global_env 不是有效的 str 类型'))
+                raise RequestDataParseError(_error_msg('配置文件参数 conf_toml.toml:request:global_env 不是有效的 str 类型'))
             if not env.endswith('.env'):
-                raise RequestDataParseError(_error_msg('配置文件参数 conf.toml:request:global_env 输入不合法'))
+                raise RequestDataParseError(_error_msg('配置文件参数 conf_toml.toml:request:global_env 输入不合法'))
             return env
         try:
             env = self.request_data['config']['request']['env']
         except _RequestDataParamGetError:
-            raise RequestDataParseError(_error_msg('缺少 conf.toml:request:global_env 或 config:request:env 参数'))
+            raise RequestDataParseError(_error_msg('缺少 conf_toml.toml:request:global_env 或 config:request:env 参数'))
         else:
             if env is None:
                 raise RequestDataParseError(_error_msg('参数 config:request:env 为空'))
