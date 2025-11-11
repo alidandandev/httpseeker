@@ -71,7 +71,7 @@ class HttpSeekerCLI:
             value_name='<环境文件>',
             long='--env',
             default=None,
-            help='指定环境变量文件名 (例如: test.env, dev.env, pro.env)',
+            help='指定环境变量文件名 (例如: like_bofa_h5_test.env, dev.env, pro.env)',
             required=False,
         ),
     ] = None
