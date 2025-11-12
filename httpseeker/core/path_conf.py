@@ -71,7 +71,7 @@ class HttpSeekerPathConfig:
     @property
     def auth_conf_dir(self) -> str:
         """AUTH配置文件路径"""
-        return self.core_dir
+        return os.path.join(self.core_dir, 'auth_yaml')
 
     @property
     def global_var_dir(self) -> str:
