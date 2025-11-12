@@ -99,8 +99,8 @@ test_steps:
       cookies: null
       body_type: "json"
       body:
-        oldPassword: "O4zAs9Mz4aoYOirIST4Xyg=="
-        newPassword: "O4zAs9Mz4aoYOirIST4Xyg=="
+        oldPassword: "vxw4MpZHWYpnD+SKJnbZZg=="
+        newPassword: "vxw4MpZHWYpnD+SKJnbZZg=="
       files: null
 
     teardown:
@@ -131,7 +131,7 @@ test_steps:
       cookies: null
       body_type: "json"
       body:
-        name: "${hook.random_phone()}"
+        name: "${hook.random_phone}"
       files: null
 
     teardown:
@@ -159,8 +159,8 @@ test_steps:
       cookies: null
       body_type: "json"
       body:
-        oldPassword: "1OjGU8CSi95H9fzsNBpgUg=="
-        newPassword: "1OjGU8CSi95H9fzsNBpgUg=="
+        oldPassword: "O4zAs9Mz4aoYOirIST4Xyg=="
+        newPassword: "O4zAs9Mz4aoYOirIST4Xyg=="
       files: null
     teardown:
       - assert:
