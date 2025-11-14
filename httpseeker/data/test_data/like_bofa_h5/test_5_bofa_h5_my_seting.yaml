@@ -17,41 +17,6 @@ config:
 
 test_steps:
 
-  - name: "登录"
-    case_id: "cdb_my_set_000"
-    description: "用户登录接口"
-    request:
-      method: "POST"
-      url: "/cdb/api/auth/login_v1"
-      params: null
-      headers: null
-      cookies: null
-      body_type: "json"
-      body:
-        account: "17838289382"
-        pwd: "1OjGU8CSi95H9fzsNBpgUg=="
-        internationalCode: "86"
-      files: null
-
-    teardown:
-      - assert:
-          check: "验证请求成功"
-          type: "eq"
-          value: 20000
-          jsonpath: "$.json.code"
-
-      - assert:
-          check: "验证返回成功标识"
-          type: "eq"
-          value: true
-          jsonpath: "$.json.success"
-
-      - extract:
-          key: "user_token"
-          type: "cache"
-          jsonpath: "$.json.data"
-
-
   - name: "修改、新增收货地址"
     case_id: "cdb_my_set_001"
     description: "新增、编辑收货地址"
@@ -99,8 +64,8 @@ test_steps:
       cookies: null
       body_type: "json"
       body:
-        oldPassword: "vxw4MpZHWYpnD+SKJnbZZg=="
-        newPassword: "vxw4MpZHWYpnD+SKJnbZZg=="
+        oldPassword: "O4zAs9Mz4aoYOirIST4Xyg=="
+        newPassword: "O4zAs9Mz4aoYOirIST4Xyg=="
       files: null
 
     teardown:

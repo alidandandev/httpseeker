@@ -1,0 +1,268 @@
+# 点赞博发web站点登录后默认API测试用例集合
+config:
+  allure:
+    epic: "对bofa_admin后台管理系统中站点信息管理中tutorialCenter的教程中心设置 进行相关api接口触发业务校验"
+    feature: "admin后台管理系统中 站点设置管理中tutorialCenter的教程中心设置"
+    story: "默认API接口测试:test_bofa_admin_tutorialCenter的教程中心"
+    severity: "critical"
+
+  request:
+    env: "like_bofa_admin_test.env"  # 需要在run_env目录下创建qat.env文件
+    headers:
+      Content-Type: "application/json"
+    timeout: 30
+    verify: false
+    encryption_enabled: false
+    encryption_key: "your-32-byte-secure-aes-key-1234"  # 32字节的AES密钥
+
+  module: "default_apis_test"
+
+test_steps:
+  - name: "测试调用account_encryptionEnabled接口"
+    case_id: "bofa_admin_account_encryptionEnabled_001"
+    description: "验证测试获取bofa_admin_account_encryptionEnabled"
+
+    request:
+      method: "GET"
+      url: "/cdb/account/encryptionEnabled"
+      params: null
+      headers: null
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+  - name: "测试调用account_login接口"
+    case_id: "bofa_admin_account_login_001"
+    description: "验证测试获取bofa_admin_account_login 并获取后台登录后生成的token用于后续其他测试场景"
+
+    request:
+      method: "POST"
+      url: "/cdb/account/login"
+      params: null
+      headers: null
+      cookies: null
+      body_type: "json"
+      body:
+        username: "tiger"  # 后台登录账号
+        password: "O4zAs9Mz4aoYOirIST4Xyg==" # 后台登录密码
+        ggcode: ""
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+            check: "验证返回响应data为不空"
+            type: "not_eq"
+            value: null
+            jsonpath: "$.json.data."
+
+      - extract:
+          key: "authorization_admin_token"
+          type: "cache"
+          jsonpath: "$.json.data.token"
+
+  - name: "测试调用新增 tutorialCenter的教程中心接口 "
+    case_id: "bofa_admin_tutorialCenter_add_001"
+    description: "验证测试新增bofa_admin_tutorialCenter_add 新增教程中心记录 "
+
+    request:
+      method: "POST"
+      url: "/cdb/dzsys/tutorialcenter"
+      params: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: "json"
+      body:
+        id: ""
+        idw: ""
+        title: "tiger test tutorialCenter"
+        type: "2"   #2:视频 1:文本
+        status: "1"   #1:启用 2:禁用
+        videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+        textContent: "<p>this is&nbsp; a tutorial for new user, and type is a vedio file.</p>"
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+  - name: "测试调用查询新增 tutorialCenter的教程中心记录"
+    case_id: "bofa_admin_tutorialCenter_query_001"
+    description: "验证测试获取bofa_admin_tutorialCenter_query 的教程中心 提取所返回第一条数据进行后续业务校验"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzsys/tutorialcenter/list"
+      params:
+        page: 1
+        limit: 20
+        type: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中data中总条数不等于0"
+          type: "not_eq"
+          value: 0
+          jsonpath: "$.json.data.total"
+      - extract:
+          key: "new_tutorialCenter_id"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].id"
+      - extract:
+          key: "new_tutorialCenter_idw"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].idw"
+
+  - name: "测试调用查询 tutorialCenter的教程中心记录 按教程类型进行查询"
+    case_id: "bofa_admin_tutorialCenter_query_002"
+    description: "验证测试获取bofa_admin_tutorialCenter_query 的教程中心 按教程类型进行查询"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzsys/tutorialcenter/list"
+      params:
+        page: 1
+        limit: 20
+        type: "2"
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中data中总条数不等于0"
+          type: "not_eq"
+          value: 0
+          jsonpath: "$.json.data.total"
+
+  - name: "测试对新增tutorialCenter的教程中心记录 进行修改"
+    case_id: "bofa_admin_tutorialCenter_modify_001"
+    description: "验证测试对新增教程中心信息 tutorialCenter进行修改"
+
+    request:
+      method: "PUT"
+      url: "/cdb/dzsys/tutorialcenter"
+      params: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: "json"
+      body:
+        id: "${new_tutorialCenter_id}"
+        idw: "${new_tutorialCenter_idw}"
+        title: "tiger modify tutorialCenter"
+        type: "2"   #2:视频 1:文本
+        status: "2"   #1:启用 2:禁用
+        videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+        textContent: "<p>this is&nbsp; a tutorial for new user, and type is a vedio file.</p>"
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+  - name: "测试对新增tutorialCenter的教程中心记录进行删除"
+    case_id: "bofa_admin_tutorialCenter_del_001"
+    description: "验证测试对新增tutorialCenter的教程中心记录进行删除"
+
+    request:
+      method: "DELETE"
+      url: "/cdb/dzsys/tutorialcenter"
+      params:
+        id: "${new_tutorialCenter_id}"
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"

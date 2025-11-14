@@ -6,8 +6,8 @@ auth_type: tk
 ## tk token 认证（自定义请求头字段名为tk）
 ##
 tk:
-  url: https://bofa.ye81s.com/cdb/api/auth/login_v1
-  account: 18818881888
+  url: https://bofa.amigosqat.com/cdb/api/auth/login_v1
+  account: 18590794292
   pwd: O4zAs9Mz4aoYOirIST4Xyg==
   internationalCode: "86"
   headers:
@@ -24,8 +24,8 @@ tk:
 ## bearer token 认证（自动登录获取）
 ##
 bearer_token:
-  url: https://bofa.ye81s.com/cdb/api/auth/login_v1
-  username: 19919991999
+  url: https://bofa.amigosqat.com/cdb/api/auth/login_v1
+  username: 18590794292
   password: O4zAs9Mz4aoYOirIST4Xyg==
   headers:
     Content-Type: application/json

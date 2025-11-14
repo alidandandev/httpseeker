@@ -63,10 +63,10 @@ test_steps:
       cookies: null
       body_type: "json"
       body:
-        taskId: 1537
-        url: "15"
-        title: "lufei"
-        taskPassword: "cWDuJsDI"
+        taskId: 1687
+        url: "11111111"
+        title: "cody2"
+        taskPassword: "123456"
       files: null
 
     teardown:
@@ -149,7 +149,7 @@ test_steps:
       cookies: null
       body_type: "json"
       body:
-        taskPassword: "cWDuJsDI"
+        taskPassword: "123456"
         taskType: "經典電影"
       files: null
 
