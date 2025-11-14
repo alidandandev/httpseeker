@@ -78,9 +78,8 @@ class AutoRegisterAndRecharge:
             print(f"✗ 步骤2: 注册用户失败: {e}")
             raise
 
-    def step3_generate_google_code(self):
+    def step3_generate_google_code(self,secret_key = "UOZ74J5U3UMZR2OD"):
         """步骤3: 生成谷歌验证码"""
-        secret_key = "UOZ74J5U3UMZR2OD"
         google_code = get_google_auth_code(secret_key)
         print(f"✓ 步骤3: 生成谷歌验证码: {google_code}")
         return google_code
@@ -182,7 +181,8 @@ class AutoRegisterAndRecharge:
 
         headers = {
             "Content-Type": "application/json;charset=UTF-8",
-            "authorization": self.admin_token
+            "authorization": self.admin_token,
+            "x-safe-password": self.step3_generate_google_code("JOWH72QSNE2SQVOH")
         }
 
         try:
@@ -288,6 +288,11 @@ def main():
     automation = AutoRegisterAndRecharge()
     success = automation.run()
     sys.exit(0 if success else 1)
+
+def main():
+    automation = AutoRegisterAndRecharge()
+    success = automation.run()
+    return success
 
 
 if __name__ == "__main__":
