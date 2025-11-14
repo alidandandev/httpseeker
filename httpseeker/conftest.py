@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import sys
 import time
 import warnings
 
@@ -16,6 +17,25 @@ from httpseeker.common.variable_cache import variable_cache
 from httpseeker.common.yaml_handler import write_yaml_report
 from httpseeker.core.get_conf import httpseeker_config
 
+from httpseeker.auto_register_and_recharge import AutoRegisterAndRecharge  # 修改成你的实际引用路径
+
+
+def main():
+    """主函数"""
+    automation = AutoRegisterAndRecharge()
+    success = automation.run()
+    return success   # 不再使用 sys.exit
+
+
+def pytest_sessionstart(session):
+    """pytest 开始执行前运行 main()"""
+    print(">>> Running main() before tests ...")
+    success = main()
+
+    if not success:
+        raise RuntimeError("AutoRegisterAndRecharge 执行失败！")
+
+    print(">>> main() completed.")
 
 @pytest.fixture(scope='session', autouse=True)
 def session_fixture(tmp_path_factory):

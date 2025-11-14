@@ -66,7 +66,7 @@ test_steps:
         taskId: 1537
         url: "15"
         title: "lufei"
-        taskPassword: "cWDuJsDI"
+        taskPassword: "1234556"
       files: null
 
     teardown:
@@ -149,7 +149,7 @@ test_steps:
       cookies: null
       body_type: "json"
       body:
-        taskPassword: "cWDuJsDI"
+        taskPassword: "123456"
         taskType: "經典電影"
       files: null
 
