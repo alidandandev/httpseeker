@@ -55,7 +55,7 @@ def decrypt_response(response_data):
 # 使用示例
 if __name__ == "__main__":
     # 加密例子
-    data = {"data":"3mJdmdPNuwE9FCZaY7LTgIzoOxGCN6hQ+LO2/M3JY5FwsZcnkfxwLyAwfN9KfrMymQ50MWWepzx16Z4PHBHesJeamKXK4ESiwJiW5nVDsGNHJ/MbRKusV5Xnbp9EDi3pUWlWbOk7IEmwpKlo4TqgQ93H2duGUDjLzr6ecf2EYGYSbzrNFeGmsvMrVRfm9QjHVV1iDZgXAZUpGqft5imsBuA5hHq2WnKDBOAiPGDJbW1j8PGIj3SLD/CNtTIxiV0pRxdNvxQ+dZRNMIKeXBLrPQMlf3SlIjnZJKnXyAI96cTg+SFDzDZs4XpHCEsT+ubS7IVFFAoYMnpC44b592cG8eap9JkD0EoPqvnZ6bVBRkCkih+ScPjqTGOetw7+piBtP5HCy3lFd/GaA53i1wDSOplBE4LONFTvdAAhBi989wJm5RZEyq7bGbluEo+omVM7+196H2tlvmqDRRB8Ku8+3g=="}
+    data = {"data":"KCv3eOLquxV4LTD3eiKusVEf7GnlMJANfJfSxPBAwc89Q57hrroAoaveTWkeYJGTC0mriLEX+l3XYYooXS0pm1jbkmPEJrfeypcH+ggCd1U="}
     decrypt_response(data)
     data = {"data":"tGTC54e29uj506drsnOpYyBRFhRH0LKw77hq8PTkTu0rOiWQie34Lp22y3DfOHKJd1zyIbmGGpbSC22ygcuJkxu28mQMltNngmMVZS/sqO8="}
     decrypt_response(data)

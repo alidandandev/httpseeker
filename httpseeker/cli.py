@@ -91,7 +91,7 @@ class HttpSeekerCLI:
             value_name='<认证文件>',
             long='--auth',
             default=None,
-            help='指定认证配置文件路径，支持相对路径和绝对路径 (例如: httpseeker/core/auth.yaml)',
+            help='指定认证配置文件路径，支持相对路径和绝对路径 (例如: httpseeker/core/like_bofa_h5.yaml)',
             required=False,
         ),
     ] = None

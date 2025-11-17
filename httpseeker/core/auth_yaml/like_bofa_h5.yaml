@@ -7,7 +7,7 @@ auth_type: tk
 ##
 tk:
   url: https://bofa.amigosqat.com/cdb/api/auth/login_v1
-  account: 15978445656
+  account: 15675048375
   pwd: O4zAs9Mz4aoYOirIST4Xyg==
   internationalCode: "86"
   headers:
@@ -25,7 +25,7 @@ tk:
 ##
 bearer_token:
   url: https://bofa.amigosqat.com/cdb/api/auth/login_v1
-  username: 15978445656
+  username: 15675048375
   password: O4zAs9Mz4aoYOirIST4Xyg==
   headers:
     Content-Type: application/json
