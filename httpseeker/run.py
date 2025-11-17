@@ -219,7 +219,7 @@ def run(
     :param disable_warnings: 关闭控制台警告信息, 默认开启
     :param global_env: 指定全局环境变量文件名，会覆盖 conf_toml.toml 中的配置
     :param conf_path: 指定配置文件路径，默认使用 httpseeker/core/conf_toml.toml
-    :param auth_path: 指定认证配置文件路径，默认使用 httpseeker/core/auth.yaml
+    :param auth_path: 指定认证配置文件路径，默认使用 httpseeker/core/like_bofa_h5.yaml
     :param kwargs: pytest 运行关键字参数
     :return:
     """

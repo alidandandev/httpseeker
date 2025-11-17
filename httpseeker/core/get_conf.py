@@ -22,7 +22,7 @@ class HttpSeekerConfig:
             self.settings = read_toml(str(conf_file_path.parent), conf_file_path.name)
         else:
             # 使用默认路径
-            self.settings = read_toml(str(Path(__file__).resolve().parent), 'conf_toml/conf.toml')
+            self.settings = read_toml(str(Path(__file__).resolve().parent), 'conf_toml/like_bofa_h5.toml')
 
         # 检查是否通过环境变量覆盖全局环境变量
         global_env = os.environ.get('HTTPSEEKER_GLOBAL_ENV')
