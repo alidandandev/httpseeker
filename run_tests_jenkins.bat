@@ -1,44 +1,59 @@
 @echo off
-REM 显式设置控制台编码（兼容Jenkins子进程）
-chcp 65001 > nul
+REM ========================================
+REM Jenkins自动化测试执行脚本
+REM 解决Windows环境下中文乱码问题
+REM ========================================
 
-REM 确保conda初始化路径正确（根据实际路径调整）
+REM 第一步：设置控制台为UTF-8编码
+chcp 65001 > nul 2>&1
+
+REM 第二步：设置环境变量强制UTF-8编码
+set PYTHONIOENCODING=utf-8
+set PYTHONLEGACYWINDOWSSTDIO=utf-8
+set PYTHONUNBUFFERED=1
+set PYTHONUTF8=1
+set PYTEST_THEME=none
+
+REM 第三步：设置Java编码（用于Allure）
+set JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF-8
+
+REM 第四步：初始化Conda
 call C:\ProgramData\anaconda3\Scripts\activate.bat
 if %errorlevel% neq 0 (
-    echo 错误：conda初始化失败
+    echo [ERROR] Conda initialization failed
     exit /b 1
 )
 
-REM 激活环境并验证
+REM 第五步：激活虚拟环境
 call conda activate api
 if %errorlevel% neq 0 (
-    echo 错误：激活conda环境失败
+    echo [ERROR] Failed to activate conda environment
     exit /b 1
 )
 
-REM 设置Python输出编码（双重保障）
-set PYTHONIOENCODING=utf-8
-set PYTHONUNBUFFERED=1
-
-REM 安装项目
-pip install -e .
+REM 第六步：安装项目
+echo [INFO] Installing project...
+pip install -e . >nul 2>&1
 if %errorlevel% neq 0 (
-    echo 错误：项目安装失败
+    echo [ERROR] Project installation failed
     exit /b 1
 )
 
-REM 运行测试（会自动生成allure原始数据到 httpseeker/report/allure_report）
+REM 第七步：运行测试
+echo [INFO] Running tests...
 python httpseeker/cli.py ^
     --env httpseeker/core/run_env/like_bofa_h5_test.env ^
     --conf_toml httpseeker/core/conf_toml/like_bofa_h5.toml ^
     --auth httpseeker/core/auth_yaml/like_bofa_h5.yaml ^
     --run
 
-REM 检查allure原始数据是否生成
+REM 第八步：检查测试结果
 if not exist "httpseeker\report\allure_report" (
-    echo 警告：Allure原始数据未生成
+    echo [WARNING] Allure report data not generated
     exit /b 1
 )
 
-echo 测试完成，Allure原始数据已生成到: httpseeker\report\allure_report
-echo 请在Jenkins中配置Allure插件来展示报告
+echo [SUCCESS] Tests completed
+echo [INFO] Allure data: httpseeker\report\allure_report
+echo [INFO] HTML report: httpseeker\report\html_report
+exit /b 0
