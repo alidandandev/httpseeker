@@ -86,28 +86,19 @@ test_steps:
           type: "cache"
           jsonpath: "$.json.data.token"
 
-  - name: "查询 VIP 购买记录"
-    case_id: "bofa_admin_VipListRecord_000"
-    description: "验证查询 VIP 购买记录"
+  - name: "查询特殊 VIP 发放记录"
+    case_id: "bofa_admin_VipListIssue_000"
+    description: "验证查询特殊 VIP 发放记录"
 
     request:
       method: "GET"
-      url: "/cdb/dzvip/vippurchase/list"
+      url: "/cdb/dzvip/special/list"
       params:
-        idw:
         page: 1
         limit: 20
         account:
-        previousViPType:
-        afterViPType:
-        paymentMethod:
-        whetherToPay: 2
-        expireTimes: 2025-11-17 00:00:00
-        expireTimee: 2025-11-17 23:59:59
-        sourceInvitationCode:
-        gmt:
-        channelName:
-        channelType:
+        status:
+        vipType:
       headers:
         authorization: "${authorization_admin_token}"
       cookies: null
@@ -134,36 +125,25 @@ test_steps:
           value: 0
           jsonpath: "$.json.data.total"
 
+      - extract:
+          key: "ID"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].id"
 
-  - name: "导出 VIP 数据购买记录"
-    case_id: "bofa_admin_VipListRecord_001"
-    description: "验证导出 VIP 数据购买记录接口"
+  - name: "批量发放特殊VIP"
+    case_id: "bofa_admin_VipListIssue_001"
+    description: "验证批量发放特殊VIP"
 
     request:
-      method: "GET"
-      url: "/cdb/dzvip/vippurchase/vipPurchaseHistoryExportV2"
-      params:
-        idw:
-        page: 1
-        limit: 20
-        account:
-        previousViPType:
-        afterViPType:
-        paymentMethod:
-        whetherToPay: 2
-        expireTimes: 2025-11-17 00:00:00
-        expireTimee: 2025-11-17 23:59:59
-        sourceInvitationCode:
-        gmt:
-        channelName:
-        channelType:
-        exportFields:
+      method: "POST"
+      url: "/cdb/dzvip/special/batchAdd"
+      params: null
       headers:
         authorization: "${authorization_admin_token}"
       cookies: null
       body_type: null
-      body: null
-
+      body:
+        account: 1016
       files: null
 
     teardown:
@@ -180,29 +160,15 @@ test_steps:
           jsonpath: "$.json.msg"
 
 
-  - name: "VIP 未支付订单数据"
-    case_id: "bofa_admin_VipLestRecord_002"
-    description: "验证VIP 未支付订单数据接口"
+  - name: "删除特殊 VIP 发放记录"
+    case_id: "bofa_admin_VipLestIssue_002"
+    description: "验证删除特殊 VIP 发放记录接口"
 
     request:
-      method: "GET"
-      url: "/cdb/dzvip/vippurchase/list"
+      method: "DELETE"
+      url: "/cdb/dzvip/special"
       params:
-        idw:
-        page: 1
-        limit: 20
-        account:
-        previousViPType:
-        afterViPType:
-        paymentMethod:
-        whetherToPay: 1
-        expireTimes: 2025-08-19 20:38:57
-        expireTimee: 2025-11-17 20:38:57
-        sourceInvitationCode:
-        gmt:
-        depositAddress:
-        channelName:
-        channelType:
+        id: "${ID}"
       headers:
         authorization: "${authorization_admin_token}"
       cookies: null
@@ -239,23 +205,14 @@ test_steps:
 
     request:
       method: "GET"
-      url: "/cdb/dzvip/vipmessage"
+      url: "/cdb/dzvip/special/exportXlsV2"
       params:
-        idw:
         page: 1
         limit: 20
         account:
-        previousViPType:
-        afterViPType:
-        paymentMethod:
-        whetherToPay: 1
-        expireTimes: 2025-08-19 20:38:57
-        expireTimee: 2025-11-17 20:38:57
-        sourceInvitationCode:
-        gmt:
-        depositAddress:
-        channelName:
-        channelType:
+        status:
+        vipType:
+        exportFields:
       headers:
         authorization: "${authorization_admin_token}"
       cookies: null
