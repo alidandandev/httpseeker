@@ -1,0 +1,279 @@
+# 点赞博发web站点登录后默认API测试用例集合
+config:
+  allure:
+    epic: "对bofa_admin后台管理系统中VIP管理进行操作"
+    feature: "admin后台管理系统中 VIP 列表"
+    story: "默认API接口测试"
+    severity: "critical"
+
+  request:
+    env: "like_bofa_admin_test.env"  # 需要在run_env目录下创建qat.env文件
+    headers:
+      Content-Type: "application/json"
+    timeout: 30
+    verify: false
+    encryption_enabled: false
+    encryption_key: "your-32-byte-secure-aes-key-1234"  # 32字节的AES密钥
+
+  module: "default_apis_test"
+
+test_steps:
+  - name: "测试调用account_encryptionEnabled接口"
+    case_id: "bofa_admin_account_encryptionEnabled_001"
+    description: "验证测试获取bofa_admin_account_encryptionEnabled"
+
+    request:
+      method: "GET"
+      url: "/cdb/account/encryptionEnabled"
+      params: null
+      headers: null
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+  - name: "测试调用account_login接口"
+    case_id: "bofa_admin_account_login_001"
+    description: "验证测试获取bofa_admin_account_login 并获取后台登录后生成的token用于后续其他测试场景"
+
+    request:
+      method: "POST"
+      url: "/cdb/account/login"
+      params: null
+      headers: null
+      cookies: null
+      body_type: "json"
+      body:
+        username: "tiger"  # 后台登录账号
+        password: "O4zAs9Mz4aoYOirIST4Xyg==" # 后台登录密码
+        ggcode: ""
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+            check: "验证返回响应data为不空"
+            type: "not_eq"
+            value: null
+            jsonpath: "$.json.data"
+
+      - extract:
+          key: "authorization_admin_token"
+          type: "cache"
+          jsonpath: "$.json.data.token"
+
+  - name: "查询 VIP 购买记录"
+    case_id: "bofa_admin_VipListRecord_000"
+    description: "验证查询 VIP 购买记录"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzvip/vippurchase/list"
+      params:
+        idw:
+        page: 1
+        limit: 20
+        account:
+        previousViPType:
+        afterViPType:
+        paymentMethod:
+        whetherToPay: 2
+        expireTimes: 2025-11-17 00:00:00
+        expireTimee: 2025-11-17 23:59:59
+        sourceInvitationCode:
+        gmt:
+        channelName:
+        channelType:
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中data内容返回记录数不为0"
+          type: "not_eq"
+          value: 0
+          jsonpath: "$.json.data.total"
+
+
+  - name: "导出 VIP 数据购买记录"
+    case_id: "bofa_admin_VipListRecord_001"
+    description: "验证导出 VIP 数据购买记录接口"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzvip/vippurchase/vipPurchaseHistoryExportV2"
+      params:
+        idw:
+        page: 1
+        limit: 20
+        account:
+        previousViPType:
+        afterViPType:
+        paymentMethod:
+        whetherToPay: 2
+        expireTimes: 2025-11-17 00:00:00
+        expireTimee: 2025-11-17 23:59:59
+        sourceInvitationCode:
+        gmt:
+        channelName:
+        channelType:
+        exportFields:
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+
+  - name: "VIP 未支付订单数据"
+    case_id: "bofa_admin_VipLestRecord_002"
+    description: "验证VIP 未支付订单数据接口"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzvip/vippurchase/list"
+      params:
+        idw:
+        page: 1
+        limit: 20
+        account:
+        previousViPType:
+        afterViPType:
+        paymentMethod:
+        whetherToPay: 1
+        expireTimes: 2025-08-19 20:38:57
+        expireTimee: 2025-11-17 20:38:57
+        sourceInvitationCode:
+        gmt:
+        depositAddress:
+        channelName:
+        channelType:
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中data内容返回记录数不为0"
+          type: "not_eq"
+          value: 0
+          jsonpath: "$.json.data.total"
+
+
+
+
+
+  - name: "导出未支付订单数据"
+    case_id: "bofa_admin_VipListRecord_003"
+    description: "校验导出未支付订单数据接口"
+
+    request:
+      method: "POST"
+      url: "/cdb/dzvip/vipmessage"
+      params:
+        idw:
+        page: 1
+        limit: 20
+        account:
+        previousViPType:
+        afterViPType:
+        paymentMethod:
+        whetherToPay: 1
+        expireTimes: 2025-08-19 20:38:57
+        expireTimee: 2025-11-17 20:38:57
+        sourceInvitationCode:
+        gmt:
+        depositAddress:
+        channelName:
+        channelType:
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
