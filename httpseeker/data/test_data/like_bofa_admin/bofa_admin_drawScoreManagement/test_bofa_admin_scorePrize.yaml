@@ -1,0 +1,315 @@
+# 点赞博发web站点登录后默认API测试用例集合
+config:
+  allure:
+    epic: "对bofa_admin后台管理系统中用户积分管理中scorePrize的积分兑换奖品设置 进行相关api接口触发业务校验"
+    feature: "admin后台管理系统中 用户积分管理中scorePrize的积分兑换奖品设置"
+    story: "默认API接口测试:test_bofa_admin_scorePrize的积分兑换奖品设置"
+    severity: "critical"
+
+  request:
+    env: "like_bofa_admin_test.env"  # 需要在run_env目录下创建qat.env文件
+    headers:
+      Content-Type: "application/json"
+    timeout: 30
+    verify: false
+    encryption_enabled: false
+    encryption_key: "your-32-byte-secure-aes-key-1234"  # 32字节的AES密钥
+
+  module: "default_apis_test"
+
+test_steps:
+  - name: "测试调用account_encryptionEnabled接口"
+    case_id: "bofa_admin_account_encryptionEnabled_001"
+    description: "验证测试获取bofa_admin_account_encryptionEnabled"
+
+    request:
+      method: "GET"
+      url: "/cdb/account/encryptionEnabled"
+      params: null
+      headers: null
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+  - name: "测试调用account_login接口"
+    case_id: "bofa_admin_account_login_001"
+    description: "验证测试获取bofa_admin_account_login 并获取后台登录后生成的token用于后续其他测试场景"
+
+    request:
+      method: "POST"
+      url: "/cdb/account/login"
+      params: null
+      headers: null
+      cookies: null
+      body_type: "json"
+      body:
+        username: "tiger"  # 后台登录账号
+        password: "O4zAs9Mz4aoYOirIST4Xyg==" # 后台登录密码
+        ggcode: ""
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+            check: "验证返回响应data为不空"
+            type: "not_eq"
+            value: null
+            jsonpath: "$.json.data."
+
+      - extract:
+          key: "authorization_admin_token"
+          type: "cache"
+          jsonpath: "$.json.data.token"
+
+  - name: "测试调用新增 scorePrize的积分兑换奖品设置接口 "
+    case_id: "bofa_admin_scorePrize_add_001"
+    description: "验证测试新增bofa_admin_scorePrize_add 新增积分兑换奖品配置 "
+
+    request:
+      method: "POST"
+      url: "/cdb/dzscore/scorePrize"
+      params: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: "json"
+      body:
+        id: null
+        idw: null
+        prizeName: "test prize001"
+        url: "https://8xzlef11.oss-cn-hongkong.aliyuncs.com/aly/20251115/8a5bda7ecd3e41079da16314c05f8c2eapi_202"
+        types: "4"  # 4:信誉分减少
+        amount: "20"
+        score: "200"
+        maxVip: "0"
+        prizeType: "8"
+        sort: "3"
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+  - name: "测试调用查询scorePrize的积分兑换奖品设置 默认无条件查询"
+    case_id: "bofa_admin_scorePrize_query_001"
+    description: "验证测试获取bofa_admin_scorePrize_query 默认无条件查询 "
+
+    request:
+      method: "GET"
+      url: "/cdb/dzscore/scorePrize/list"
+      params:
+        page: 1
+        limit: 20
+        prizeName: null
+        prizeType: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中data中总条数不等于0"
+          type: "not_eq"
+          value: 0
+          jsonpath: "$.json.data.total"
+
+  - name: "测试调用查询scorePrize的积分兑换奖品设置 按奖品名称查询"
+    case_id: "bofa_admin_scorePrize_query_002"
+    description: "验证测试获取bofa_admin_scorePrize_query 按奖品名称查询 "
+
+    request:
+      method: "GET"
+      url: "/cdb/dzscore/scorePrize/list"
+      params:
+        page: 1
+        limit: 20
+        prizeName: "test prize001"
+        prizeType: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中data中总条数不等于0"
+          type: "not_eq"
+          value: 0
+          jsonpath: "$.json.data.total"
+
+      - extract:
+          key: "new_scorePrize_id"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].id"
+      - extract:
+          key: "new_scorePrize_idw"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].idw"
+
+  - name: "测试调用查询scorePrize的积分兑换奖品设置 按奖品活动类型查询"
+    case_id: "bofa_admin_scorePrize_query_003"
+    description: "验证测试获取bofa_admin_scorePrize_query 按奖品活动类型查询 "
+
+    request:
+      method: "GET"
+      url: "/cdb/dzscore/scorePrize/list"
+      params:
+        page: 1
+        limit: 20
+        prizeName: null
+        prizeType: "8"  # 8:夺宝积分
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中data中总条数不等于0"
+          type: "not_eq"
+          value: 0
+          jsonpath: "$.json.data.total"
+
+  - name: "测试对新增scorePrize的积分兑换奖品设置 进行修改"
+    case_id: "bofa_admin_scorePrize_modify_001"
+    description: "验证测试对新增积分兑换奖品设置 scorePrize进行修改"
+
+    request:
+      method: "PUT"
+      url: "/cdb/dzscore/scorePrize"
+      params: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: "json"
+      body:
+        id: "${new_scorePrize_id}"
+        idw: "${new_scorePrize_idw}"
+        prizeName: "modify prize001"
+        url: "https://8xzlef11.oss-cn-hongkong.aliyuncs.com/aly/20251115/8a5bda7ecd3e41079da16314c05f8c2eapi_202"
+        types: "4"  # 4:信誉分减少
+        amount: "200"
+        score: "500"
+        maxVip: "1"
+        prizeType: "8"
+        sort: "3"
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+  - name: "测试对新增scorePrize的积分兑换奖品设置 进行删除  (操作栏中没有删除功能，尝试一下次方法主要是避免数据一致增加不删除)"
+    case_id: "bofa_admin_scorePrize_del_001"
+    description: "验证测试对新增积分兑换奖品设置 scorePrize 进行删除"
+
+    request:
+      method: "DELETE"
+      url: "/cdb/dzscore/scorePrize"
+      params:
+        id: "${new_scorePrize_id}"
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求异常--code 9999"
+          type: "eq"
+          value: 9999
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应 该操作未授权--msg"
+          type: "eq"
+          value: "该操作未授权"
+          jsonpath: "$.json.msg"
