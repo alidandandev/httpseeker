@@ -1,0 +1,206 @@
+# bofa站点admin后台首页
+config:
+  allure:
+    epic: "bofa站点admin后台"
+    feature: "余额宝_产品信息"
+    story: "页面所有数据接口"
+    severity: "critical"
+
+  request:
+    env: "like_bofa_admin_test.env"  # 需要在run_env目录下创建test.env文件
+    headers:
+      Content-Type: "application/json"
+    timeout: 30
+    verify: false
+
+  module: "yuebao_prodInfo"
+
+test_steps:
+  - name: "登录"
+    case_id: "cdb_bofa_login_001"
+    description: "登录拿token"
+
+    request:
+      method: "POST"
+      url: "/cdb/account/login"
+      params: null
+      headers: null
+      cookies: null
+      body_type: "json"
+      body:
+        username: ethans
+        password: 75OIo26rz2WLN02K4ZH6yQ==
+        ggcode: ${get_login_google_auth_code()}
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+      - extract:
+          key: "token"
+          type: "cache"
+          jsonpath: "$.json.data.token"
+
+  # ========== 步骤2: 余额宝模块-产品信息子模块-添加产品接口==========
+  - name: "添加产品接口"
+    case_id: "cdb_bofa_yuebao_prodInfo_001"
+    description: "系统管理模块-用户管理子模块-添加产品接口"
+
+    request:
+      method: "POST"
+      url: "/cdb/dzbalance/balance/wallet"
+      params: null
+      headers:
+        Authorization: "${token}"
+      cookies: null
+      body_type: "json"
+      body:
+          "id": ""
+          "name": "自动化测试_余额宝${generate_five_digit_number()}"
+          "background": ""
+          "dayIncomeRatio": "123"
+          "status": "1"
+          "remark": "123"
+          "minAmount": "123"
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+  # ========== 步骤3: 余额宝模块-产品信息子模块-列表数据（搜索/重置）接口==========
+  - name: "列表数据接口"
+    case_id: "cdb_bofa_yuebao_prodInfo_002"
+    description: "系统管理模块-用户管理子模块-列表数据接口"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzbalance/balance/wallet/list?page=1&limit=20"
+      params: null
+      headers:
+        Authorization: "${token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+      - extract:
+          key: "id"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].id"
+
+  # ========== 步骤4: 余额宝模块-产品信息子模块-修改产品接口==========
+  - name: "修改产品接口"
+    case_id: "cdb_bofa_yuebao_prodInfo_003"
+    description: "系统管理模块-用户管理子模块-修改产品接口"
+
+    request:
+      method: "POST"
+      url: "/cdb/dzbalance/balance/wallet"
+      params: null
+      headers:
+        Authorization: "${token}"
+      cookies: null
+      body_type: "json"
+      body:
+          "id": "${id}"
+          "name": "自动化测试_修改后的余额宝${generate_five_digit_number()}"
+          "background": ""
+          "dayIncomeRatio": "123"
+          "status": "0"
+          "remark": "123"
+          "minAmount": "123"
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+  # ========== 步骤5: 余额宝模块-产品信息子模块-删除产品接口==========
+  - name: "删除产品接口"
+    case_id: "cdb_bofa_yuebao_prodInfo_004"
+    description: "系统管理模块-用户管理子模块-删除产品接口"
+
+    request:
+      method: "DELETE"
+      url: "/cdb/dzbalance/balance/wallet?id=${id}"
+      params: null
+      headers:
+        Authorization: "${token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+
+
+
+
+
+
