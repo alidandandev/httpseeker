@@ -1,0 +1,1934 @@
+# bofa站点admin后台首页
+config:
+  allure:
+    epic: "bofa站点admin后台"
+    feature: "用户管理_代理列表"
+    story: "页面所有数据接口"
+    severity: "critical"
+
+  request:
+    env: "like_bofa_admin_test.env"  # 需要在run_env目录下创建test.env文件
+    headers:
+      Content-Type: "application/json"
+    timeout: 30
+    verify: false
+
+  module: "userMgmt_proxyList"
+
+test_steps:
+  - name: "登录"
+    case_id: "cdb_bofa_login_001"
+    description: "登录拿token"
+
+    request:
+      method: "POST"
+      url: "/cdb/account/login"
+      params: null
+      headers: null
+      cookies: null
+      body_type: "json"
+      body:
+        username: ethans
+        password: 75OIo26rz2WLN02K4ZH6yQ==
+        ggcode: ${get_login_google_auth_code()}
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+      - extract:
+          key: "token"
+          type: "cache"
+          jsonpath: "$.json.data.token"
+
+  # ========== 步骤2: 用户管理模块-用户列表子模块-获取VIP类型==========
+  - name: "获取VIP类型"
+    case_id: "cdb_bofa_userMgmt_proxyList_001"
+    description: "用户管理模块-用户列表子模块-获取VIP类型"
+
+    request:
+      method: "GET"
+      url: "/cdb/dict/getDicts/ViP%E7%B1%BB%E5%9E%8B"
+      params: null
+      headers:
+        Authorization: "${token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+  # ========== 步骤3: 用户管理模块-代理列表子模块-列表数据（搜索/重置）==========
+  - name: "列表数据（搜索/重置）"
+    case_id: "cdb_bofa_userMgmt_proxyList_002"
+    description: "用户管理模块-代理列表子模块-列表数据（搜索/重置）"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzuser/user/getPartList?page=1&limit=10&str=&dzstatus=&vipType=&userType=2&registerIp=&lastIp=&levels=0&expireTimes=&expireTimee=&sourceInvitationCode=&walletAddress=&countryCodeNumber=&realName=&gmt=&limitStr=&lastIpCity="
+      params: null
+      headers:
+        Authorization: "${token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+      - extract:
+          key: "id"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].id"
+
+  # ========== 步骤4: 用户管理模块-代理列表子模块-获取所有国家列表==========
+  - name: "获取所有国家列表"
+    case_id: "cdb_bofa_userMgmt_proxyList_003"
+    description: "用户管理模块-代理列表子模块-获取所有国家列表"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzsys/country/getListAll"
+      params: null
+      headers:
+        Authorization: "${token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+  # ========== 步骤5: 用户管理模块-代理列表子模块-用户统计数据==========
+  - name: "用户统计数据"
+    case_id: "cdb_bofa_userMgmt_proxyList_004"
+    description: "用户管理模块-代理列表子模块-用户统计数据"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzuser/user/userStatistics"
+      params: null
+      headers:
+        Authorization: "${token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+  # ========== 步骤6: 用户管理模块-代理列表子模块-获取账号状态==========
+  - name: "获取账号状态"
+    case_id: "cdb_bofa_userMgmt_proxyList_005"
+    description: "用户管理模块-代理列表子模块-获取账号状态"
+
+    request:
+      method: "GET"
+      url: "/cdb/dict/getDicts/%E8%B4%A6%E5%8F%B7%E7%8A%B6%E6%80%81"
+      params: null
+      headers:
+        Authorization: "${token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+  # ========== 步骤7: 用户管理模块-代理列表子模块-导出==========
+  - name: "导出"
+    case_id: "cdb_bofa_userMgmt_proxyList_006"
+    description: "用户管理模块-代理列表子模块-导出"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzuser/user/userInfoExportV2?page=1&limit=10&str=&dzstatus=&vipType=&userType=2&registerIp=&lastIp=&levels=0&expireTimes=&expireTimee=&sourceInvitationCode=&walletAddress=&countryCodeNumber=&realName=&gmt=&limitStr=&lastIpCity=&exportFields="
+      params: null
+      headers:
+        Authorization: "${token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "响应状态码为200"
+          type: "eq"
+          value: 200
+          jsonpath: "$.status_code"
+
+  # ========== 步骤8: 用户管理模块-代理列表子模块-冻结(autotester309113/286268)==========
+  - name: "冻结"
+    case_id: "cdb_bofa_userMgmt_proxyList_007"
+    description: "用户管理模块-代理列表子模块-冻结"
+
+    request:
+      method: "POST"
+      url: "/cdb/dzuser/user/updateUserByStatus"
+      params: null
+      headers:
+        Authorization: "${token}"
+      cookies: null
+      body_type:  "json"
+      body:
+        "feeMode": 0
+        "lastTime": "2025-11-13 07:33:26"
+        "registrationTime": "2025-11-13 07:33:26"
+        "frontIncomeSwitch": 0
+        "maximumWithdrawal": null
+        "withdrawalFee": null
+        "lastIp": "182.160.8.143"
+        "paymentPassword": "30134ab1762ca9fa1e8e93396a49fc04"
+        "superiorId": 0
+        "minimumWithdrawal": null
+        "password": "30134ab1762ca9fa1e8e93396a49fc04"
+        "modifyTime": "2025-11-13 08:13:31"
+        "id": 286268
+        "expVipType_str": "Vip0"
+        "remakeNumOK": null
+        "invitationCode": "d0za3i"
+        "registerIp": "182.160.8.143"
+        "expVipExpireDate": "1900-01-01 00:00:00"
+        "teamVIPOpeningTotal": null
+        "moneyNO": null
+        "vipImg": null
+        "moneyOK": null
+        "vipExpireDate": "2026-10-29 07:33:25"
+        "taskAccount": null
+        "limitProfit": 2
+        "name": null
+        "fidw": null
+        "limitCode": 2
+        "userType": "2"
+        "walletAddress": ""
+        "idw": "1988872816156483584"
+        "numberOfSubordinates": null
+        "limitDrawing": 2
+        "registerIpCity": ""
+        "teamVIPOpeningTotalRebate": null
+        "profitAmount": null
+        "countryCodeNumber": "1"
+        "remark": "1"
+        "feeModeCus": 0
+        "totalBonusIncomeLeft": null
+        "headPortraitKey": null
+        "feeRange": [ ]
+        "totalRechargeAmountLeft": null
+        "dzstatus_str": "冻结"
+        "lastIpCity": ""
+        "vipPrice": null
+        "email": null
+        "modifyBy": 233
+        "limitBuyCdb": 2
+        "vipType_str": "Vip0"
+        "vipType": "v0"
+        "frontIncomeAmount": 0
+        "realName": null
+        "createBy": 233
+        "expVipType": "v0"
+        "dzstatus": 2
+        "taskMoney": null
+        "superAccount": "autotester309113"
+        "createTime": "2025-11-13 07:33:26"
+        "userType_str": "内部账号"
+        "userBalanceLeft": 5
+        "sourceInvitationCode": "d0za3i"
+        "user": null
+        "account": "autotester309113"
+        "levels": null
+        "status": 5
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+  # ========== 步骤9: 用户管理模块-代理列表子模块-启用(autotester309113/286268)==========
+  - name: "启用"
+    case_id: "cdb_bofa_userMgmt_proxyList_008"
+    description: "用户管理模块-代理列表子模块-启用"
+
+    request:
+      method: "POST"
+      url: "/cdb/dzuser/user/updateUserByStatus"
+      params: null
+      headers:
+        Authorization: "${token}"
+      cookies: null
+      body_type:  "json"
+      body:
+        "feeMode": 0
+        "lastTime": "2025-11-13 07:33:26"
+        "registrationTime": "2025-11-13 07:33:26"
+        "frontIncomeSwitch": 0
+        "maximumWithdrawal": null
+        "withdrawalFee": null
+        "lastIp": "182.160.8.143"
+        "paymentPassword": "30134ab1762ca9fa1e8e93396a49fc04"
+        "superiorId": 0
+        "minimumWithdrawal": null
+        "password": "30134ab1762ca9fa1e8e93396a49fc04"
+        "modifyTime": "2025-11-13 08:13:31"
+        "id": 286268
+        "expVipType_str": "Vip0"
+        "remakeNumOK": null
+        "invitationCode": "d0za3i"
+        "registerIp": "182.160.8.143"
+        "expVipExpireDate": "1900-01-01 00:00:00"
+        "teamVIPOpeningTotal": null
+        "moneyNO": null
+        "vipImg": null
+        "moneyOK": null
+        "vipExpireDate": "2026-10-29 07:33:25"
+        "taskAccount": null
+        "limitProfit": 2
+        "name": null
+        "fidw": null
+        "limitCode": 2
+        "userType": "2"
+        "walletAddress": ""
+        "idw": "1988872816156483584"
+        "numberOfSubordinates": null
+        "limitDrawing": 2
+        "registerIpCity": ""
+        "teamVIPOpeningTotalRebate": null
+        "profitAmount": null
+        "countryCodeNumber": "1"
+        "remark": "1"
+        "feeModeCus": 0
+        "totalBonusIncomeLeft": null
+        "headPortraitKey": null
+        "feeRange": [ ]
+        "totalRechargeAmountLeft": null
+        "dzstatus_str": "启用"
+        "lastIpCity": ""
+        "vipPrice": null
+        "email": null
+        "modifyBy": 233
+        "limitBuyCdb": 2
+        "vipType_str": "Vip0"
+        "vipType": "v0"
+        "frontIncomeAmount": 0
+        "realName": null
+        "createBy": 233
+        "expVipType": "v0"
+        "dzstatus": 1
+        "taskMoney": null
+        "superAccount": "autotester309113"
+        "createTime": "2025-11-13 07:33:26"
+        "userType_str": "内部账号"
+        "userBalanceLeft": 5
+        "sourceInvitationCode": "d0za3i"
+        "user": null
+        "account": "autotester309113"
+        "levels": null
+        "status": 5
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+  # ========== 步骤10: 用户管理模块-代理列表子模块-已限购(autotester309113/286268)==========
+  - name: "已限购"
+    case_id: "cdb_bofa_userMgmt_proxyList_009"
+    description: "用户管理模块-代理列表子模块-已限购"
+
+    request:
+      method: "POST"
+      url: "/cdb/dzuser/user/updateUserByStatus"
+      params: null
+      headers:
+        Authorization: "${token}"
+      cookies: null
+      body_type:  "json"
+      body:
+        "feeMode": 0
+        "lastTime": "2025-11-13 07:33:26"
+        "registrationTime": "2025-11-13 07:33:26"
+        "frontIncomeSwitch": 0
+        "maximumWithdrawal": null
+        "withdrawalFee": null
+        "lastIp": "182.160.8.143"
+        "paymentPassword": "30134ab1762ca9fa1e8e93396a49fc04"
+        "superiorId": 0
+        "minimumWithdrawal": null
+        "password": "30134ab1762ca9fa1e8e93396a49fc04"
+        "modifyTime": "2025-11-13 08:35:30"
+        "id": 286268
+        "expVipType_str": "Vip0"
+        "remakeNumOK": null
+        "invitationCode": "d0za3i"
+        "registerIp": "182.160.8.143"
+        "expVipExpireDate": "1900-01-01 00:00:00"
+        "teamVIPOpeningTotal": null
+        "moneyNO": null
+        "vipImg": null
+        "moneyOK": null
+        "vipExpireDate": "2026-10-29 07:33:25"
+        "taskAccount": null
+        "limitProfit": 2
+        "name": null
+        "fidw": null
+        "limitCode": 2
+        "userType": "2"
+        "walletAddress": ""
+        "idw": "1988872816156483584"
+        "numberOfSubordinates": null
+        "limitDrawing": 2
+        "registerIpCity": ""
+        "teamVIPOpeningTotalRebate": null
+        "profitAmount": null
+        "countryCodeNumber": "1"
+        "remark": "1"
+        "feeModeCus": 0
+        "totalBonusIncomeLeft": null
+        "headPortraitKey": null
+        "feeRange": [ ]
+        "totalRechargeAmountLeft": null
+        "dzstatus_str": "启用"
+        "lastIpCity": ""
+        "vipPrice": null
+        "email": null
+        "modifyBy": 233
+        "limitBuyCdb": 1
+        "vipType_str": "Vip0"
+        "vipType": "v0"
+        "frontIncomeAmount": 0
+        "realName": null
+        "createBy": 233
+        "expVipType": "v0"
+        "dzstatus": 1
+        "taskMoney": null
+        "superAccount": "autotester309113"
+        "createTime": "2025-11-13 07:33:26"
+        "userType_str": "内部账号"
+        "userBalanceLeft": 5
+        "sourceInvitationCode": "d0za3i"
+        "user": null
+        "account": "autotester309113"
+        "levels": null
+        "status": 1
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+  # ========== 步骤11: 用户管理模块-代理列表子模块-未限购(autotester309113/286268)==========
+  - name: "未限购"
+    case_id: "cdb_bofa_userMgmt_proxyList_010"
+    description: "用户管理模块-代理列表子模块-未限购"
+
+    request:
+      method: "POST"
+      url: "/cdb/dzuser/user/updateUserByStatus"
+      params: null
+      headers:
+        Authorization: "${token}"
+      cookies: null
+      body_type:  "json"
+      body:
+        "feeMode": 0
+        "lastTime": "2025-11-13 07:33:26"
+        "registrationTime": "2025-11-13 07:33:26"
+        "frontIncomeSwitch": 0
+        "maximumWithdrawal": null
+        "withdrawalFee": null
+        "lastIp": "182.160.8.143"
+        "paymentPassword": "30134ab1762ca9fa1e8e93396a49fc04"
+        "superiorId": 0
+        "minimumWithdrawal": null
+        "password": "30134ab1762ca9fa1e8e93396a49fc04"
+        "modifyTime": "2025-11-13 10:53:01"
+        "id": 286268
+        "expVipType_str": "Vip0"
+        "remakeNumOK": null
+        "invitationCode": "d0za3i"
+        "registerIp": "182.160.8.143"
+        "expVipExpireDate": "1900-01-01 00:00:00"
+        "teamVIPOpeningTotal": null
+        "moneyNO": null
+        "vipImg": null
+        "moneyOK": null
+        "vipExpireDate": "2026-10-29 07:33:25"
+        "taskAccount": null
+        "limitProfit": 2
+        "name": null
+        "fidw": null
+        "limitCode": 2
+        "userType": "2"
+        "walletAddress": ""
+        "idw": "1988872816156483584"
+        "numberOfSubordinates": null
+        "limitDrawing": 2
+        "registerIpCity": ""
+        "teamVIPOpeningTotalRebate": null
+        "profitAmount": null
+        "countryCodeNumber": "1"
+        "remark": "1"
+        "feeModeCus": 0
+        "totalBonusIncomeLeft": null
+        "headPortraitKey": null
+        "feeRange": [ ]
+        "totalRechargeAmountLeft": null
+        "dzstatus_str": "启用"
+        "lastIpCity": ""
+        "vipPrice": null
+        "email": null
+        "modifyBy": 1
+        "limitBuyCdb": 2
+        "vipType_str": "Vip0"
+        "vipType": "v0"
+        "frontIncomeAmount": 0
+        "realName": null
+        "createBy": 233
+        "expVipType": "v0"
+        "dzstatus": 1
+        "taskMoney": null
+        "superAccount": "autotester309113"
+        "createTime": "2025-11-13 07:33:26"
+        "userType_str": "内部账号"
+        "userBalanceLeft": 5
+        "sourceInvitationCode": "d0za3i"
+        "user": null
+        "account": "autotester309113"
+        "levels": null
+        "status": 1
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+  # ========== 步骤11: 用户管理模块-代理列表子模块-已限提(autotester309113/286268)==========
+  - name: "已限提"
+    case_id: "cdb_bofa_userMgmt_proxyList_010"
+    description: "用户管理模块-代理列表子模块-已限提"
+
+    request:
+      method: "POST"
+      url: "/cdb/dzuser/user/updateUserByStatus"
+      params: null
+      headers:
+        Authorization: "${token}"
+      cookies: null
+      body_type:  "json"
+      body:
+        "feeMode": 0
+        "lastTime": "2025-11-13 07:33:26"
+        "registrationTime": "2025-11-13 07:33:26"
+        "frontIncomeSwitch": 0
+        "maximumWithdrawal": null
+        "withdrawalFee": null
+        "lastIp": "182.160.8.143"
+        "paymentPassword": "30134ab1762ca9fa1e8e93396a49fc04"
+        "superiorId": 0
+        "minimumWithdrawal": null
+        "password": "30134ab1762ca9fa1e8e93396a49fc04"
+        "modifyTime": "2025-11-13 10:53:01"
+        "id": 286268
+        "expVipType_str": "Vip0"
+        "remakeNumOK": null
+        "invitationCode": "d0za3i"
+        "registerIp": "182.160.8.143"
+        "expVipExpireDate": "1900-01-01 00:00:00"
+        "teamVIPOpeningTotal": null
+        "moneyNO": null
+        "vipImg": null
+        "moneyOK": null
+        "vipExpireDate": "2026-10-29 07:33:25"
+        "taskAccount": null
+        "limitProfit": 2
+        "name": null
+        "fidw": null
+        "limitCode": 2
+        "userType": "2"
+        "walletAddress": ""
+        "idw": "1988872816156483584"
+        "numberOfSubordinates": null
+        "limitDrawing": 1
+        "registerIpCity": ""
+        "teamVIPOpeningTotalRebate": null
+        "profitAmount": null
+        "countryCodeNumber": "1"
+        "remark": "1"
+        "feeModeCus": 0
+        "totalBonusIncomeLeft": null
+        "headPortraitKey": null
+        "feeRange": [ ]
+        "totalRechargeAmountLeft": null
+        "dzstatus_str": "启用"
+        "lastIpCity": ""
+        "vipPrice": null
+        "email": null
+        "modifyBy": 1
+        "limitBuyCdb": 2
+        "vipType_str": "Vip0"
+        "vipType": "v0"
+        "frontIncomeAmount": 0
+        "realName": null
+        "createBy": 233
+        "expVipType": "v0"
+        "dzstatus": 1
+        "taskMoney": null
+        "superAccount": "autotester309113"
+        "createTime": "2025-11-13 07:33:26"
+        "userType_str": "内部账号"
+        "userBalanceLeft": 5
+        "sourceInvitationCode": "d0za3i"
+        "user": null
+        "account": "autotester309113"
+        "levels": null
+        "status": 2
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+  # ========== 步骤12: 用户管理模块-代理列表子模块-未限提(autotester309113/286268)==========
+  - name: "未限提"
+    case_id: "cdb_bofa_userMgmt_proxyList_011"
+    description: "用户管理模块-代理列表子模块-未限提"
+
+    request:
+      method: "POST"
+      url: "/cdb/dzuser/user/updateUserByStatus"
+      params: null
+      headers:
+        Authorization: "${token}"
+      cookies: null
+      body_type:  "json"
+      body:
+        "feeMode": 0
+        "lastTime": "2025-11-13 07:33:26"
+        "registrationTime": "2025-11-13 07:33:26"
+        "frontIncomeSwitch": 0
+        "maximumWithdrawal": null
+        "withdrawalFee": null
+        "lastIp": "182.160.8.143"
+        "paymentPassword": "30134ab1762ca9fa1e8e93396a49fc04"
+        "superiorId": 0
+        "minimumWithdrawal": null
+        "password": "30134ab1762ca9fa1e8e93396a49fc04"
+        "modifyTime": "2025-11-13 10:53:01"
+        "id": 286268
+        "expVipType_str": "Vip0"
+        "remakeNumOK": null
+        "invitationCode": "d0za3i"
+        "registerIp": "182.160.8.143"
+        "expVipExpireDate": "1900-01-01 00:00:00"
+        "teamVIPOpeningTotal": null
+        "moneyNO": null
+        "vipImg": null
+        "moneyOK": null
+        "vipExpireDate": "2026-10-29 07:33:25"
+        "taskAccount": null
+        "limitProfit": 2
+        "name": null
+        "fidw": null
+        "limitCode": 2
+        "userType": "2"
+        "walletAddress": ""
+        "idw": "1988872816156483584"
+        "numberOfSubordinates": null
+        "limitDrawing": 2
+        "registerIpCity": ""
+        "teamVIPOpeningTotalRebate": null
+        "profitAmount": null
+        "countryCodeNumber": "1"
+        "remark": "1"
+        "feeModeCus": 0
+        "totalBonusIncomeLeft": null
+        "headPortraitKey": null
+        "feeRange": [ ]
+        "totalRechargeAmountLeft": null
+        "dzstatus_str": "启用"
+        "lastIpCity": ""
+        "vipPrice": null
+        "email": null
+        "modifyBy": 1
+        "limitBuyCdb": 2
+        "vipType_str": "Vip0"
+        "vipType": "v0"
+        "frontIncomeAmount": 0
+        "realName": null
+        "createBy": 233
+        "expVipType": "v0"
+        "dzstatus": 1
+        "taskMoney": null
+        "superAccount": "autotester309113"
+        "createTime": "2025-11-13 07:33:26"
+        "userType_str": "内部账号"
+        "userBalanceLeft": 5
+        "sourceInvitationCode": "d0za3i"
+        "user": null
+        "account": "autotester309113"
+        "levels": null
+        "status": 2
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+  # ========== 步骤13: 用户管理模块-代理列表子模块-已限制收益(autotester309113/286268)==========
+  - name: "已限制收益"
+    case_id: "cdb_bofa_userMgmt_proxyList_012"
+    description: "用户管理模块-代理列表子模块-已限制收益"
+
+    request:
+      method: "POST"
+      url: "/cdb/dzuser/user/updateUserByStatus"
+      params: null
+      headers:
+        Authorization: "${token}"
+      cookies: null
+      body_type:  "json"
+      body:
+        "feeMode": 0
+        "lastTime": "2025-11-13 07:33:26"
+        "registrationTime": "2025-11-13 07:33:26"
+        "frontIncomeSwitch": 0
+        "maximumWithdrawal": null
+        "withdrawalFee": null
+        "lastIp": "182.160.8.143"
+        "paymentPassword": "30134ab1762ca9fa1e8e93396a49fc04"
+        "superiorId": 0
+        "minimumWithdrawal": null
+        "password": "30134ab1762ca9fa1e8e93396a49fc04"
+        "modifyTime": "2025-11-13 10:53:01"
+        "id": 286268
+        "expVipType_str": "Vip0"
+        "remakeNumOK": null
+        "invitationCode": "d0za3i"
+        "registerIp": "182.160.8.143"
+        "expVipExpireDate": "1900-01-01 00:00:00"
+        "teamVIPOpeningTotal": null
+        "moneyNO": null
+        "vipImg": null
+        "moneyOK": null
+        "vipExpireDate": "2026-10-29 07:33:25"
+        "taskAccount": null
+        "limitProfit": 1
+        "name": null
+        "fidw": null
+        "limitCode": 2
+        "userType": "2"
+        "walletAddress": ""
+        "idw": "1988872816156483584"
+        "numberOfSubordinates": null
+        "limitDrawing": 2
+        "registerIpCity": ""
+        "teamVIPOpeningTotalRebate": null
+        "profitAmount": null
+        "countryCodeNumber": "1"
+        "remark": "1"
+        "feeModeCus": 0
+        "totalBonusIncomeLeft": null
+        "headPortraitKey": null
+        "feeRange": [ ]
+        "totalRechargeAmountLeft": null
+        "dzstatus_str": "启用"
+        "lastIpCity": ""
+        "vipPrice": null
+        "email": null
+        "modifyBy": 1
+        "limitBuyCdb": 2
+        "vipType_str": "Vip0"
+        "vipType": "v0"
+        "frontIncomeAmount": 0
+        "realName": null
+        "createBy": 233
+        "expVipType": "v0"
+        "dzstatus": 1
+        "taskMoney": null
+        "superAccount": "autotester309113"
+        "createTime": "2025-11-13 07:33:26"
+        "userType_str": "内部账号"
+        "userBalanceLeft": 5
+        "sourceInvitationCode": "d0za3i"
+        "user": null
+        "account": "autotester309113"
+        "levels": null
+        "status": 3
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+  # ========== 步骤14: 用户管理模块-代理列表子模块-未限制收益(autotester309113/286268)==========
+  - name: "未限制收益"
+    case_id: "cdb_bofa_userMgmt_proxyList_013"
+    description: "用户管理模块-代理列表子模块-未限制收益"
+
+    request:
+      method: "POST"
+      url: "/cdb/dzuser/user/updateUserByStatus"
+      params: null
+      headers:
+        Authorization: "${token}"
+      cookies: null
+      body_type:  "json"
+      body:
+        "feeMode": 0
+        "lastTime": "2025-11-13 07:33:26"
+        "registrationTime": "2025-11-13 07:33:26"
+        "frontIncomeSwitch": 0
+        "maximumWithdrawal": null
+        "withdrawalFee": null
+        "lastIp": "182.160.8.143"
+        "paymentPassword": "30134ab1762ca9fa1e8e93396a49fc04"
+        "superiorId": 0
+        "minimumWithdrawal": null
+        "password": "30134ab1762ca9fa1e8e93396a49fc04"
+        "modifyTime": "2025-11-13 10:53:01"
+        "id": 286268
+        "expVipType_str": "Vip0"
+        "remakeNumOK": null
+        "invitationCode": "d0za3i"
+        "registerIp": "182.160.8.143"
+        "expVipExpireDate": "1900-01-01 00:00:00"
+        "teamVIPOpeningTotal": null
+        "moneyNO": null
+        "vipImg": null
+        "moneyOK": null
+        "vipExpireDate": "2026-10-29 07:33:25"
+        "taskAccount": null
+        "limitProfit": 2
+        "name": null
+        "fidw": null
+        "limitCode": 2
+        "userType": "2"
+        "walletAddress": ""
+        "idw": "1988872816156483584"
+        "numberOfSubordinates": null
+        "limitDrawing": 2
+        "registerIpCity": ""
+        "teamVIPOpeningTotalRebate": null
+        "profitAmount": null
+        "countryCodeNumber": "1"
+        "remark": "1"
+        "feeModeCus": 0
+        "totalBonusIncomeLeft": null
+        "headPortraitKey": null
+        "feeRange": [ ]
+        "totalRechargeAmountLeft": null
+        "dzstatus_str": "启用"
+        "lastIpCity": ""
+        "vipPrice": null
+        "email": null
+        "modifyBy": 1
+        "limitBuyCdb": 2
+        "vipType_str": "Vip0"
+        "vipType": "v0"
+        "frontIncomeAmount": 0
+        "realName": null
+        "createBy": 233
+        "expVipType": "v0"
+        "dzstatus": 1
+        "taskMoney": null
+        "superAccount": "autotester309113"
+        "createTime": "2025-11-13 07:33:26"
+        "userType_str": "内部账号"
+        "userBalanceLeft": 5
+        "sourceInvitationCode": "d0za3i"
+        "user": null
+        "account": "autotester309113"
+        "levels": null
+        "status": 3
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+  # ========== 步骤15: 用户管理模块-代理列表子模块-已限制邀请码(autotester309113/286268)==========
+  - name: "已限制邀请码"
+    case_id: "cdb_bofa_userMgmt_proxyList_014"
+    description: "用户管理模块-代理列表子模块-已限制邀请码"
+
+    request:
+      method: "POST"
+      url: "/cdb/dzuser/user/updateUserByStatus"
+      params: null
+      headers:
+        Authorization: "${token}"
+      cookies: null
+      body_type:  "json"
+      body:
+        "feeMode": 0
+        "lastTime": "2025-11-13 07:33:26"
+        "registrationTime": "2025-11-13 07:33:26"
+        "frontIncomeSwitch": 0
+        "maximumWithdrawal": null
+        "withdrawalFee": null
+        "lastIp": "182.160.8.143"
+        "paymentPassword": "30134ab1762ca9fa1e8e93396a49fc04"
+        "superiorId": 0
+        "minimumWithdrawal": null
+        "password": "30134ab1762ca9fa1e8e93396a49fc04"
+        "modifyTime": "2025-11-13 10:53:01"
+        "id": 286268
+        "expVipType_str": "Vip0"
+        "remakeNumOK": null
+        "invitationCode": "d0za3i"
+        "registerIp": "182.160.8.143"
+        "expVipExpireDate": "1900-01-01 00:00:00"
+        "teamVIPOpeningTotal": null
+        "moneyNO": null
+        "vipImg": null
+        "moneyOK": null
+        "vipExpireDate": "2026-10-29 07:33:25"
+        "taskAccount": null
+        "limitProfit": 2
+        "name": null
+        "fidw": null
+        "limitCode": 1
+        "userType": "2"
+        "walletAddress": ""
+        "idw": "1988872816156483584"
+        "numberOfSubordinates": null
+        "limitDrawing": 2
+        "registerIpCity": ""
+        "teamVIPOpeningTotalRebate": null
+        "profitAmount": null
+        "countryCodeNumber": "1"
+        "remark": "1"
+        "feeModeCus": 0
+        "totalBonusIncomeLeft": null
+        "headPortraitKey": null
+        "feeRange": [ ]
+        "totalRechargeAmountLeft": null
+        "dzstatus_str": "启用"
+        "lastIpCity": ""
+        "vipPrice": null
+        "email": null
+        "modifyBy": 1
+        "limitBuyCdb": 2
+        "vipType_str": "Vip0"
+        "vipType": "v0"
+        "frontIncomeAmount": 0
+        "realName": null
+        "createBy": 233
+        "expVipType": "v0"
+        "dzstatus": 1
+        "taskMoney": null
+        "superAccount": "autotester309113"
+        "createTime": "2025-11-13 07:33:26"
+        "userType_str": "内部账号"
+        "userBalanceLeft": 5
+        "sourceInvitationCode": "d0za3i"
+        "user": null
+        "account": "autotester309113"
+        "levels": null
+        "status": 4
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+  # ========== 步骤16: 用户管理模块-代理列表子模块-未限制邀请码(autotester309113/286268)==========
+  - name: "未限制邀请码"
+    case_id: "cdb_bofa_userMgmt_proxyList_015"
+    description: "用户管理模块-代理列表子模块-未限制邀请码"
+
+    request:
+      method: "POST"
+      url: "/cdb/dzuser/user/updateUserByStatus"
+      params: null
+      headers:
+        Authorization: "${token}"
+      cookies: null
+      body_type:  "json"
+      body:
+        "feeMode": 0
+        "lastTime": "2025-11-13 07:33:26"
+        "registrationTime": "2025-11-13 07:33:26"
+        "frontIncomeSwitch": 0
+        "maximumWithdrawal": null
+        "withdrawalFee": null
+        "lastIp": "182.160.8.143"
+        "paymentPassword": "30134ab1762ca9fa1e8e93396a49fc04"
+        "superiorId": 0
+        "minimumWithdrawal": null
+        "password": "30134ab1762ca9fa1e8e93396a49fc04"
+        "modifyTime": "2025-11-13 10:53:01"
+        "id": 286268
+        "expVipType_str": "Vip0"
+        "remakeNumOK": null
+        "invitationCode": "d0za3i"
+        "registerIp": "182.160.8.143"
+        "expVipExpireDate": "1900-01-01 00:00:00"
+        "teamVIPOpeningTotal": null
+        "moneyNO": null
+        "vipImg": null
+        "moneyOK": null
+        "vipExpireDate": "2026-10-29 07:33:25"
+        "taskAccount": null
+        "limitProfit": 2
+        "name": null
+        "fidw": null
+        "limitCode": 2
+        "userType": "2"
+        "walletAddress": ""
+        "idw": "1988872816156483584"
+        "numberOfSubordinates": null
+        "limitDrawing": 2
+        "registerIpCity": ""
+        "teamVIPOpeningTotalRebate": null
+        "profitAmount": null
+        "countryCodeNumber": "1"
+        "remark": "1"
+        "feeModeCus": 0
+        "totalBonusIncomeLeft": null
+        "headPortraitKey": null
+        "feeRange": [ ]
+        "totalRechargeAmountLeft": null
+        "dzstatus_str": "启用"
+        "lastIpCity": ""
+        "vipPrice": null
+        "email": null
+        "modifyBy": 1
+        "limitBuyCdb": 2
+        "vipType_str": "Vip0"
+        "vipType": "v0"
+        "frontIncomeAmount": 0
+        "realName": null
+        "createBy": 233
+        "expVipType": "v0"
+        "dzstatus": 1
+        "taskMoney": null
+        "superAccount": "autotester309113"
+        "createTime": "2025-11-13 07:33:26"
+        "userType_str": "内部账号"
+        "userBalanceLeft": 5
+        "sourceInvitationCode": "d0za3i"
+        "user": null
+        "account": "autotester309113"
+        "levels": null
+        "status": 4
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+  # ========== 步骤17: 用户管理模块-代理列表子模块-冻结(autotester309113/286268)==========
+  - name: "冻结"
+    case_id: "cdb_bofa_userMgmt_proxyList_016"
+    description: "用户管理模块-代理列表子模块-冻结"
+
+    request:
+      method: "POST"
+      url: "/cdb/dzuser/user/updateUserByStatus"
+      params: null
+      headers:
+        Authorization: "${token}"
+      cookies: null
+      body_type:  "json"
+      body:
+        "feeMode": 0
+        "lastTime": "2025-11-13 07:33:26"
+        "registrationTime": "2025-11-13 07:33:26"
+        "frontIncomeSwitch": 0
+        "maximumWithdrawal": null
+        "withdrawalFee": null
+        "lastIp": "182.160.8.143"
+        "paymentPassword": "30134ab1762ca9fa1e8e93396a49fc04"
+        "superiorId": 0
+        "minimumWithdrawal": null
+        "password": "30134ab1762ca9fa1e8e93396a49fc04"
+        "modifyTime": "2025-11-13 08:13:31"
+        "id": 286268
+        "expVipType_str": "Vip0"
+        "remakeNumOK": null
+        "invitationCode": "d0za3i"
+        "registerIp": "182.160.8.143"
+        "expVipExpireDate": "1900-01-01 00:00:00"
+        "teamVIPOpeningTotal": null
+        "moneyNO": null
+        "vipImg": null
+        "moneyOK": null
+        "vipExpireDate": "2026-10-29 07:33:25"
+        "taskAccount": null
+        "limitProfit": 2
+        "name": null
+        "fidw": null
+        "limitCode": 2
+        "userType": "2"
+        "walletAddress": ""
+        "idw": "1988872816156483584"
+        "numberOfSubordinates": null
+        "limitDrawing": 2
+        "registerIpCity": ""
+        "teamVIPOpeningTotalRebate": null
+        "profitAmount": null
+        "countryCodeNumber": "1"
+        "remark": "1"
+        "feeModeCus": 0
+        "totalBonusIncomeLeft": null
+        "headPortraitKey": null
+        "feeRange": [ ]
+        "totalRechargeAmountLeft": null
+        "dzstatus_str": "冻结"
+        "lastIpCity": ""
+        "vipPrice": null
+        "email": null
+        "modifyBy": 233
+        "limitBuyCdb": 2
+        "vipType_str": "Vip0"
+        "vipType": "v0"
+        "frontIncomeAmount": 0
+        "realName": null
+        "createBy": 233
+        "expVipType": "v0"
+        "dzstatus": 2
+        "taskMoney": null
+        "superAccount": "autotester309113"
+        "createTime": "2025-11-13 07:33:26"
+        "userType_str": "内部账号"
+        "userBalanceLeft": 5
+        "sourceInvitationCode": "d0za3i"
+        "user": null
+        "account": "autotester309113"
+        "levels": null
+        "status": 5
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+  # ========== 步骤18: 用户管理模块-代理列表子模块-修改邀请码(autotester309113/286268)==========
+  - name: "修改邀请码"
+    case_id: "cdb_bofa_userMgmt_proxyList_017"
+    description: "用户管理模块-代理列表子模块-修改邀请码"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzuser/user/updateInvitation?id=286268&value=${get_invitation_code()}"
+      params: null
+      headers:
+        Authorization: "${token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+  # ========== 步骤19: 用户管理模块-代理列表子模块-启用(autotester309113/286268)==========
+  - name: "启用"
+    case_id: "cdb_bofa_userMgmt_proxyList_0018"
+    description: "用户管理模块-代理列表子模块-启用"
+
+    request:
+      method: "POST"
+      url: "/cdb/dzuser/user/updateUserByStatus"
+      params: null
+      headers:
+        Authorization: "${token}"
+      cookies: null
+      body_type:  "json"
+      body:
+        "feeMode": 0
+        "lastTime": "2025-11-13 07:33:26"
+        "registrationTime": "2025-11-13 07:33:26"
+        "frontIncomeSwitch": 0
+        "maximumWithdrawal": null
+        "withdrawalFee": null
+        "lastIp": "182.160.8.143"
+        "paymentPassword": "30134ab1762ca9fa1e8e93396a49fc04"
+        "superiorId": 0
+        "minimumWithdrawal": null
+        "password": "30134ab1762ca9fa1e8e93396a49fc04"
+        "modifyTime": "2025-11-13 08:13:31"
+        "id": 286268
+        "expVipType_str": "Vip0"
+        "remakeNumOK": null
+        "invitationCode": "d0za3i"
+        "registerIp": "182.160.8.143"
+        "expVipExpireDate": "1900-01-01 00:00:00"
+        "teamVIPOpeningTotal": null
+        "moneyNO": null
+        "vipImg": null
+        "moneyOK": null
+        "vipExpireDate": "2026-10-29 07:33:25"
+        "taskAccount": null
+        "limitProfit": 2
+        "name": null
+        "fidw": null
+        "limitCode": 2
+        "userType": "2"
+        "walletAddress": ""
+        "idw": "1988872816156483584"
+        "numberOfSubordinates": null
+        "limitDrawing": 2
+        "registerIpCity": ""
+        "teamVIPOpeningTotalRebate": null
+        "profitAmount": null
+        "countryCodeNumber": "1"
+        "remark": "1"
+        "feeModeCus": 0
+        "totalBonusIncomeLeft": null
+        "headPortraitKey": null
+        "feeRange": [ ]
+        "totalRechargeAmountLeft": null
+        "dzstatus_str": "启用"
+        "lastIpCity": ""
+        "vipPrice": null
+        "email": null
+        "modifyBy": 233
+        "limitBuyCdb": 2
+        "vipType_str": "Vip0"
+        "vipType": "v0"
+        "frontIncomeAmount": 0
+        "realName": null
+        "createBy": 233
+        "expVipType": "v0"
+        "dzstatus": 1
+        "taskMoney": null
+        "superAccount": "autotester309113"
+        "createTime": "2025-11-13 07:33:26"
+        "userType_str": "内部账号"
+        "userBalanceLeft": 5
+        "sourceInvitationCode": "d0za3i"
+        "user": null
+        "account": "autotester309113"
+        "levels": null
+        "status": 5
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+  # ========== 步骤20: 用户管理模块-代理列表子模块-获取vip类型==========
+  - name: "获取vip类型"
+    case_id: "cdb_bofa_userMgmt_proxyList_0019"
+    description: "用户管理模块-代理列表子模块-获取vip类型"
+
+    request:
+      method: "GET"
+      url: "/cdb/dict/getDicts/ViP%E7%B1%BB%E5%9E%8B"
+      params: null
+      headers:
+        Authorization: "${token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+  # ========== 步骤21: 用户管理模块-代理列表子模块-查看下级(autotester309113/286268)==========
+  - name: "查看下级"
+    case_id: "cdb_bofa_userMgmt_proxyList_0020"
+    description: "用户管理模块-代理列表子模块-查看下级"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzuser/user/getSuperiorSubordinate?page=1&limit=10&str=d0za3i&walletAddress=&dzstatus=&vipType=&userType=&registerIp=&lastIp=&flag=0&userId=286268"
+      params: null
+      headers:
+        Authorization: "${token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+  # ========== 步骤22: 用户管理模块-代理列表子模块-上分(autotester309113/286268)==========
+  - name: "上分"
+    case_id: "cdb_bofa_userMgmt_proxyList_0021"
+    description: "用户管理模块-代理列表子模块-上分"
+
+    request:
+      method: "POST"
+      url: "/cdb/dzuser/user/straightBuckle"
+      params: null
+      headers:
+        Authorization: "${token}"
+        X-Safe-Password: "${get_action_google_auth_code()}"
+      cookies: null
+      body_type:  "json"
+      body:
+        "money": "1"
+        "type": 1
+        "uid": 286268
+        "remark": "1"
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+  # ========== 步骤23: 用户管理模块-代理列表子模块-下分(autotester309113/286268)==========
+  - name: "下分"
+    case_id: "cdb_bofa_userMgmt_proxyList_0022"
+    description: "用户管理模块-代理列表子模块-下分"
+
+    request:
+      method: "POST"
+      url: "/cdb/dzuser/user/straightBuckle"
+      params: null
+      headers:
+        Authorization: "${token}"
+        X-Safe-Password: "${get_action_google_auth_code()}"
+      cookies: null
+      body_type:  "json"
+      body:
+        "money": "1"
+        "type": 2
+        "uid": 286268
+        "remark": "1"
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+  # ========== 步骤24: 用户管理模块-代理列表子模块-修改提款地址(autotester309113/286268)==========
+  # 只能修改USDT(ERC20)地址
+  - name: "修改提款地址"
+    case_id: "cdb_bofa_userMgmt_proxyList_023"
+    description: "用户管理模块-代理列表子模块-修改提款地址"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzuser/user/updateWalletAddr?id=286268&value=0xabc5acbc4b5666a6da6fd8286981104c598100bb"
+      params: null
+      headers:
+        Authorization: "${token}"
+        X-Safe-Password: "${get_action_google_auth_code()}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+  # ========== 步骤25: 用户管理模块-代理列表子模块-新增三方平台钱包地址(autotester309113/286268)==========
+  # T3hHN1ngCmcDnq467vpvtxLSaY6TQZS8Ji
+  - name: "新增三方平台钱包地址"
+    case_id: "cdb_bofa_userMgmt_proxyList_024"
+    description: "用户管理模块-代理列表子模块-新增三方平台钱包地址"
+
+    request:
+      method: "POST"
+      url: "/cdb/dzuser/walletaddress"
+      params: null
+      headers:
+        Authorization: "${token}"
+        X-Safe-Password: "${get_action_google_auth_code()}"
+      cookies: null
+      body_type:  "json"
+      body:
+        "id": ""
+        "sourceInvitationCode": ""
+        "uid": ""
+        "account": "autotester309113"
+        "walletAddress": "T3hHN1ngCmcDnq467vpvtxLSaY6TQZS8Ji"
+        "platformName": "WalletPay"
+        "bankname": "哈基米"
+        "channelType": "USDT.TRC20"
+        "walletName": "ethan"
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+  # ========== 步骤26: 用户管理模块-代理列表子模块-查询三方平台钱包地址(autotester309113/286268)==========
+  - name: "查询三方平台钱包地址"
+    case_id: "cdb_bofa_userMgmt_proxyList_025"
+    description: "用户管理模块-代理列表子模块-查询三方平台钱包地址"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzuser/walletaddress/list?page=1&limit=20&account=autotester309113&platformName=&walletAddress=&walletName=&channelType="
+      params: null
+      headers:
+        Authorization: "${token}"
+      cookies: null
+      body_type: null
+      body:  null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - extract:
+          key: "third_party_address_ID"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].id"
+
+  # ========== 步骤27: 用户管理模块-用户列表子模块-修改三方平台钱包地址(autotester309113/286268)==========
+  # TRd8xLLqoWp814RTDDA1ghjpoVtNzmPQNA
+  - name: "修改三方平台钱包地址"
+    case_id: "cdb_bofa_userMgmt_proxyList_026"
+    description: "用户管理模块-用户列表子模块-修改三方平台钱包地址"
+
+    request:
+      method: "PUT"
+      url: "/cdb/dzuser/walletaddress"
+      params: null
+      headers:
+        Authorization: "${token}"
+        X-Safe-Password: "${get_action_google_auth_code()}"
+      cookies: null
+      body_type:  "json"
+      body:
+        "id": ${third_party_address_ID}
+        "uid": 286268
+        "account": "autotester309113"
+        "walletAddress": "TRd8xLLqoWp814RTDDA1ghjpoVtNzmPQNA"
+        "platformName": "WalletPay"
+        "bankname": "哈基米"
+        "channelType": "USDT.TRC20"
+        "walletName": "ethan"
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+  # ========== 步骤28: 用户管理模块-代理列表子模块-删除三方平台钱包地址(autotester309113/286268)==========
+  - name: "删除三方平台钱包地址"
+    case_id: "cdb_bofa_userMgmt_proxyList_027"
+    description: "用户管理模块-代理列表子模块-删除三方平台钱包地址"
+
+    request:
+      method: "DELETE"
+      url: "/cdb/dzuser/walletaddress?id=${third_party_address_ID}"
+      params: null
+      headers:
+        Authorization: "${token}"
+        X-Safe-Password: "${get_action_google_auth_code()}"
+      cookies: null
+      body_type:  "json"
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+  # ========== 步骤29: 用户管理模块-代理列表子模块-批量冻结(账号：86-20241027001)==========
+  - name: "批量冻结"
+    case_id: "cdb_bofa_userMgmt_proxyList_028"
+    description: "用户管理模块-代理列表子模块-批量冻结"
+
+    request:
+      method: "POST"
+      url: "/cdb/dzuser/user/batchUser"
+      params: null
+      headers:
+        Authorization: "${token}"
+      cookies: null
+      body_type: "json"
+      body:
+        "flg": 2
+        "userInfos": [{"id":550,"createTime":"2024-10-27 13:43:38","createBy":null,"modifyTime":null,"modifyBy":null,"user":null,"limitBuyCdb":null,"limitDrawing":2,"limitProfit":2,"limitCode":null,"idw":null,"sourceInvitationCode":null,"countryCodeNumber":"86","superiorId":null,"invitationCode":null,"name":null,"realName":null,"email":null,"headPortraitKey":null,"levels":1,"account":"20241027001","password":null,"paymentPassword":null,"userType":null,"vipType":"v0","vipExpireDate":null,"registerIp":null,"lastIp":null,"registerIpCity":null,"lastIpCity":null,"lastTime":null,"registrationTime":null,"dzstatus":1,"remark":null,"fidw":null,"feeModeCus":0,"feeMode":0,"withdrawalFee":null,"minimumWithdrawal":null,"maximumWithdrawal":null,"feeRange":[],"frontIncomeSwitch":null,"frontIncomeAmount":null,"totalRechargeAmountLeft":0,"teamVIPOpeningTotalRebate":null,"taskMoney":null,"taskAccount":null,"remakeNumOK":null,"moneyOK":0,"moneyNO":null,"totalBonusIncomeLeft":null,"userBalanceLeft":1005,"teamVIPOpeningTotal":null,"vipImg":null,"vipPrice":null,"walletAddress":null,"superAccount":null,"numberOfSubordinates":null,"profitAmount":null}]
+        "value": "1"
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+  # ========== 步骤30: 用户管理模块-代理列表子模块-批量启用(账号：86-20241027001)==========
+  - name: "批量启用"
+    case_id: "cdb_bofa_userMgmt_proxyList_029"
+    description: "用户管理模块-代理列表子模块-批量启用"
+
+    request:
+      method: "POST"
+      url: "/cdb/dzuser/user/batchUser"
+      params: null
+      headers:
+        Authorization: "${token}"
+      cookies: null
+      body_type: "json"
+      body:
+        "flg": 1
+        "userInfos": [{"id":550,"createTime":"2024-10-27 13:43:38","createBy":null,"modifyTime":null,"modifyBy":null,"user":null,"limitBuyCdb":null,"limitDrawing":2,"limitProfit":2,"limitCode":null,"idw":null,"sourceInvitationCode":null,"countryCodeNumber":"86","superiorId":null,"invitationCode":null,"name":null,"realName":null,"email":null,"headPortraitKey":null,"levels":1,"account":"20241027001","password":null,"paymentPassword":null,"userType":null,"vipType":"v0","vipExpireDate":null,"registerIp":null,"lastIp":null,"registerIpCity":null,"lastIpCity":null,"lastTime":null,"registrationTime":null,"dzstatus":1,"remark":null,"fidw":null,"feeModeCus":0,"feeMode":0,"withdrawalFee":null,"minimumWithdrawal":null,"maximumWithdrawal":null,"feeRange":[],"frontIncomeSwitch":null,"frontIncomeAmount":null,"totalRechargeAmountLeft":0,"teamVIPOpeningTotalRebate":null,"taskMoney":null,"taskAccount":null,"remakeNumOK":null,"moneyOK":0,"moneyNO":null,"totalBonusIncomeLeft":null,"userBalanceLeft":1005,"teamVIPOpeningTotal":null,"vipImg":null,"vipPrice":null,"walletAddress":null,"superAccount":null,"numberOfSubordinates":null,"profitAmount":null}]
+        "value": "1"
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+  # ========== 步骤31: 用户管理模块-代理列表子模块-批量限制收益(账号：86-20241027001)==========
+  - name: "批量限制收益"
+    case_id: "cdb_bofa_userMgmt_proxyList_030"
+    description: "用户管理模块-代理列表子模块-批量限制收益"
+
+    request:
+      method: "POST"
+      url: "/cdb/dzuser/user/batchLimitProfit"
+      params: null
+      headers:
+        Authorization: "${token}"
+      cookies: null
+      body_type: "json"
+      body:
+        "flg": 1
+        "userInfos": [{"id":550,"createTime":"2024-10-27 13:43:38","createBy":null,"modifyTime":null,"modifyBy":null,"user":null,"limitBuyCdb":null,"limitDrawing":2,"limitProfit":1,"limitCode":null,"idw":null,"sourceInvitationCode":null,"countryCodeNumber":"86","superiorId":null,"invitationCode":null,"name":null,"realName":null,"email":null,"headPortraitKey":null,"levels":1,"account":"20241027001","password":null,"paymentPassword":null,"userType":null,"vipType":"v0","vipExpireDate":null,"registerIp":null,"lastIp":null,"registerIpCity":null,"lastIpCity":null,"lastTime":null,"registrationTime":null,"dzstatus":1,"remark":null,"fidw":null,"feeModeCus":0,"feeMode":0,"withdrawalFee":null,"minimumWithdrawal":null,"maximumWithdrawal":null,"feeRange":[],"frontIncomeSwitch":null,"frontIncomeAmount":null,"totalRechargeAmountLeft":0,"teamVIPOpeningTotalRebate":null,"taskMoney":null,"taskAccount":null,"remakeNumOK":null,"moneyOK":0,"moneyNO":null,"totalBonusIncomeLeft":null,"userBalanceLeft":1005,"teamVIPOpeningTotal":null,"vipImg":null,"vipPrice":null,"walletAddress":null,"superAccount":null,"numberOfSubordinates":null,"profitAmount":null}]
+        "value": "1"
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+  # ========== 步骤32: 用户管理模块-代理列表子模块-批量解除限制收益(账号：86-20241027001)==========
+  - name: "批量解除限制收益"
+    case_id: "cdb_bofa_userMgmt_proxyList_031"
+    description: "用户管理模块-代理列表子模块-批量解除限制收益"
+
+    request:
+      method: "POST"
+      url: "/cdb/dzuser/user/batchLimitProfit"
+      params: null
+      headers:
+        Authorization: "${token}"
+      cookies: null
+      body_type: "json"
+      body:
+        "flg": 2
+        "userInfos": [{"id":550,"createTime":"2024-10-27 13:43:38","createBy":null,"modifyTime":null,"modifyBy":null,"user":null,"limitBuyCdb":null,"limitDrawing":2,"limitProfit":1,"limitCode":null,"idw":null,"sourceInvitationCode":null,"countryCodeNumber":"86","superiorId":null,"invitationCode":null,"name":null,"realName":null,"email":null,"headPortraitKey":null,"levels":1,"account":"20241027001","password":null,"paymentPassword":null,"userType":null,"vipType":"v0","vipExpireDate":null,"registerIp":null,"lastIp":null,"registerIpCity":null,"lastIpCity":null,"lastTime":null,"registrationTime":null,"dzstatus":1,"remark":null,"fidw":null,"feeModeCus":0,"feeMode":0,"withdrawalFee":null,"minimumWithdrawal":null,"maximumWithdrawal":null,"feeRange":[],"frontIncomeSwitch":null,"frontIncomeAmount":null,"totalRechargeAmountLeft":0,"teamVIPOpeningTotalRebate":null,"taskMoney":null,"taskAccount":null,"remakeNumOK":null,"moneyOK":0,"moneyNO":null,"totalBonusIncomeLeft":null,"userBalanceLeft":1005,"teamVIPOpeningTotal":null,"vipImg":null,"vipPrice":null,"walletAddress":null,"superAccount":null,"numberOfSubordinates":null,"profitAmount":null}]
+        "value": "1"
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+  # ========== 步骤33: 用户管理模块-代理列表子模块-批量限制提款(账号：86-20241027001)==========
+  - name: "批量限制提款"
+    case_id: "cdb_bofa_userMgmt_proxyList_032"
+    description: "用户管理模块-代理列表子模块-批量限制提款"
+
+    request:
+      method: "POST"
+      url: "/cdb/dzuser/user/batchLimitDrawing"
+      params: null
+      headers:
+        Authorization: "${token}"
+      cookies: null
+      body_type: "json"
+      body:
+        "flg": 1
+        "userInfos": [{"id":550,"createTime":"2024-10-27 13:43:38","createBy":null,"modifyTime":null,"modifyBy":null,"user":null,"limitBuyCdb":null,"limitDrawing":2,"limitProfit":2,"limitCode":null,"idw":null,"sourceInvitationCode":null,"countryCodeNumber":"86","superiorId":null,"invitationCode":null,"name":null,"realName":null,"email":null,"headPortraitKey":null,"levels":1,"account":"20241027001","password":null,"paymentPassword":null,"userType":null,"vipType":"v0","vipExpireDate":null,"registerIp":null,"lastIp":null,"registerIpCity":null,"lastIpCity":null,"lastTime":null,"registrationTime":null,"dzstatus":1,"remark":null,"fidw":null,"feeModeCus":0,"feeMode":0,"withdrawalFee":null,"minimumWithdrawal":null,"maximumWithdrawal":null,"feeRange":[],"frontIncomeSwitch":null,"frontIncomeAmount":null,"totalRechargeAmountLeft":0,"teamVIPOpeningTotalRebate":null,"taskMoney":null,"taskAccount":null,"remakeNumOK":null,"moneyOK":0,"moneyNO":null,"totalBonusIncomeLeft":null,"userBalanceLeft":1005,"teamVIPOpeningTotal":null,"vipImg":null,"vipPrice":null,"walletAddress":null,"superAccount":null,"numberOfSubordinates":null,"profitAmount":null}]
+        "value": "1"
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+  # ========== 步骤34: 用户管理模块-代理列表子模块-批量解除限制提款(账号：86-20241027001)==========
+  - name: "批量解除限制提款"
+    case_id: "cdb_bofa_userMgmt_proxyList_033"
+    description: "用户管理模块-代理列表子模块-批量解除限制提款"
+
+    request:
+      method: "POST"
+      url: "/cdb/dzuser/user/batchLimitDrawing"
+      params: null
+      headers:
+        Authorization: "${token}"
+      cookies: null
+      body_type: "json"
+      body:
+        "flg": 2
+        "userInfos": [{"id":550,"createTime":"2024-10-27 13:43:38","createBy":null,"modifyTime":null,"modifyBy":null,"user":null,"limitBuyCdb":null,"limitDrawing":2,"limitProfit":2,"limitCode":null,"idw":null,"sourceInvitationCode":null,"countryCodeNumber":"86","superiorId":null,"invitationCode":null,"name":null,"realName":null,"email":null,"headPortraitKey":null,"levels":1,"account":"20241027001","password":null,"paymentPassword":null,"userType":null,"vipType":"v0","vipExpireDate":null,"registerIp":null,"lastIp":null,"registerIpCity":null,"lastIpCity":null,"lastTime":null,"registrationTime":null,"dzstatus":1,"remark":null,"fidw":null,"feeModeCus":0,"feeMode":0,"withdrawalFee":null,"minimumWithdrawal":null,"maximumWithdrawal":null,"feeRange":[],"frontIncomeSwitch":null,"frontIncomeAmount":null,"totalRechargeAmountLeft":0,"teamVIPOpeningTotalRebate":null,"taskMoney":null,"taskAccount":null,"remakeNumOK":null,"moneyOK":0,"moneyNO":null,"totalBonusIncomeLeft":null,"userBalanceLeft":1005,"teamVIPOpeningTotal":null,"vipImg":null,"vipPrice":null,"walletAddress":null,"superAccount":null,"numberOfSubordinates":null,"profitAmount":null}]
+        "value": "1"
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
