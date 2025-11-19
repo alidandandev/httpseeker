@@ -217,9 +217,9 @@ def run(
     :param strict_markers: markers 严格模式, 对于设置 marker 装饰器的用例, 如果 marker 未在 pytest.ini 注册, 用例将报错
     :param capture: 避免在使用输出模式为"v"和"s"时，html报告中的表格日志为空的情况, 默认开启
     :param disable_warnings: 关闭控制台警告信息, 默认开启
-    :param global_env: 指定全局环境变量文件名，会覆盖 conf.toml 中的配置
-    :param conf_path: 指定配置文件路径，默认使用 httpseeker/core/conf.toml
-    :param auth_path: 指定认证配置文件路径，默认使用 httpseeker/core/auth.yaml
+    :param global_env: 指定全局环境变量文件名，会覆盖 conf_toml.toml 中的配置
+    :param conf_path: 指定配置文件路径，默认使用 httpseeker/core/conf_toml.toml
+    :param auth_path: 指定认证配置文件路径，默认使用 httpseeker/core/like_bofa_h5.yaml
     :param kwargs: pytest 运行关键字参数
     :return:
     """

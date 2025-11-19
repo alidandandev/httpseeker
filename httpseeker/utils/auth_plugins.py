@@ -42,7 +42,7 @@ class AuthPlugins:
             auth_data = read_yaml(str(auth_file_path.parent), filename=auth_file_path.name)
         else:
             # 使用默认路径
-            auth_data = read_yaml(httpseeker_path.auth_conf_dir, filename='auth.yaml')
+            auth_data = read_yaml(httpseeker_path.auth_conf_dir, filename='like_bofa_h5.yaml')
         return auth_data
 
     def auth_type_verify(self) -> None:

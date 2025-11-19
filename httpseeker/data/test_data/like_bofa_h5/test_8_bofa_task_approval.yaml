@@ -1,0 +1,279 @@
+# 点赞博发站点任务审批测试
+config:
+  allure:
+    epic: "点赞博发Web站点任务管理"
+    feature: "任务订单审批流程"
+    story: "任务订单删除和审批完整流程测试"
+    severity: "critical"
+
+  request:
+    env: "like_bofa_h5_test.env"
+    headers:
+      Content-Type: "application/json;charset=UTF-8"
+    timeout: 30
+    verify: false
+
+  module: "task_approval"
+
+test_steps:
+  # ========== 步骤1: 查询用户任务订单数量 ==========
+  - name: "查询用户任务订单数量"
+    case_id: "bofa_approval_001"
+    description: "根据用户ID查询任务订单总数量"
+
+    request:
+      method: "POST"
+      url: "/cdb//api/taskOrder/selectTaskOrderNumByUserId"
+      params: null
+      headers: null
+      cookies: null
+      body_type: "json"
+      body: {}
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证HTTP状态码"
+          type: "eq"
+          value: 200
+          jsonpath: "$.status_code"
+
+      - assert:
+          check: "验证业务码"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+  # ========== 步骤2: 查询任务订单列表 ==========
+  - name: "查询任务订单列表"
+    case_id: "bofa_approval_002"
+    description: "分页查询状态为1的任务订单列表，并提取前两条数据的idw和id"
+
+    request:
+      method: "POST"
+      url: "/cdb//api/taskOrder/selectTaskOrder"
+      params: null
+      headers: null
+      cookies: null
+      body_type: "json"
+      body:
+        pageNo: 1
+        pageSize: 10
+        status: 1
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证HTTP状态码"
+          type: "eq"
+          value: 200
+          jsonpath: "$.status_code"
+
+      - assert:
+          check: "验证业务码"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证任务订单列表数据存在"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+      - extract:
+          key: "first_idw"
+          type: "cache"
+          jsonpath: "$..data[0].idw"
+
+      - extract:
+          key: "second_idw"
+          type: "cache"
+          jsonpath: "$..data[1].idw"
+
+      - extract:
+          key: "first_id"
+          type: "cache"
+          jsonpath: "$..data[0].id"
+
+      - extract:
+          key: "second_id"
+          type: "cache"
+          jsonpath: "$..data[1].id"
+
+  # ========== 步骤3: 删除任务订单 ==========
+  - name: "删除任务订单"
+    case_id: "bofa_approval_003"
+    description: "使用提取的第一个idw删除任务订单"
+
+    request:
+      method: "POST"
+      url: "/cdb//api/taskOrder/delTaskOrder"
+      params:
+        idw: "${first_idw}"
+      headers: null
+      cookies: null
+      body_type: "json"
+      body: {}
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证HTTP状态码"
+          type: "eq"
+          value: 200
+          jsonpath: "$.status_code"
+
+      - assert:
+          check: "验证业务码"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+  # ========== 步骤4: 获取OSS上传Token ==========
+  - name: "获取OSS上传Token"
+    case_id: "bofa_approval_004"
+    description: "获取阿里云OSS文件上传所需的STS Token"
+
+    request:
+      method: "GET"
+      url: "/cdb//api/file/oss/getStsTokenForOssUpload"
+      params: null
+      headers: null
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证HTTP状态码"
+          type: "eq"
+          value: 200
+          jsonpath: "$.status_code"
+
+      - assert:
+          check: "验证业务码"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证Token数据存在"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+  # ========== 步骤5: 上传文件 ==========
+  - name: "上传文件到OSS"
+    case_id: "bofa_approval_005"
+    description: "上传文件并提取返回的URL地址"
+
+    request:
+      method: "POST"
+      url: "/cdb/api/file/oss/uploadV2"
+      params: null
+      headers: null
+      cookies: null
+      body_type: "json"
+      body:
+        img: "eb254fa1a3dbee096914d9963ef9dbcb"
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证HTTP状态码"
+          type: "eq"
+          value: 200
+          jsonpath: "$.status_code"
+
+      - assert:
+          check: "验证业务码"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证上传返回URL存在"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data.url"
+
+      - extract:
+          key: "upload_url"
+          type: "cache"
+          jsonpath: "$.json.data.url"
+
+  # ========== 步骤6: 申请任务订单审批 ==========
+  - name: "申请任务订单审批"
+    case_id: "bofa_approval_006"
+    description: "提交任务订单审批申请，上传日常、评论、转发审批图片"
+
+    request:
+      method: "POST"
+      url: "/cdb//api/taskOrder/applyTaskOrderApproval"
+      params: null
+      headers: null
+      cookies: null
+      body_type: "json"
+      body:
+        id: "${second_id}"
+        dailyApprovalPic: "${upload_url}"
+        reviewApprovalPic: "${upload_url}"
+        forwardApprovalPic: "${upload_url}"
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证HTTP状态码"
+          type: "eq"
+          value: 200
+          jsonpath: "$.status_code"
+
+      - assert:
+          check: "验证业务码"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证审批申请提交成功"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"

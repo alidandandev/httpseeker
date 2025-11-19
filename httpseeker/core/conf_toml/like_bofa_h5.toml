@@ -1,0 +1,74 @@
+# 测试项目
+[project]
+name = 'like_bofa_h5'
+
+# 测试报告
+[report]
+title = "power_bank接口自动化测试报告"
+tester_name = 'Rookie'
+# jenkins allure
+jenkins_url = 'https://foryourself'
+
+# mysql 数据库（可选，如不需要请留空或删除配置）
+[mysql]
+host = ''
+port = 6306
+user = ''
+password = ''
+database = ''
+charset = 'utf8mb4'
+
+# redis 数据库（可选，如不需要请留空或删除配置）
+[redis]
+host = ''
+port = 6379
+password = ''
+database = 0
+timeout = 10
+
+# 邮件
+[email]
+host = ''
+port = 465
+user = ''
+password = ''
+receiver = ''  # if more, use: [str]
+ssl = true
+send = false
+
+# 钉钉
+[dingding]
+webhook = ''
+proxies.http = ''
+proxies.https = ''
+send = false
+
+# 飞书
+[feishu]
+webhook = ''
+proxies.http = ''
+proxies.https = ''
+send = false
+
+# 企业微信
+[wechat]
+webhook = ''
+proxies.http = ''
+proxies.https = ''
+send = false
+
+
+# 请求发送
+[request]
+global_env = ''
+timeout = 10
+verify = false
+redirects = true
+proxies.http = ''
+proxies.https = ''
+retry = 3
+
+# 加密配置
+[encryption]
+enabled = true
+key = "your-32-byte-secure-aes-key-1234"

@@ -7,7 +7,7 @@ config:
     severity: "critical"
 
   request:
-    env: "test.env"
+    env: "like_bofa_h5_test.env"
     headers:
       Content-Type: "application/json;charset=UTF-8"
     timeout: 30
@@ -433,7 +433,7 @@ test_steps:
       body:
         vipIdw: "${idw}"
         paymentMethod: 1
-        paymentPassword: "vxw4MpZHWYpnD+SKJnbZZg=="
+        paymentPassword: "O4zAs9Mz4aoYOirIST4Xyg=="
       files: null
 
     teardown:

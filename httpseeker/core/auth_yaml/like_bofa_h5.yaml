@@ -1,0 +1,53 @@
+# 是否启用全局自动认证
+is_auth: ture
+# 认证类型，请填写为认证方式的键值，如：bearer_token, tk
+auth_type: tk
+##
+## tk token 认证（自定义请求头字段名为tk）
+##
+tk:
+  url: https://bofa.amigosqat.com/cdb/api/auth/login_v1
+  account: 15675048375
+  pwd: O4zAs9Mz4aoYOirIST4Xyg==
+  internationalCode: "86"
+  headers:
+    Content-Type: application/json
+    User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36
+  # 是否启用加密
+  encryption_enabled: true
+  encryption_key: "your-32-byte-secure-aes-key-1234"
+  # jsonpath表达式，用于从响应中提取token
+  token_key: $.data
+  # token有效期，单位: 秒
+  timeout: 100
+##
+## bearer token 认证（自动登录获取）
+##
+bearer_token:
+  url: https://bofa.amigosqat.com/cdb/api/auth/login_v1
+  username: 15675048375
+  password: O4zAs9Mz4aoYOirIST4Xyg==
+  headers:
+    Content-Type: application/json
+    User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36
+  # jsonpath表达式，用于从响应中提取token
+  token_key: $.data
+  # token有效期，单位: 秒
+  timeout: 100000
+##
+## bearer token 认证（自定义）
+##
+bearer_token_custom:
+  token: xxx
+  timeout: 100000
+##
+## cookie 认证
+##
+header_cookie:
+  url: xxx
+  username: xxx
+  password: xxx
+  headers:
+    Content-Type: application/json
+    User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36
+  timeout: 100000

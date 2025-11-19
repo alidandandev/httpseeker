@@ -1,0 +1,164 @@
+# 点赞博发web站点登录后默认API测试用例集合
+config:
+  allure:
+    epic: "C端用户的登录后查询我的页面数据"
+    feature: "我的页面"
+    story: "购买黄金流程"
+    severity: "critical"
+
+  request:
+    env: "like_bofa_h5_test.env"  # 需要在run_env目录下创建test.env文件
+    headers:
+      Content-Type: "application/json"
+    timeout: 30
+    verify: false
+
+  module: "my"
+
+test_steps:
+
+  - name: "修改、新增收货地址"
+    case_id: "cdb_goid_000"
+    description: "新增、编辑收货地址"
+
+    request:
+      method: "PUT"
+      url: "/cdb//api/userDeliveryAddress/update"
+      params: null
+      headers:
+        tk: "${user_token}"
+      cookies: null
+      body_type: "json"
+      body:
+        recipientName: "地址"
+        recipientPhone: "7848393232"
+        region: "北京市北京市东城区"
+        detailedAddress: "32323"
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+  - name: "查看黄金列表"
+    case_id: "cdb_goid_001"
+    description: "校验黄金列表接口"
+
+    request:
+      method: "POST"
+      url: "/cdb//api/gold/getGoldProducts"
+      params: null
+      headers: null
+      cookies: null
+      body_type: "json"
+      body:
+        page: 1
+        pageSize: 10
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+      - extract:
+          key: "goidID"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].id"
+
+      - extract:
+          key: "goldPrice"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].goldPrice"
+
+  - name: "黄金详情页"
+    case_id: "cdb_goid_002"
+    description: "黄金详情页"
+
+    request:
+      method: "GET"
+      url: "/cdb//api/gold/getGoldProductById/${goidID}"
+      params: null
+      headers: null
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+      - assert:
+          check: "黄金ID不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data.id"
+
+  - name: "购买黄金"
+    case_id: "cdb_bofa_003"
+    description: "校验购买黄金接口功能"
+
+    request:
+      method: "POST"
+      url: "/cdb//api/gold/createGoldOrder"
+      params: null
+      headers: null
+      cookies: null
+      body_type: "json"
+      body:
+        productId: "${goidID}"
+        goldPrice: "${goldPrice}"
+        purchaseQuantity: 1
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
