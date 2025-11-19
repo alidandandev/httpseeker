@@ -1,0 +1,128 @@
+# bofa站点admin后台首页
+config:
+  allure:
+    epic: "bofa站点admin后台"
+    feature: "用户管理_用户排行"
+    story: "页面所有数据接口"
+    severity: "critical"
+
+  request:
+    env: "like_bofa_admin_test.env"  # 需要在run_env目录下创建test.env文件
+    headers:
+      Content-Type: "application/json"
+    timeout: 30
+    verify: false
+
+  module: "userMgmt_uRanks"
+
+test_steps:
+  - name: "登录"
+    case_id: "cdb_bofa_login_001"
+    description: "登录拿token"
+
+    request:
+      method: "POST"
+      url: "/cdb/account/login"
+      params: null
+      headers: null
+      cookies: null
+      body_type: "json"
+      body:
+        username: ethans
+        password: 75OIo26rz2WLN02K4ZH6yQ==
+        ggcode: ${get_login_google_auth_code()}
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+      - extract:
+          key: "token"
+          type: "cache"
+          jsonpath: "$.json.data.token"
+
+  # ========== 步骤2: 用户管理模块-用户排行子模块-IP排名==========
+  - name: "IP排名"
+    case_id: "cdb_bofa_userMgmt_uRanks_001"
+    description: "用户管理模块-用户排行子模块-IP排名"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzuser/balance/phip?page=1&limit=100"
+      params: null
+      headers:
+        Authorization: "${token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+  # ========== 步骤3: 用户管理模块-用户排行子模块-金额排名==========
+  - name: "金额排名"
+    case_id: "cdb_bofa_userMgmt_uRanks_002"
+    description: "用户管理模块-用户排行子模块-金额排名"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzuser/balance/phbl?page=1&limit=100"
+      params: null
+      headers:
+        Authorization: "${token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"

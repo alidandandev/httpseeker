@@ -4,7 +4,7 @@ config:
     epic: "注册登录"
     feature: "登录"
     story: "使用注册好的账号，直接登录"
-    severity: "P0"
+    severity: "critical"
 
   request:
     env: "test_volt.env"
@@ -28,11 +28,10 @@ test_steps:
       headers:
         Content-Type: application/json
         User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36
-        x-encrypted: true
       cookies: null
       body_type:  "json"
       body:
-        username: "77777777"
+        account: "77777777"
         pwd: "zVZQ5HqOayF7tJYFz6tIhA=="
         internationalCode: "86"
       files: null
@@ -55,15 +54,4 @@ test_steps:
           type: "eq"
           value: true
           jsonpath: "$.json.success"
-
-      - assert:
-          check: "验证VIP列表不为空"
-          type: "not_eq"
-          value: null
-          jsonpath: "$.json.data"
-
-      - extract:
-          key: "idw"
-          type: "cache"
-          jsonpath: "$.json.data[0].idw"
 

@@ -4,7 +4,7 @@ config:
     epic: "注册登录"
     feature: "注册"
     story: "后台登录获取验证码，H5前端注册"
-    severity: "P0"
+    severity: "critical"
 
   request:
     env: "test_volt.env"
@@ -31,7 +31,7 @@ test_steps:
       cookies: null
       body_type: "json"
       body:
-        username: "0987654321"
+        username: "${random_phone()}"
         password: "75OIo26rz2WLN02K4ZH6yQ=="
         ggcode: "${get_google_auth_code()}"
       files: null
