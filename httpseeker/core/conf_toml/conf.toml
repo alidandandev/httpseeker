@@ -57,6 +57,14 @@ proxies.http = ''
 proxies.https = ''
 send = false
 
+# Telegram
+[telegram]
+bot_token = ''
+chat_id = ''
+proxies.http = ''
+proxies.https = ''
+send = false
+
 
 # 请求发送
 [request]

@@ -1,12 +1,12 @@
 # 测试项目
 [project]
-name = 'like_bofa_h5'
+name = 'Dz_like_bofa_h5'
 
 # 测试报告
 [report]
 title = "power_bank接口自动化测试报告"
 tester_name = 'Rookie'
-# jenkins allure
+# jenkins allurz_
 jenkins_url = 'https://foryourself'
 
 # mysql 数据库（可选，如不需要请留空或删除配置）
@@ -56,6 +56,14 @@ webhook = ''
 proxies.http = ''
 proxies.https = ''
 send = false
+
+# Telegram
+[telegram]
+bot_token = '6968270418:AAGlX7tNpfnIuueB2hAssZWzwuNCMjR6ryE'
+chat_id = ' -5069723666'  # 从 https://api.telegram.org/bot{TOKEN}/getUpdates 获取chat_id
+proxies.http = ''
+proxies.https = ''
+send = true
 
 
 # 请求发送
