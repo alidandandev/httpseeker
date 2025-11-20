@@ -1,0 +1,270 @@
+# bofa站点admin后台首页
+config:
+  allure:
+    epic: "bofa站点admin后台"
+    feature: "系统管理_用户管理模块"
+    story: "页面所有数据接口"
+    severity: "critical"
+
+  request:
+    env: "like_bofa_admin_test.env"  # 需要在run_env目录下创建test.env文件
+    headers:
+      Content-Type: "application/json"
+    timeout: 30
+    verify: false
+
+  module: "SysMgmt_RolMgmt"
+
+test_steps:
+  - name: "登录"
+    case_id: "cdb_bofa_login_001"
+    description: "登录拿token"
+
+    request:
+      method: "POST"
+      url: "/cdb/account/login"
+      params: null
+      headers: null
+      cookies: null
+      body_type: "json"
+      body:
+        username: ethans
+        password: 75OIo26rz2WLN02K4ZH6yQ==
+        ggcode: ${get_login_google_auth_code()}
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+      - extract:
+          key: "token"
+          type: "cache"
+          jsonpath: "$.json.data.token"
+
+  # ========== 步骤2: 系统管理模块-角色管理子模块-获取部门列表接口 ==========
+  - name: "获取部门列表"
+    case_id: "cdb_bofa_SysMgmt_RolMgmt_001"
+    description: "系统管理模块-角色管理子模块-获取部门列表接口"
+
+    request:
+      method: "GET"
+      url: "/cdb/dept/list"
+      params: null
+      headers:
+        Authorization: "${token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+  # ========== 步骤3: 系统管理模块-角色管理子模块-添加角色接口 ==========
+  - name: "添加角色接口"
+    case_id: "cdb_bofa_SysMgmt_RolMgmt_002"
+    description: "系统管理模块-角色管理子模块-添加角色接口"
+
+    request:
+      method: "POST"
+      url: "/cdb/role"
+      params: null
+      headers:
+        Authorization: "${token}"
+      cookies: null
+      body_type: "json"
+      body:
+        "id": ""
+        "num": 1
+        "name": "autotest${generate_five_digit_number()}"
+        "code": "${generate_five_digit_number()}"
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+  # ========== 步骤4: 系统管理模块-角色管理子模块-获取列表数据(查询/重置) ==========
+  - name: "获取列表数据(查询/重置)"
+    case_id: "cdb_bofa_SysMgmt_RolMgmt_003"
+    description: "系统管理模块-角色管理子模块-获取列表数据(查询/重置)"
+
+    request:
+      method: "GET"
+      url: "/cdb/role/list?page=1&limit=20&name=&code="
+      params: null
+      headers:
+        Authorization: "${token}"
+      cookies: null
+      body_type: "json"
+      body:
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+      - extract:
+          key: "id"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].id"
+
+      - extract:
+          key: "name"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].name"
+
+      - extract:
+          key: "code"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].code"
+
+  # ========== 步骤5: 系统管理模块-角色管理子模块-修改角色 ==========
+  - name: "修改角色"
+    case_id: "cdb_bofa_SysMgmt_RolMgmt_004"
+    description: "系统管理模块-角色管理子模块-修改角色"
+
+    request:
+      method: "POST"
+      url: "/cdb/role"
+      params: null
+      headers:
+        Authorization: "${token}"
+      cookies: null
+      body_type: "json"
+      body:
+        "id": ${id}
+        "num": 1
+        "deptid": 1
+        "pid": 1
+        "name": "${name}"
+        "code": "${code}"
+      files: null
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+  # ========== 步骤6: 系统管理模块-角色管理子模块-修改权限配置 ==========
+  - name: "修改权限配置"
+    case_id: "cdb_bofa_SysMgmt_RolMgmt_005"
+    description: "系统管理模块-角色管理子模块-修改权限配置"
+
+    request:
+      method: "POST"
+      url: "/cdb/role/savePermisson?roleId=${id}&permissions=${PERMISSIONS}"
+      params: null
+      headers:
+        Authorization: "${token}"
+      cookies: null
+      body_type: "json"
+      body:
+      files: null
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+  # ========== 步骤7: 系统管理模块-角色管理子模块-删除角色 ==========
+  - name: "删除角色"
+    case_id: "cdb_bofa_SysMgmt_RolMgmt_006"
+    description: "系统管理模块-角色管理子模块-删除角色"
+
+    request:
+      method: "DELETE"
+      url: "/cdb/role?roleId=${id}"
+      params: null
+      headers:
+        Authorization: "${token}"
+      cookies: null
+      body_type: "json"
+      body:
+      files: null
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+
+
+

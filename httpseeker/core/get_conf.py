@@ -22,8 +22,7 @@ class HttpSeekerConfig:
             self.settings = read_toml(str(conf_file_path.parent), conf_file_path.name)
         else:
             # 使用默认路径
-            self.settings = read_toml(str(Path(__file__).resolve().parent), 'conf_toml/like_bofa_h5.toml')
-
+            self.settings = read_toml(str(Path(__file__).resolve().parent), 'conf_toml/Dz_like_bofa_h5.toml')
         # 检查是否通过环境变量覆盖全局环境变量
         global_env = os.environ.get('HTTPSEEKER_GLOBAL_ENV')
         if global_env:
@@ -96,6 +95,19 @@ class HttpSeekerConfig:
                 else None,
             }
             self.WECHAT_SEND = glom(self.settings, 'wechat.send')
+
+            # Telegram
+            self.TELEGRAM_BOT_TOKEN = glom(self.settings, 'telegram.bot_token')
+            self.TELEGRAM_CHAT_ID = glom(self.settings, 'telegram.chat_id')
+            self.TELEGRAM_PROXY = {
+                'http': glom(self.settings, 'telegram.proxies.http')
+                if glom(self.settings, 'telegram.proxies.http') != ''
+                else None,
+                'https': glom(self.settings, 'telegram.proxies.https')
+                if glom(self.settings, 'telegram.proxies.https') != ''
+                else None,
+            }
+            self.TELEGRAM_SEND = glom(self.settings, 'telegram.send')
 
             # 请求发送
             self.REQUEST_GLOBAL_ENV = glom(self.settings, 'request.global_env')

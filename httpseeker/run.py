@@ -25,6 +25,7 @@ from httpseeker.utils.request import case_data_parse as case_data
 from httpseeker.utils.send_report.dingding import DingDing
 from httpseeker.utils.send_report.email import SendEmail
 from httpseeker.utils.send_report.feishu import FeiShu
+from httpseeker.utils.send_report.telegram import Telegram
 from httpseeker.utils.send_report.wechat import WeChat
 from httpseeker.utils.time_control import get_current_time
 
@@ -144,6 +145,9 @@ def startup(
     if httpseeker_config.WECHAT_SEND:
         WeChat(test_result).send()
 
+    if httpseeker_config.TELEGRAM_SEND:
+        Telegram(test_result).send()
+
     if allure:
         if os.path.exists(httpseeker_path.allure_report_dir):
             if not os.path.exists(httpseeker_path.allure_report_env_file):
@@ -219,7 +223,7 @@ def run(
     :param disable_warnings: 关闭控制台警告信息, 默认开启
     :param global_env: 指定全局环境变量文件名，会覆盖 conf_toml.toml 中的配置
     :param conf_path: 指定配置文件路径，默认使用 httpseeker/core/conf_toml.toml
-    :param auth_path: 指定认证配置文件路径，默认使用 httpseeker/core/like_bofa_h5.yaml
+    :param auth_path: 指定认证配置文件路径，默认使用 httpseeker/core/Dz_like_bofa_h5.yaml
     :param kwargs: pytest 运行关键字参数
     :return:
     """

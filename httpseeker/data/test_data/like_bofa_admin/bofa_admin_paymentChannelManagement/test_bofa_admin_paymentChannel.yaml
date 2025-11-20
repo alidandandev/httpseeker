@@ -1,9 +1,9 @@
 # 点赞博发web站点登录后默认API测试用例集合
 config:
   allure:
-    epic: "对bofa_admin后台管理系统中VIP管理进行操作"
-    feature: "admin后台管理系统中 VIP 列表"
-    story: "默认API接口测试"
+    epic: "对bofa_admin后台管理系统中支付通道管理中paymentChannel的支付渠道设置 进行相关api接口触发业务校验"
+    feature: "admin后台管理系统中支付通道管理中paymentChannel的支付渠道设置"
+    story: "默认API接口测试:test_bofa_admin_paymentChannel的支付渠道设置"
     severity: "critical"
 
   request:
@@ -79,35 +79,68 @@ test_steps:
             check: "验证返回响应data为不空"
             type: "not_eq"
             value: null
-            jsonpath: "$.json.data"
+            jsonpath: "$.json.data."
 
       - extract:
           key: "authorization_admin_token"
           type: "cache"
           jsonpath: "$.json.data.token"
 
-  - name: "查询 VIP 购买记录"
-    case_id: "bofa_admin_VipListRecord_000"
-    description: "验证查询 VIP 购买记录"
+  - name: "测试调用新增 paymentChannel的支付渠道设置接口 "
+    case_id: "bofa_admin_paymentChannel_add_001"
+    description: "验证测试新增bofa_admin_paymentChannel_add 新增支付渠道设置接口 "
+
+    request:
+      method: "POST"
+      url: "/cdb/dzsys/paymentchannel"
+      params: null
+      headers:
+        authorization: "${authorization_admin_token}"
+        x-safe-password: "123456"
+      cookies: null
+      body_type: "json"
+      body:
+        id: null
+        channelName: "USDT.TRC20"
+        dzkey: "https:usdt.api.pay334455.com"
+        currency: "usdt"
+        remark: "usdt  key 123456"
+        logo: "https://8xzlef11.oss-cn-hongkong.aliyuncs.com/aly/20251115/2592c5d0ed1c4b09a61017ebb51cb139api_202"
+        isPayment: 1
+        isWithdrawal: 1
+        model: "usdt334455"
+        bankCode: "123456"
+        sort: 15
+        minimumWithdrawalAmount: "1000"
+        maximumWithdrawalAmount: "20000"
+        currencyCode: "LLmtW/MIFZS/8a9GYKMa9Q=="  # 123456
+        privateKey: "LLmtW/MIFZS/8a9GYKMa9Q=="  # 123456
+        publicKey: ""
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+  - name: "测试调用查询paymentChannel的支付渠道list接口 默认无条件查询"
+    case_id: "bofa_admin_paymentChannel_query_001"
+    description: "验证测试获取bofa_admin_paymentChannel_query 默认无条件查询 取第一条新增数据进行后续验证"
 
     request:
       method: "GET"
-      url: "/cdb/dzvip/vippurchase/list"
+      url: "/cdb/dzsys/paymentchannel/list"
       params:
-        idw:
         page: 1
         limit: 20
-        account:
-        previousViPType:
-        afterViPType:
-        paymentMethod:
-        whetherToPay: 2
-        expireTimes: 2025-11-17 00:00:00
-        expireTimee: 2025-11-17 23:59:59
-        sourceInvitationCode:
-        gmt:
-        channelName:
-        channelType:
       headers:
         authorization: "${authorization_admin_token}"
       cookies: null
@@ -129,84 +162,30 @@ test_steps:
           jsonpath: "$.json.msg"
 
       - assert:
-          check: "验证返回响应中data内容返回记录数不为0"
+          check: "验证返回响应中data中总条数不等于0"
           type: "not_eq"
           value: 0
           jsonpath: "$.json.data.total"
 
+      - extract:
+          key: "new_paymentChannel_id"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].id"
 
-  - name: "导出 VIP 数据购买记录"
-    case_id: "bofa_admin_VipListRecord_001"
-    description: "验证导出 VIP 数据购买记录接口"
+  - name: "测试调用查询paymentChannel的支付渠道list接口 刷新接口触发"
+    case_id: "bofa_admin_paymentChannel_query_002"
+    description: "验证测试获取bofa_admin_paymentChannel_query 刷新接口触发"
 
     request:
-      method: "GET"
-      url: "/cdb/dzvip/vippurchase/vipPurchaseHistoryExportV2"
+      method: "POST"
+      url: "/cdb/dzsys/paymentchannel/refresh"
       params:
-        idw:
         page: 1
         limit: 20
-        account:
-        previousViPType:
-        afterViPType:
-        paymentMethod:
-        whetherToPay: 2
-        expireTimes: 2025-11-17 00:00:00
-        expireTimee: 2025-11-17 23:59:59
-        sourceInvitationCode:
-        gmt:
-        channelName:
-        channelType:
-        exportFields:
       headers:
         authorization: "${authorization_admin_token}"
       cookies: null
-      body_type: null
-      body: null
-
-      files: null
-
-    teardown:
-      - assert:
-          check: "验证请求成功--code"
-          type: "eq"
-          value: 20000
-          jsonpath: "$.json.code"
-
-      - assert:
-          check: "验证返回响应成功标识--msg"
-          type: "eq"
-          value: "success"
-          jsonpath: "$.json.msg"
-
-
-  - name: "VIP 未支付订单数据"
-    case_id: "bofa_admin_VipLestRecord_002"
-    description: "验证VIP 未支付订单数据接口"
-
-    request:
-      method: "GET"
-      url: "/cdb/dzvip/vippurchase/list"
-      params:
-        idw:
-        page: 1
-        limit: 20
-        account:
-        previousViPType:
-        afterViPType:
-        paymentMethod:
-        whetherToPay: 1
-        expireTimes: 2025-08-19 20:38:57
-        expireTimee: 2025-11-17 20:38:57
-        sourceInvitationCode:
-        gmt:
-        depositAddress:
-        channelName:
-        channelType:
-      headers:
-        authorization: "${authorization_admin_token}"
-      cookies: null
-      body_type: null
+      body_type: "json"
       body: null
       files: null
 
@@ -222,58 +201,3 @@ test_steps:
           type: "eq"
           value: "success"
           jsonpath: "$.json.msg"
-
-      - assert:
-          check: "验证返回响应中data内容返回记录数不为0"
-          type: "not_eq"
-          value: 0
-          jsonpath: "$.json.data.total"
-
-
-
-
-
-  - name: "导出未支付订单数据"
-    case_id: "bofa_admin_VipListRecord_003"
-    description: "校验导出未支付订单数据接口"
-
-    request:
-      method: "GET"
-      url: "/cdb/dzvip/vipmessage"
-      params:
-        idw:
-        page: 1
-        limit: 20
-        account:
-        previousViPType:
-        afterViPType:
-        paymentMethod:
-        whetherToPay: 1
-        expireTimes: 2025-08-19 20:38:57
-        expireTimee: 2025-11-17 20:38:57
-        sourceInvitationCode:
-        gmt:
-        depositAddress:
-        channelName:
-        channelType:
-      headers:
-        authorization: "${authorization_admin_token}"
-      cookies: null
-      body_type: null
-      body: null
-
-      files: null
-
-    teardown:
-      - assert:
-          check: "验证请求成功--code"
-          type: "eq"
-          value: 20000
-          jsonpath: "$.json.code"
-
-      - assert:
-          check: "验证返回响应成功标识--msg"
-          type: "eq"
-          value: "success"
-          jsonpath: "$.json.msg"
-

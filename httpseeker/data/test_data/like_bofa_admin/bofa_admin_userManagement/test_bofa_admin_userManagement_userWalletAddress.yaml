@@ -1,0 +1,229 @@
+# bofa站点admin后台首页
+config:
+  allure:
+    epic: "bofa站点admin后台"
+    feature: "用户管理_用户钱包地址"
+    story: "页面所有数据接口"
+    severity: "critical"
+
+  request:
+    env: "like_bofa_admin_test.env"  # 需要在run_env目录下创建test.env文件
+    headers:
+      Content-Type: "application/json"
+    timeout: 30
+    verify: false
+
+  module: "userMgmt_userWalletAddr"
+
+test_steps:
+  - name: "登录"
+    case_id: "cdb_bofa_login_001"
+    description: "登录拿token"
+
+    request:
+      method: "POST"
+      url: "/cdb/account/login"
+      params: null
+      headers: null
+      cookies: null
+      body_type: "json"
+      body:
+        username: ethans
+        password: 75OIo26rz2WLN02K4ZH6yQ==
+        ggcode: ${get_login_google_auth_code()}
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+      - extract:
+          key: "token"
+          type: "cache"
+          jsonpath: "$.json.data.token"
+
+  # ========== 步骤2: 用户管理模块-用户钱包地址子模块-导出==========
+  - name: "导出"
+    case_id: "cdb_bofa_userMgmt_usrWltAddr_001"
+    description: "用户管理模块-用户钱包地址子模块-导出"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzuser/walletaddress/walletExport?page=1&limit=20&platformName=&walletAddress=&walletName=&channelType=&exportFields="
+      params: null
+      headers:
+        Authorization: "${token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "响应状态码为200"
+          type: "eq"
+          value: 200
+          jsonpath: "$.status_code"
+
+  # ========== 步骤3: 用户管理模块-用户钱包地址子模块-添加地址==========
+  - name: "添加地址"
+    case_id: "cdb_bofa_userMgmt_usrWltAddr_002"
+    description: "用户管理模块-用户钱包地址子模块-添加地址"
+
+    request:
+      method: "POST"
+      url: "/cdb/dzuser/walletaddress"
+      params: null
+      headers:
+        Authorization: "${token}"
+        X-Safe-Password: "${get_action_google_auth_code()}"
+      cookies: null
+      body_type: "json"
+      body:
+        "id": ""
+        "sourceInvitationCode": ""
+        "uid": ""
+        "account": "57764"
+        "walletAddress": "TEApzCFND7W4u6oRSNvDc5naacVXgyCVB5"
+        "platformName": "WalletPay"
+        "bankname": "中国银行"
+        "channelType": "USDT.TRC20"
+        "walletName": "ethans"
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+  # ========== 步骤4: 用户管理模块-用户钱包地址子模块-列表数据==========
+  - name: "列表数据"
+    case_id: "cdb_bofa_userMgmt_usrWltAddr_003"
+    description: "用户管理模块-用户钱包地址子模块-列表数据"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzuser/walletaddress/list?page=1&limit=20&platformName=&walletAddress=&walletName=&channelType="
+      params: null
+      headers:
+        Authorization: "${token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+      - extract:
+          key: "id"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].id"
+
+  # ========== 步骤5: 用户管理模块-用户钱包地址子模块-修改地址==========
+  - name: "修改地址"
+    case_id: "cdb_bofa_userMgmt_usrWltAddr_004"
+    description: "用户管理模块-用户钱包地址子模块-修改地址"
+
+    request:
+      method: "PUT"
+      url: "/cdb/dzuser/walletaddress"
+      params: null
+      headers:
+        Authorization: "${token}"
+        X-Safe-Password: "${get_action_google_auth_code()}"
+      cookies: null
+      body_type: "json"
+      body:
+        "id": ${id}
+        "uid": 286213
+        "account": "57764"
+        "walletAddress": "TEApzCFND7W4u6oRSNvDc5naacVXgyCVB6"
+        "platformName": "WalletPay"
+        "bankname": "中国银行"
+        "channelType": "USDT.TRC20"
+        "walletName": "ethans"
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+  # ========== 步骤6: 用户管理模块-用户钱包地址子模块-删除地址==========
+  - name: "删除地址"
+    case_id: "cdb_bofa_userMgmt_usrWltAddr_005"
+    description: "用户管理模块-用户钱包地址子模块-删除地址"
+
+    request:
+      method: "DELETE"
+      url: "/cdb/dzuser/walletaddress?id=${id}"
+      params: null
+      headers:
+        Authorization: "${token}"
+        X-Safe-Password: "${get_action_google_auth_code()}"
+      cookies: null
+      body_type:  null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+

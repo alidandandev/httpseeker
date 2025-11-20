@@ -199,7 +199,7 @@ class AutoRegisterAndRecharge:
 
     def step7_update_auth_yaml(self):
         """步骤7: 更新auth.yaml文件"""
-        auth_yaml_path = current_dir / "core" / "auth_yaml" / "like_bofa_h5.yaml"
+        auth_yaml_path = current_dir / "core" / "auth_yaml" / "Dz_like_bofa_h5.yaml"
 
         try:
             # 读取现有的auth.yaml文件内容

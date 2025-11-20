@@ -7,7 +7,7 @@ config:
     severity: "critical"
 
   request:
-    env: "like_bofa_h5_test.env"  # 需要在run_env目录下创建test.env文件
+    env: "Dz_like_bofa_h5.env"  # 需要在run_env目录下创建test.env文件
     headers:
       Content-Type: "application/json"
     timeout: 30

@@ -7,7 +7,7 @@ config:
     severity: "critical"
 
   request:
-    env: "like_bofa_h5_test.env"
+    env: "Dz_like_bofa_h5.env"
     headers:
       Content-Type: "application/json;charset=UTF-8"
     timeout: 30
