@@ -1,0 +1,1932 @@
+# 点赞博发web站点登录后默认API测试用例集合
+config:
+  allure:
+    epic: "对bofa_admin后台管理系统中财务中心-提现记录查询"
+    feature: "admin后台管理系统中 财务中心-withdrawRecord的提现记录查询"
+    story: "默认API接口测试:test_bofa_admin_withdrawRecord的提现记录查询"
+    severity: "critical"
+
+  request:
+    env: "like_bofa_admin_test.env"  # 需要在run_env目录下创建qat.env文件
+    headers:
+      Content-Type: "application/json"
+    timeout: 30
+    verify: false
+    encryption_enabled: false
+    encryption_key: "your-32-byte-secure-aes-key-1234"  # 32字节的AES密钥
+
+  module: "default_apis_test"
+
+test_steps:
+  - name: "测试调用account_encryptionEnabled接口"
+    case_id: "bofa_admin_account_encryptionEnabled_001"
+    description: "验证测试获取bofa_admin_account_encryptionEnabled"
+
+    request:
+      method: "GET"
+      url: "/cdb/account/encryptionEnabled"
+      params: null
+      headers: null
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+  - name: "测试调用account_login接口"
+    case_id: "bofa_admin_account_login_001"
+    description: "验证测试获取bofa_admin_account_login 并获取后台登录后生成的token用于后续其他测试场景"
+
+    request:
+      method: "POST"
+      url: "/cdb/account/login"
+      params: null
+      headers: null
+      cookies: null
+      body_type: "json"
+      body:
+        username: "tiger"  # 后台登录账号
+        password: "O4zAs9Mz4aoYOirIST4Xyg==" # 后台登录密码
+        ggcode: ""
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+            check: "验证返回响应data为不空"
+            type: "not_eq"
+            value: null
+            jsonpath: "$.json.data."
+
+      - extract:
+          key: "authorization_admin_token"
+          type: "cache"
+          jsonpath: "$.json.data.token"
+
+  - name: "测试调用查询withdrawRecord的 VIP类型查询 "
+    case_id: "bofa_admin_withdrawRecord_VIPQuery_001"
+    description: "验证测试withdrawRecord_VIPQuery_001 VIP类型查询 "
+
+    request:
+      method: "GET"
+      url: "/cdb/dict/getDicts/ViP%E7%B1%BB%E5%9E%8B"
+      params: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+  - name: "测试调用查询withdrawRecord的 状态类型查询 "
+    case_id: "bofa_admin_withdrawRecord_statusQuery_001"
+    description: "验证测试withdrawRecord_statusQuery_001 状态类型查询 "
+
+    request:
+      method: "GET"
+      url: "/cdb/dict/getDicts/%E5%AE%A1%E6%A0%B8%E7%8A%B6%E6%80%81"
+      params: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+  - name: "测试调用查询withdrawRecord的 支付通道查询 "
+    case_id: "bofa_admin_withdrawRecord_payChannelQuery_001"
+    description: "验证测试withdrawRecord_payChannelQuery_001 支付通道查询 "
+
+    request:
+      method: "GET"
+      url: "/cdb/dict/getDicts/%E6%94%AF%E4%BB%98%E9%80%9A%E9%81%93"
+      params: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+  - name: "测试调用查询withdrawRecord的 支付通道类型查询 "
+    case_id: "bofa_admin_withdrawRecord_payChannelTypeQuery_001"
+    description: "验证测试withdrawRecord_payChannelTypeQuery_001 支付通道类型查询 "
+
+    request:
+      method: "GET"
+      url: "/cdb/dict/getDicts/%E9%80%9A%E9%81%93%E7%B1%BB%E5%9E%8B"
+      params: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+  - name: "测试调用查询withdrawRecord的提现记录查询 默认无条件查询"
+    case_id: "bofa_admin_withdrawRecord_query_001"
+    description: "验证测试withdrawRecord_query_001 的提现记录查询 默认无条件查询"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzuser/withdrawals/list"
+      params:
+        page: 1
+        limit: 20
+        sourceInvitationCode: null
+        withdrawalAddress: null
+        transactionNumber: null
+        countryCodeNumber: null
+        orderNumber: null
+        account: null
+        rechargeStatus: null
+        channelName: null
+        flg: "2"
+        expireTimes: null
+        expireTimee: null
+        vipType: null
+        gmt: null
+        channelType: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中记录条数大于0"
+          type: "not_eq"
+          value: 0
+          jsonpath: "$.json.data.total"
+      - extract:
+          key: "frist_withdrawRecord_rechargeStatus"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].rechargeStatus"
+      - extract:
+          key: "frist_withdrawRecord_vipType"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].userInfo.vipType"
+      - extract:
+          key: "frist_withdrawRecord_orderNumber"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].orderNumber"
+      - extract:
+          key: "frist_withdrawRecord_withdrawalAddress"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].withdrawalAddress"
+      - extract:
+          key: "frist_withdrawRecord_upWithdrawalAddress"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].upWithdrawalAddress"
+      - extract:
+          key: "frist_withdrawRecord_channelName"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].channelName"
+      - extract:
+          key: "frist_withdrawRecord_channelName_str"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].channelName_str"
+      - extract:
+          key: "frist_withdrawRecord_channelType"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].channelType"
+      - extract:
+          key: "frist_withdrawRecord_countryCodeNumber"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].userInfo.countryCodeNumber"
+      - extract:
+          key: "frist_withdrawRecord_account"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].account"
+      - extract:
+          key: "frist_withdrawRecord_id"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].id"
+      - extract:
+          key: "frist_withdrawRecord_idw"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].idw"
+      - extract:
+          key: "frist_withdrawRecord_transactionNumber"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].transactionNumber"
+      - extract:
+          key: "frist_withdrawRecord_sourceInvitationAccount"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].userInfo.user.account"
+
+      - extract:
+          key: "frist_withdrawRecord_sourceInvitationCode"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].sourceInvitationCode"
+      - extract:
+          key: "frist_withdrawRecord_uid"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].uid"
+      - extract:
+          key: "frist_withdrawRecord_handlingFee"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].handlingFee"
+      - extract:
+          key: "frist_withdrawRecord_amountReceived"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].amountReceived"
+      - extract:
+          key: "frist_withdrawRecord_remark"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].remark"
+      - extract:
+          key: "frist_withdrawRecord_operator"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].operator"
+      - extract:
+          key: "frist_withdrawRecord_previousBalance"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].previousBalance"
+      - extract:
+          key: "frist_withdrawRecord_money"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].money"
+      - extract:
+          key: "frist_withdrawRecord_afterBalance"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].afterBalance"
+
+  - name: "测试调用查询withdrawRecord的提现记录汇总金额查询 默认无条件查询"
+    case_id: "bofa_admin_withdrawRecord_findCountMoney_query_001"
+    description: "验证测试withdrawRecord_findCountMoney_query_001 的提现记录汇总金额查询 默认无条件查询"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzuser/withdrawals/findCountMoney"
+      params:
+        page: 1
+        limit: 20
+        sourceInvitationCode: null
+        withdrawalAddress: null
+        transactionNumber: null
+        countryCodeNumber: null
+        orderNumber: null
+        account: null
+        rechargeStatus: null
+        channelName: null
+        flg: "2"
+        expireTimes: null
+        expireTimee: null
+        vipType: null
+        gmt: null
+        channelType: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中金额大于0"
+          type: "not_eq"
+          value: 0
+          jsonpath: "$.json.data.countMoney"
+
+  - name: "测试调用查询withdrawRecord的提现记录查询 按照状态去条件查询"
+    case_id: "bofa_admin_withdrawRecord_query_002"
+    description: "验证测试withdrawRecord_query_002 的提现记录查询 按照状态去条件查询"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzuser/withdrawals/list"
+      params:
+        page: 1
+        limit: 20
+        sourceInvitationCode: null
+        withdrawalAddress: null
+        transactionNumber: null
+        countryCodeNumber: null
+        orderNumber: null
+        account: null
+        rechargeStatus: "${frist_withdrawRecord_rechargeStatus}"
+        channelName: null
+        flg: "2"
+        expireTimes: null
+        expireTimee: null
+        vipType: null
+        gmt: null
+        channelType: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中记录条数大于0"
+          type: "not_eq"
+          value: 0
+          jsonpath: "$.json.data.total"
+
+  - name: "测试调用查询withdrawRecord的提现记录汇总金额查询 按照状态去条件查询"
+    case_id: "bofa_admin_withdrawRecord_findCountMoney_query_002"
+    description: "验证测试withdrawRecord_findCountMoney_query_002 的提现记录汇总金额查询 按照状态去条件查询"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzuser/withdrawals/findCountMoney"
+      params:
+        page: 1
+        limit: 20
+        sourceInvitationCode: null
+        withdrawalAddress: null
+        transactionNumber: null
+        countryCodeNumber: null
+        orderNumber: null
+        account: null
+        rechargeStatus: "${frist_withdrawRecord_rechargeStatus}"
+        channelName: null
+        flg: "2"
+        expireTimes: null
+        expireTimee: null
+        vipType: null
+        gmt: null
+        channelType: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中金额大于0"
+          type: "not_eq"
+          value: 0
+          jsonpath: "$.json.data.countMoney"
+
+  - name: "测试调用查询withdrawRecord的提现记录查询 按照选择VIP等级去条件查询"
+    case_id: "bofa_admin_withdrawRecord_query_003"
+    description: "验证测试withdrawRecord_query_003 的提现记录查询 按照选择VIP等级去条件查询"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzuser/withdrawals/list"
+      params:
+        page: 1
+        limit: 20
+        sourceInvitationCode: null
+        withdrawalAddress: null
+        transactionNumber: null
+        countryCodeNumber: null
+        orderNumber: null
+        account: null
+        rechargeStatus: null
+        channelName: null
+        flg: "2"
+        expireTimes: null
+        expireTimee: null
+        vipType: "${frist_withdrawRecord_vipType}"
+        gmt: null
+        channelType: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中记录条数大于0"
+          type: "not_eq"
+          value: 0
+          jsonpath: "$.json.data.total"
+
+  - name: "测试调用查询withdrawRecord的提现记录汇总金额查询 按照选择VIP等级去条件查询"
+    case_id: "bofa_admin_withdrawRecord_findCountMoney_query_003"
+    description: "验证测试withdrawRecord_findCountMoney_query_003 的提现记录汇总金额查询 按照选择VIP等级去条件查询"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzuser/withdrawals/findCountMoney"
+      params:
+        page: 1
+        limit: 20
+        sourceInvitationCode: null
+        withdrawalAddress: null
+        transactionNumber: null
+        countryCodeNumber: null
+        orderNumber: null
+        account: null
+        rechargeStatus: null
+        channelName: null
+        flg: "2"
+        expireTimes: null
+        expireTimee: null
+        vipType: "${frist_withdrawRecord_vipType}"
+        gmt: null
+        channelType: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中金额大于0"
+          type: "not_eq"
+          value: 0
+          jsonpath: "$.json.data.countMoney"
+
+  - name: "测试调用查询withdrawRecord的提现记录查询 按照输入国家码去条件查询"
+    case_id: "bofa_admin_withdrawRecord_query_004"
+    description: "验证测试withdrawRecord_query_004 的提现记录查询 按照输入国家码去条件查询"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzuser/withdrawals/list"
+      params:
+        page: 1
+        limit: 20
+        sourceInvitationCode: null
+        withdrawalAddress: null
+        transactionNumber: null
+        countryCodeNumber: "${frist_withdrawRecord_countryCodeNumber}"
+        orderNumber: null
+        account: null
+        rechargeStatus: null
+        channelName: null
+        flg: "2"
+        expireTimes: null
+        expireTimee: null
+        vipType: null
+        gmt: null
+        channelType: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中记录条数大于0"
+          type: "not_eq"
+          value: 0
+          jsonpath: "$.json.data.total"
+
+  - name: "测试调用查询withdrawRecord的提现记录汇总金额查询 按照输入国家码去条件查询"
+    case_id: "bofa_admin_withdrawRecord_findCountMoney_query_004"
+    description: "验证测试withdrawRecord_findCountMoney_query_004 的提现记录汇总金额查询 按照输入国家码去条件查询"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzuser/withdrawals/findCountMoney"
+      params:
+        page: 1
+        limit: 20
+        sourceInvitationCode: null
+        withdrawalAddress: null
+        transactionNumber: null
+        countryCodeNumber: "${frist_withdrawRecord_countryCodeNumber}"
+        orderNumber: null
+        account: null
+        rechargeStatus: null
+        channelName: null
+        flg: "2"
+        expireTimes: null
+        expireTimee: null
+        vipType: null
+        gmt: null
+        channelType: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中金额大于0"
+          type: "not_eq"
+          value: 0
+          jsonpath: "$.json.data.countMoney"
+
+  - name: "测试调用查询withdrawRecord的提现记录查询 按照输入用户账户去条件查询"
+    case_id: "bofa_admin_withdrawRecord_query_005"
+    description: "验证测试withdrawRecord_query_005 的提现记录查询 按照输入用户账户去条件查询"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzuser/withdrawals/list"
+      params:
+        page: 1
+        limit: 20
+        sourceInvitationCode: null
+        withdrawalAddress: null
+        transactionNumber: null
+        countryCodeNumber: null
+        orderNumber: null
+        account: "${frist_withdrawRecord_account}"
+        rechargeStatus: null
+        channelName: null
+        flg: "2"
+        expireTimes: null
+        expireTimee: null
+        vipType: null
+        gmt: null
+        channelType: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中记录条数大于0"
+          type: "not_eq"
+          value: 0
+          jsonpath: "$.json.data.total"
+
+  - name: "测试调用查询withdrawRecord的提现记录汇总金额查询 按照输入用户账户去条件查询"
+    case_id: "bofa_admin_withdrawRecord_findCountMoney_query_005"
+    description: "验证测试withdrawRecord_findCountMoney_query_005 的提现记录汇总金额查询 按照输入用户账户去条件查询"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzuser/withdrawals/findCountMoney"
+      params:
+        page: 1
+        limit: 20
+        sourceInvitationCode: null
+        withdrawalAddress: null
+        transactionNumber: null
+        countryCodeNumber: null
+        orderNumber: null
+        account: "${frist_withdrawRecord_account}"
+        rechargeStatus: null
+        channelName: null
+        flg: "2"
+        expireTimes: null
+        expireTimee: null
+        vipType: null
+        gmt: null
+        channelType: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中金额大于0"
+          type: "not_eq"
+          value: 0
+          jsonpath: "$.json.data.countMoney"
+
+  - name: "测试调用查询withdrawRecord的提现记录查询 按照输入订单号去条件查询"
+    case_id: "bofa_admin_withdrawRecord_query_006"
+    description: "验证测试withdrawRecord_query_006 的提现记录查询 按照输入订单号去条件查询"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzuser/withdrawals/list"
+      params:
+        page: 1
+        limit: 20
+        sourceInvitationCode: null
+        withdrawalAddress: null
+        transactionNumber: null
+        countryCodeNumber: null
+        orderNumber: "${frist_withdrawRecord_orderNumber}"
+        account: null
+        rechargeStatus: null
+        channelName: null
+        flg: "2"
+        expireTimes: null
+        expireTimee: null
+        vipType: null
+        gmt: null
+        channelType: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中记录条数大于0"
+          type: "not_eq"
+          value: 0
+          jsonpath: "$.json.data.total"
+
+  - name: "测试调用查询withdrawRecord的提现记录汇总金额查询 按照输入订单号去条件查询"
+    case_id: "bofa_admin_withdrawRecord_findCountMoney_query_006"
+    description: "验证测试withdrawRecord_findCountMoney_query_006 的提现记录汇总金额查询 按照输入订单号去条件查询"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzuser/withdrawals/findCountMoney"
+      params:
+        page: 1
+        limit: 20
+        sourceInvitationCode: null
+        withdrawalAddress: null
+        transactionNumber: null
+        countryCodeNumber: null
+        orderNumber: "${frist_withdrawRecord_orderNumber}"
+        account: null
+        rechargeStatus: null
+        channelName: null
+        flg: "2"
+        expireTimes: null
+        expireTimee: null
+        vipType: null
+        gmt: null
+        channelType: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中金额大于0"
+          type: "not_eq"
+          value: 0
+          jsonpath: "$.json.data.countMoney"
+
+  - name: "测试调用查询withdrawRecord的提现记录查询 按照顶级代理账号去条件查询"
+    case_id: "bofa_admin_withdrawRecord_query_007"
+    description: "验证测试withdrawRecord_query_007 的提现记录查询 按照顶级代理账号去条件查询"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzuser/withdrawals/list"
+      params:
+        page: 1
+        limit: 20
+        sourceInvitationCode: "${frist_withdrawRecord_sourceInvitationAccount}"
+        withdrawalAddress: null
+        transactionNumber: null
+        countryCodeNumber: null
+        orderNumber: null
+        account: null
+        rechargeStatus: null
+        channelName: null
+        flg: "2"
+        expireTimes: null
+        expireTimee: null
+        vipType: null
+        gmt: null
+        channelType: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中记录条数大于0"
+          type: "not_eq"
+          value: 0
+          jsonpath: "$.json.data.total"
+
+  - name: "测试调用查询withdrawRecord的提现记录汇总金额查询 按照顶级代理账号去条件查询"
+    case_id: "bofa_admin_withdrawRecord_findCountMoney_query_007"
+    description: "验证测试withdrawRecord_findCountMoney_query_007 的提现记录汇总金额查询 按照顶级代理账号去条件查询"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzuser/withdrawals/findCountMoney"
+      params:
+        page: 1
+        limit: 20
+        sourceInvitationCode: "${frist_withdrawRecord_sourceInvitationAccount}"
+        withdrawalAddress: null
+        transactionNumber: null
+        countryCodeNumber: null
+        orderNumber: null
+        account: null
+        rechargeStatus: null
+        channelName: null
+        flg: "2"
+        expireTimes: null
+        expireTimee: null
+        vipType: null
+        gmt: null
+        channelType: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中金额大于0"
+          type: "not_eq"
+          value: 0
+          jsonpath: "$.json.data.countMoney"
+
+  - name: "测试调用查询withdrawRecord的提现记录查询 按照选择的支付渠道去条件查询"
+    case_id: "bofa_admin_withdrawRecord_query_008"
+    description: "验证测试withdrawRecord_query_008 的提现记录查询 按照选择的支付渠道去条件查询"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzuser/withdrawals/list"
+      params:
+        page: 1
+        limit: 20
+        sourceInvitationCode: null
+        withdrawalAddress: null
+        transactionNumber: null
+        countryCodeNumber: null
+        orderNumber: null
+        account: null
+        rechargeStatus: null
+        channelName: "${frist_withdrawRecord_channelName}"
+        flg: "2"
+        expireTimes: null
+        expireTimee: null
+        vipType: null
+        gmt: null
+        channelType: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中记录条数大于0"
+          type: "not_eq"
+          value: 0
+          jsonpath: "$.json.data.total"
+
+  - name: "测试调用查询withdrawRecord的提现记录汇总金额查询 按照选择的支付渠道去条件查询"
+    case_id: "bofa_admin_withdrawRecord_findCountMoney_query_008"
+    description: "验证测试withdrawRecord_findCountMoney_query_008 的提现记录汇总金额查询 按照选择的支付渠道去条件查询"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzuser/withdrawals/findCountMoney"
+      params:
+        page: 1
+        limit: 20
+        sourceInvitationCode: null
+        withdrawalAddress: null
+        transactionNumber: null
+        countryCodeNumber: null
+        orderNumber: null
+        account: null
+        rechargeStatus: null
+        channelName: "${frist_withdrawRecord_channelName}"
+        flg: "2"
+        expireTimes: null
+        expireTimee: null
+        vipType: null
+        gmt: null
+        channelType: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中金额大于0"
+          type: "not_eq"
+          value: 0
+          jsonpath: "$.json.data.countMoney"
+
+  - name: "测试调用查询withdrawRecord的提现记录查询 按照选择的通道类型去条件查询"
+    case_id: "bofa_admin_withdrawRecord_query_009"
+    description: "验证测试withdrawRecord_query_009 的提现记录查询 按照选择的通道类型去条件查询"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzuser/withdrawals/list"
+      params:
+        page: 1
+        limit: 20
+        sourceInvitationCode: null
+        withdrawalAddress: null
+        transactionNumber: null
+        countryCodeNumber: null
+        orderNumber: null
+        account: null
+        rechargeStatus: null
+        channelName: null
+        flg: "2"
+        expireTimes: null
+        expireTimee: null
+        vipType: null
+        gmt: null
+        channelType: "${frist_withdrawRecord_channelType}"
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+  - name: "测试调用查询withdrawRecord的提现记录汇总金额查询 按照选择的通道类型去条件查询"
+    case_id: "bofa_admin_withdrawRecord_findCountMoney_query_009"
+    description: "验证测试withdrawRecord_findCountMoney_query_009 的提现记录汇总金额查询 按照选择的通道类型去条件查询"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzuser/withdrawals/findCountMoney"
+      params:
+        page: 1
+        limit: 20
+        sourceInvitationCode: null
+        withdrawalAddress: null
+        transactionNumber: null
+        countryCodeNumber: null
+        orderNumber: null
+        account: null
+        rechargeStatus: null
+        channelName: null
+        flg: "2"
+        expireTimes: null
+        expireTimee: null
+        vipType: null
+        gmt: null
+        channelType: "${frist_withdrawRecord_channelType}"
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+  - name: "测试调用查询withdrawRecord的提现记录查询 按照输入提现地址或者银行卡号去条件查询"
+    case_id: "bofa_admin_withdrawRecord_query_010"
+    description: "验证测试withdrawRecord_query_010 的提现记录查询 按照输入提现地址或者银行卡号去条件查询"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzuser/withdrawals/list"
+      params:
+        page: 1
+        limit: 20
+        sourceInvitationCode: null
+        withdrawalAddress: "${frist_withdrawRecord_upWithdrawalAddress}"
+        transactionNumber: null
+        countryCodeNumber: null
+        orderNumber: null
+        account: null
+        rechargeStatus: null
+        channelName: null
+        flg: "2"
+        expireTimes: null
+        expireTimee: null
+        vipType: null
+        gmt: null
+        channelType: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中记录条数大于0"
+          type: "not_eq"
+          value: 0
+          jsonpath: "$.json.data.total"
+
+  - name: "测试调用查询withdrawRecord的提现记录汇总金额查询 按照输入提现地址或者银行卡号去条件查询"
+    case_id: "bofa_admin_withdrawRecord_findCountMoney_query_010"
+    description: "验证测试withdrawRecord_findCountMoney_query_010 的提现记录汇总金额查询 按照输入提现地址或者银行卡号去条件查询"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzuser/withdrawals/findCountMoney"
+      params:
+        page: 1
+        limit: 20
+        sourceInvitationCode: null
+        withdrawalAddress: "${frist_withdrawRecord_upWithdrawalAddress}"
+        transactionNumber: null
+        countryCodeNumber: null
+        orderNumber: null
+        account: null
+        rechargeStatus: null
+        channelName: null
+        flg: "2"
+        expireTimes: null
+        expireTimee: null
+        vipType: null
+        gmt: null
+        channelType: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中金额大于0"
+          type: "not_eq"
+          value: 0
+          jsonpath: "$.json.data.countMoney"
+
+  - name: "测试调用查询withdrawRecord的提现记录查询 按照输入transactionNumber去条件查询"
+    case_id: "bofa_admin_withdrawRecord_query_011"
+    description: "验证测试withdrawRecord_query_011 的提现记录查询 按照输入transactionNumber去条件查询"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzuser/withdrawals/list"
+      params:
+        page: 1
+        limit: 20
+        sourceInvitationCode: null
+        withdrawalAddress: null
+        transactionNumber: "${frist_withdrawRecord_transactionNumber}"
+        countryCodeNumber: null
+        orderNumber: null
+        account: null
+        rechargeStatus: null
+        channelName: null
+        flg: "2"
+        expireTimes: null
+        expireTimee: null
+        vipType: null
+        gmt: null
+        channelType: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中记录条数大于0"
+          type: "not_eq"
+          value: 0
+          jsonpath: "$.json.data.total"
+
+  - name: "测试调用查询withdrawRecord的提现记录汇总金额查询 按照输入transactionNumber去条件查询"
+    case_id: "bofa_admin_withdrawRecord_findCountMoney_query_011"
+    description: "验证测试withdrawRecord_findCountMoney_query_011 的提现记录汇总金额查询 按照输入transactionNumber去条件查询"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzuser/withdrawals/findCountMoney"
+      params:
+        page: 1
+        limit: 20
+        sourceInvitationCode: null
+        withdrawalAddress: null
+        transactionNumber: "${frist_withdrawRecord_transactionNumber}"
+        countryCodeNumber: null
+        orderNumber: null
+        account: null
+        rechargeStatus: null
+        channelName: null
+        flg: "2"
+        expireTimes: null
+        expireTimee: null
+        vipType: null
+        gmt: null
+        channelType: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中金额大于0"
+          type: "not_eq"
+          value: 0
+          jsonpath: "$.json.data.countMoney"
+
+  - name: "测试调用查询withdrawRecord的提现记录查询 按照时间日期范围去查询"
+    case_id: "bofa_admin_withdrawRecord_query_012"
+    description: "验证测试withdrawRecord_query_012 的提现记录查询 按照时间日期范围去查询"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzuser/withdrawals/list"
+      params:
+        page: 1
+        limit: 20
+        sourceInvitationCode: null
+        withdrawalAddress: null
+        transactionNumber: null
+        countryCodeNumber: null
+        orderNumber: null
+        account: null
+        rechargeStatus: null
+        channelName: null
+        flg: "2"
+        expireTimes: "2025-08-31 12:31:48"
+        expireTimee: "2025-12-30 12:31:48"
+        vipType: null
+        gmt: null
+        channelType: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中记录条数大于0"
+          type: "not_eq"
+          value: 0
+          jsonpath: "$.json.data.total"
+
+  - name: "测试调用查询withdrawRecord的提现记录汇总金额查询 按照时间日期范围去查询"
+    case_id: "bofa_admin_withdrawRecord_findCountMoney_query_012"
+    description: "验证测试withdrawRecord_findCountMoney_query_012 的提现记录汇总金额查询 按照时间日期范围去查询"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzuser/withdrawals/findCountMoney"
+      params:
+        page: 1
+        limit: 20
+        sourceInvitationCode: null
+        withdrawalAddress: null
+        transactionNumber: null
+        countryCodeNumber: null
+        orderNumber: null
+        account: null
+        rechargeStatus: null
+        channelName: null
+        flg: "2"
+        expireTimes: "2025-08-31 12:31:48"
+        expireTimee: "2025-12-30 12:31:48"
+        vipType: null
+        gmt: null
+        channelType: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+  - name: "测试调用withdrawRecord的提现记录 对第一条记录修改备注内容"
+    case_id: "bofa_admin_withdrawRecord_modify_001"
+    description: "验证测试withdrawRecord_modify_001 的提现记录 对第一条记录修改备注内容"
+
+    request:
+      method: "PUT"
+      url: "/cdb/dzuser/withdrawals"
+      params: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: "json"
+      body:
+        id: "${frist_withdrawRecord_id}"
+        idw: "${frist_withdrawRecord_idw}"
+        sourceInvitationCode: "${frist_withdrawRecord_sourceInvitationCode}"
+        uid: "${frist_withdrawRecord_uid}"
+        account: "${frist_withdrawRecord_account}"
+        orderNumber: "${frist_withdrawRecord_orderNumber}"
+        transactionNumber: "${frist_withdrawRecord_transactionNumber}"
+        channelName: "${frist_withdrawRecord_channelName}"
+        handlingFee: "${frist_withdrawRecord_handlingFee}"
+        amountReceived: "${frist_withdrawRecord_amountReceived}"
+        rechargeStatus: "${frist_withdrawRecord_rechargeStatus}"
+        remark: "${frist_withdrawRecord_remark} nodify"
+        withdrawalAddress: "${frist_withdrawRecord_withdrawalAddress}"
+        upWithdrawalAddress: "${frist_withdrawRecord_upWithdrawalAddress}"
+        operator: "${frist_withdrawRecord_operator}"
+        previousBalance: "${frist_withdrawRecord_previousBalance}"
+        money: "${frist_withdrawRecord_money}"
+        afterBalance: "${frist_withdrawRecord_afterBalance}"
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+  - name: "测试调用查询withdrawRecord的提现记录查询 查询已审核状态的记录  提取第一条数据为进行驳回操作做准备"
+    case_id: "bofa_admin_withdrawRecord_query_201"
+    description: "验证测试withdrawRecord_query_201 的提现记录查询 提取第一条数据"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzuser/withdrawals/list"
+      params:
+        page: 1
+        limit: 20
+        sourceInvitationCode: null
+        withdrawalAddress: null
+        transactionNumber: null
+        countryCodeNumber: null
+        orderNumber: null
+        account: null
+        rechargeStatus: "ok"
+        channelName: null
+        flg: "2"
+        expireTimes: null
+        expireTimee: null
+        vipType: null
+        gmt: null
+        channelType: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中记录条数大于0"
+          type: "not_eq"
+          value: 0
+          jsonpath: "$.json.data.total"
+      - extract:
+          key: "frist_withdrawRecord_rechargeStatus"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].rechargeStatus"
+      - extract:
+          key: "frist_withdrawRecord_vipType"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].userInfo.vipType"
+      - extract:
+          key: "frist_withdrawRecord_orderNumber"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].orderNumber"
+      - extract:
+          key: "frist_withdrawRecord_withdrawalAddress"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].withdrawalAddress"
+      - extract:
+          key: "frist_withdrawRecord_upWithdrawalAddress"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].upWithdrawalAddress"
+      - extract:
+          key: "frist_withdrawRecord_channelName"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].channelName"
+      - extract:
+          key: "frist_withdrawRecord_channelName_str"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].channelName_str"
+      - extract:
+          key: "frist_withdrawRecord_channelType"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].channelType"
+      - extract:
+          key: "frist_withdrawRecord_countryCodeNumber"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].userInfo.countryCodeNumber"
+      - extract:
+          key: "frist_withdrawRecord_account"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].account"
+      - extract:
+          key: "frist_withdrawRecord_id"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].id"
+      - extract:
+          key: "frist_withdrawRecord_idw"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].idw"
+      - extract:
+          key: "frist_withdrawRecord_transactionNumber"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].transactionNumber"
+      - extract:
+          key: "frist_withdrawRecord_sourceInvitationAccount"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].userInfo.user.account"
+
+      - extract:
+          key: "frist_withdrawRecord_sourceInvitationCode"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].sourceInvitationCode"
+      - extract:
+          key: "frist_withdrawRecord_uid"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].uid"
+      - extract:
+          key: "frist_withdrawRecord_handlingFee"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].handlingFee"
+      - extract:
+          key: "frist_withdrawRecord_amountReceived"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].amountReceived"
+      - extract:
+          key: "frist_withdrawRecord_remark"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].remark"
+      - extract:
+          key: "frist_withdrawRecord_operator"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].operator"
+      - extract:
+          key: "frist_withdrawRecord_previousBalance"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].previousBalance"
+      - extract:
+          key: "frist_withdrawRecord_money"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].money"
+      - extract:
+          key: "frist_withdrawRecord_afterBalance"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].afterBalance"
+      - extract:
+          key: "frist_withdrawRecord"
+          type: "cache"
+          jsonpath: "$.json.data.records[0]"
+
+  - name: "测试调用withdrawRecord的提现记录 对第一条已审核记录进行驳回操作"
+    case_id: "bofa_admin_withdrawRecord_updateAuditReject_001"
+    description: "验证测试withdrawRecord_updateAuditReject_001 的提现记录 对第一条已审核记录进行驳回操作"
+
+    request:
+      method: "POST"
+      url: "/cdb/dzuser/withdrawals/updateAuditReject"
+      params: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: "json"
+      body:
+        value: ""
+        withdrawalsRecordList: ["${frist_withdrawRecord}"]
+      files: null
+
+    setup:
+      - testcase: "bofa_admin_withdrawRecord_query_201"  # 先执行可用数据查询提取
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+  - name: "测试调用查询withdrawRecord的提现记录查询 查询已审核状态的记录  提取第一条数据信息为进行手动调用触发做前提准备"
+    case_id: "bofa_admin_withdrawRecord_query_202"
+    description: "验证测试withdrawRecord_query_202 的提现记录查询 提取第一条数据信息为进行手动调用触发做前提准备"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzuser/withdrawals/list"
+      params:
+        page: 1
+        limit: 20
+        sourceInvitationCode: null
+        withdrawalAddress: null
+        transactionNumber: null
+        countryCodeNumber: null
+        orderNumber: null
+        account: null
+        rechargeStatus: "ok"
+        channelName: null
+        flg: "2"
+        expireTimes: null
+        expireTimee: null
+        vipType: null
+        gmt: null
+        channelType: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中记录条数大于0"
+          type: "not_eq"
+          value: 0
+          jsonpath: "$.json.data.total"
+      - extract:
+          key: "frist_withdrawRecord_id"
+          type: "cache"
+          jsonpath: "$.json.data.records[0]"
+
+
+  - name: "测试调用withdrawRecord的提现记录 对第一条进行手动调用触发"
+    case_id: "bofa_admin_withdrawRecord_manualCheckStatusV2_001"
+    description: "验证测试withdrawRecord_manualCheckStatusV2_001 的提现记录 返回第一条进行手动调用触发"
+
+    request:
+      method: "POST"
+      url: "/cdb/dzuser/withdrawals/manualCheckStatusV2"
+      params: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: "json"
+      body:
+        id: "${frist_withdrawRecord_id}"
+      files: null
+
+    setup:
+      - testcase: "bofa_admin_withdrawRecord_query_202"  # 先执行可用数据查询提取
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+  - name: "测试调用查询withdrawRecord的提现记录查询 查询已审核状态的记录  提取第一条数据 为进行手动标记完成做准备"
+    case_id: "bofa_admin_withdrawRecord_query_203"
+    description: "验证测试withdrawRecord_query_203 的提现记录查询 提取第一条数据 为进行手动标记完成做准备"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzuser/withdrawals/list"
+      params:
+        page: 1
+        limit: 20
+        sourceInvitationCode: null
+        withdrawalAddress: null
+        transactionNumber: null
+        countryCodeNumber: null
+        orderNumber: null
+        account: null
+        rechargeStatus: "ok"
+        channelName: null
+        flg: "2"
+        expireTimes: null
+        expireTimee: null
+        vipType: null
+        gmt: null
+        channelType: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中记录条数大于0"
+          type: "not_eq"
+          value: 0
+          jsonpath: "$.json.data.total"
+      - extract:
+          key: "frist_withdrawRecord_info"
+          type: "cache"
+          jsonpath: "$.json.data.records[0]"
+
+  - name: "测试调用withdrawRecord的提现记录 返回第一条进行手动标记完成"
+    case_id: "bofa_admin_withdrawRecord_manualspmesg_001"
+    description: "验证测试withdrawRecord_manualspmesg_001 的提现记录 返回第一条进行手动标记完成"
+
+    request:
+      method: "POST"
+      url: "/cdb/dzuser/withdrawals/updateStatus"
+      params: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: "json"
+      body: ${frist_withdrawRecord_info}
+      files: null
+    setup:
+      - testcase: "bofa_admin_withdrawRecord_query_203"  # 先执行可用数据查询提取
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+  - name: "测试调用查询withdrawRecord的提现记录  按默认查询后导出"
+    case_id: "bofa_admin_withdrawRecord_ExportV2_001"
+    description: "验证测试withdrawRecord_ExportV2_001 的提现记录查询 按默认查询后导出"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzuser/withdrawals/withdrawalsExportV2"
+      params:
+        page: 1
+        limit: 20
+        sourceInvitationCode: null
+        withdrawalAddress: null
+        transactionNumber: null
+        countryCodeNumber: null
+        orderNumber: null
+        account: null
+        rechargeStatus: null
+        channelName: null
+        flg: "2"
+        expireTimes: null
+        expireTimee: null
+        vipType: null
+        gmt: null
+        channelType: null
+        orderField: null
+        orderName: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 200
+          jsonpath: "$.status_code"
