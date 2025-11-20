@@ -27,6 +27,13 @@ class HttpSeekerConfig:
         global_env = os.environ.get('HTTPSEEKER_GLOBAL_ENV')
         if global_env:
             self.settings['request']['global_env'] = global_env
+
+        # 检查是否通过Jenkins环境变量动态获取构建URL
+        jenkins_build_url = os.environ.get('BUILD_URL')
+        if jenkins_build_url:
+            # Jenkins环境变量存在，使用BUILD_URL + 'allure/'作为报告地址
+            self.settings['report']['jenkins_url'] = jenkins_build_url.rstrip('/') + '/allure/'
+
         try:
             # 项目目录名
             self.PROJECT_NAME = glom(self.settings, 'project.name')
