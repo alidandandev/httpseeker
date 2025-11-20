@@ -607,3 +607,34 @@ test_steps:
           type: "eq"
           value: "success"
           jsonpath: "$.json.msg"
+
+  - name: "测试调用查询用户购买钱包产品记录 shareWalletRecord记录  按默认查询后导出"
+    case_id: "bofa_admin_shareWalletRecord_ExportV2_001"
+    description: "验证测试shareWalletRecord_ExportV2_001 的shareWalletRecord记录 按默认查询后导出"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzwallet/sharedrecord/sharedWalletRecordExportV2"
+      params:
+        page: 1
+        limit: 20
+        expireTimes: null
+        expireTimee: null
+        account: null
+        status: null
+        name: null
+        lockDate: null
+        sourceInvitationCode: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 200
+          jsonpath: "$.status_code"

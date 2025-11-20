@@ -358,3 +358,67 @@ test_steps:
           value: "success"
           jsonpath: "$.json.msg"
 
+  - name: "测试调用查询creditRecord的 查询变动类型 "
+    case_id: "bofa_admin_creditRecord_changeTypeQuery_001"
+    description: "验证测试creditRecord_changeTypeQuery1 查询变动类型 "
+
+    request:
+      method: "GET"
+      url: "/cdb/dict/getDicts/%E5%8F%98%E6%9B%B4%E7%B1%BB%E5%9E%8B"
+      params: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+  - name: "测试调用查询信誉分变动记录  按默认查询后导出"
+    case_id: "bofa_admin_creditRecord_ExportV2_001"
+    description: "验证测试creditRecord_ExportV2_001 的信誉分变动记录查询 按默认查询后导出"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzcredit/creditrecord/export"
+      params:
+        page: 1
+        limit: 20
+        idw: null
+        chargeStatus: null
+        account: null
+        upAccount: null
+        expireTimes: null
+        expireTimee: null
+        fromAccount: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 200
+          jsonpath: "$.status_code"
