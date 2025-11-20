@@ -60,7 +60,7 @@ send = false
 # Telegram
 [telegram]
 bot_token = '6968270418:AAGlX7tNpfnIuueB2hAssZWzwuNCMjR6ryE'
-chat_id = ' -5069723666'  # 从  https://api.telegram.org/bot6968270418:AAGlX7tNpfnIuueB2hAssZWzwuNCMjR6ryE/getUpdates 获取chat_id
+chat_id = ' -4781359846'  # 从  https://api.telegram.org/bot6968270418:AAGlX7tNpfnIuueB2hAssZWzwuNCMjR6ryE/getUpdates 获取chat_id
 proxies.http = ''
 proxies.https = ''
 send = true
