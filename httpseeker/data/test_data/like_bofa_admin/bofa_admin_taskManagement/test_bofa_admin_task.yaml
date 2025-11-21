@@ -1,9 +1,9 @@
 # 点赞博发web站点登录后默认API测试用例集合
 config:
   allure:
-    epic: "对bofa_admin后台管理系统中站点信息管理中tutorialCenter的教程中心设置 进行相关api接口触发业务校验"
-    feature: "admin后台管理系统中 站点设置管理中tutorialCenter的教程中心设置"
-    story: "默认API接口测试:test_bofa_admin_tutorialCenter的教程中心"
+    epic: "对bofa_admin后台管理系统中任务管理"
+    feature: "admin后台管理系统中任务"
+    story: "默认API接口测试"
     severity: "critical"
 
   request:
@@ -18,34 +18,8 @@ config:
   module: "default_apis_test"
 
 test_steps:
-  - name: "测试调用account_encryptionEnabled接口"
-    case_id: "bofa_admin_account_encryptionEnabled_001"
-    description: "验证测试获取bofa_admin_account_encryptionEnabled"
 
-    request:
-      method: "GET"
-      url: "/cdb/account/encryptionEnabled"
-      params: null
-      headers: null
-      cookies: null
-      body_type: null
-      body: null
-      files: null
-
-    teardown:
-      - assert:
-          check: "验证请求成功--code"
-          type: "eq"
-          value: 20000
-          jsonpath: "$.json.code"
-
-      - assert:
-          check: "验证返回响应成功标识"
-          type: "eq"
-          value: "success"
-          jsonpath: "$.json.msg"
-
-  - name: "测试调用account_login接口"
+  - name: "后台登录接口"
     case_id: "bofa_admin_account_login_001"
     description: "验证测试获取bofa_admin_account_login 并获取后台登录后生成的token用于后续其他测试场景"
 
@@ -57,7 +31,7 @@ test_steps:
       cookies: null
       body_type: "json"
       body:
-        username: "tiger"  # 后台登录账号
+        username: "admin"  # 后台登录账号
         password: "O4zAs9Mz4aoYOirIST4Xyg==" # 后台登录密码
         ggcode: ""
       files: null
@@ -79,33 +53,34 @@ test_steps:
             check: "验证返回响应data为不空"
             type: "not_eq"
             value: null
-            jsonpath: "$.json.data."
+            jsonpath: "$.json.data"
 
       - extract:
           key: "authorization_admin_token"
           type: "cache"
           jsonpath: "$.json.data.token"
-
-  - name: "测试调用新增 tutorialCenter的教程中心接口 "
-    case_id: "bofa_admin_tutorialCenter_add_001"
-    description: "验证测试新增bofa_admin_tutorialCenter_add 新增教程中心记录 "
+  - name: "新增任务"
+    case_id: "bofa_admin_TaskList_002"
+    description: "验证新增任务内容接口"
 
     request:
       method: "POST"
-      url: "/cdb/dzsys/tutorialcenter"
+      url: "/cdb/dzdianzan/likeTask"
       params: null
       headers:
         authorization: "${authorization_admin_token}"
       cookies: null
       body_type: "json"
       body:
-        id: ""
-        idw: ""
-        title: "tiger test tutorialCenter"
-        type: "2"   #2:视频 1:文本
-        status: "1"   #1:启用 2:禁用
-        videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
-        textContent: "<p>this is&nbsp; a tutorial for new user, and type is a vedio file.</p>"
+        id: ''
+        idw: ''
+        name: 测试任务
+        orderRequirements: spvip
+        url: "${random_phone()}"
+        taskType: 银牌
+        taskNum: 4
+        status: ''
+        sort: 3
       files: null
 
     teardown:
@@ -121,17 +96,20 @@ test_steps:
           value: "success"
           jsonpath: "$.json.msg"
 
-  - name: "测试调用查询新增 tutorialCenter的教程中心记录"
-    case_id: "bofa_admin_tutorialCenter_query_001"
-    description: "验证测试获取bofa_admin_tutorialCenter_query 的教程中心 提取所返回第一条数据进行后续业务校验"
+  - name: "查询 任务 列表数据"
+    case_id: "bofa_admin_TaskList_001"
+    description: "验证查询 任务 列表数据接口"
 
     request:
       method: "GET"
-      url: "/cdb/dzsys/tutorialcenter/list"
+      url: "/cdb/dzdianzan/likeTask/list"
       params:
         page: 1
         limit: 20
-        type: null
+        orderRequirements:
+        url:
+        taskType:
+        status:
       headers:
         authorization: "${authorization_admin_token}"
       cookies: null
@@ -153,30 +131,39 @@ test_steps:
           jsonpath: "$.json.msg"
 
       - assert:
-          check: "验证返回响应中data中总条数不等于0"
+          check: "验证返回响应中data内容返回记录数不为0"
           type: "not_eq"
           value: 0
           jsonpath: "$.json.data.total"
+
       - extract:
-          key: "new_tutorialCenter_id"
+          key: "task_id"
           type: "cache"
           jsonpath: "$.json.data.records[0].id"
-      - extract:
-          key: "new_tutorialCenter_idw"
-          type: "cache"
-          jsonpath: "$.json.data.records[0].idw"
 
-  - name: "测试调用查询 tutorialCenter的教程中心记录 按教程类型进行查询"
-    case_id: "bofa_admin_tutorialCenter_query_002"
-    description: "验证测试获取bofa_admin_tutorialCenter_query 的教程中心 按教程类型进行查询"
+      - extract:
+          key: "idw"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].id"
+
+
+
+
+
+  - name: "批量新增任务"
+    case_id: "bofa_admin_TaskList_003"
+    description: "验证批量新增任务接口"
 
     request:
-      method: "GET"
-      url: "/cdb/dzsys/tutorialcenter/list"
+      method: "POST"
+      url: "/cdb/dzdianzan/likeTask/likeTaskbatchAdd"
       params:
-        page: 1
-        limit: 20
-        type: "2"
+        name: 任务
+        url: 呜呜呜呜呜呜呜呜呜呜呜呜
+        taskType: 鑽石vip區
+        taskNum: 1
+        orderRequirements: spvip
+        status: 1
       headers:
         authorization: "${authorization_admin_token}"
       cookies: null
@@ -197,89 +184,25 @@ test_steps:
           value: "success"
           jsonpath: "$.json.msg"
 
-      - assert:
-          check: "验证返回响应中data中总条数不等于0"
-          type: "not_eq"
-          value: 0
-          jsonpath: "$.json.data.total"
 
-  - name: "测试对新增tutorialCenter的教程中心记录 进行修改"
-    case_id: "bofa_admin_tutorialCenter_modify_001"
-    description: "验证测试对新增教程中心信息 tutorialCenter进行修改"
 
-    request:
-      method: "PUT"
-      url: "/cdb/dzsys/tutorialcenter"
-      params: null
-      headers:
-        authorization: "${authorization_admin_token}"
-      cookies: null
-      body_type: "json"
-      body:
-        id: "${new_tutorialCenter_id}"
-        idw: "${new_tutorialCenter_idw}"
-        title: "tiger modify tutorialCenter"
-        type: "2"   #2:视频 1:文本
-        status: "2"   #1:启用 2:禁用
-        videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
-        textContent: "<p>this is&nbsp; a tutorial for new user, and type is a vedio file.</p>"
-      files: null
 
-    teardown:
-      - assert:
-          check: "验证请求成功--code"
-          type: "eq"
-          value: 20000
-          jsonpath: "$.json.code"
 
-      - assert:
-          check: "验证返回响应成功标识--msg"
-          type: "eq"
-          value: "success"
-          jsonpath: "$.json.msg"
-
-  - name: "测试对新增tutorialCenter的教程中心记录进行删除"
-    case_id: "bofa_admin_tutorialCenter_del_001"
-    description: "验证测试对新增tutorialCenter的教程中心记录进行删除"
+  - name: "删除任务数据"
+    case_id: "bofa_admin_Task_004"
+    description: "校验删除任务数据"
 
     request:
       method: "DELETE"
-      url: "/cdb/dzsys/tutorialcenter"
-      params:
-        id: "${new_tutorialCenter_id}"
-      headers:
-        authorization: "${authorization_admin_token}"
-      cookies: null
-      body_type: null
-      body: null
-      files: null
-
-    teardown:
-      - assert:
-          check: "验证请求成功--code"
-          type: "eq"
-          value: 20000
-          jsonpath: "$.json.code"
-
-      - assert:
-          check: "验证返回响应成功标识--msg"
-          type: "eq"
-          value: "success"
-          jsonpath: "$.json.msg"
-
-  - name: "测试调用查询tutorialCenter 查询教程类型 "
-    case_id: "bofa_admin_tutorialCenter_Type_001"
-    description: "验证测试tutorialCenter_Type_001 查询教程类型 "
-
-    request:
-      method: "GET"
-      url: "/cdb/dict/getDicts/%E6%95%99%E7%A8%8B%E7%B1%BB%E5%9E%8B"
+      url: "/cdb/dzdianzan/likeTask/likeTaskBatchDelete"
       params: null
       headers:
         authorization: "${authorization_admin_token}"
       cookies: null
-      body_type: null
-      body: null
+      body_type: "json"
+      body:
+        [{'modifyBy': 1, 'isAudit': None, 'sort': 3, 'url': '放放风', 'createBy': 1, 'taskType': '银牌', 'modifyTime': '2025-11-20 08:00:40', 'createTime': '2025-11-20 08:00:40', 'orderRequirements': 'spvip', 'name': '测试任务', 'id': "${task_id}", 'idw': "${idw}", 'taskNum': 4, 'status': 2}]
+
       files: null
 
     teardown:
@@ -295,8 +218,162 @@ test_steps:
           value: "success"
           jsonpath: "$.json.msg"
 
+
+  - name: "导出数据"
+    case_id: "bofa_admin_Task_005"
+    description: "校验导出页面数据"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzdianzan/likeTask/recordExportV2"
+      params:
+        page: 22
+        limit: 20
+        orderRequirements:
+        url:
+        taskType:
+        status:
+        exportFields:
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+
+
+  - name: "编辑任务内容"
+    case_id: "bofa_admin_Task_6"
+    description: "校验编辑任务数据"
+
+    request:
+      method: "PUT"
+      url: "/cdb/dzdianzan/likeTask"
+      params: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: "json"
+      body:
+        id: 1175
+        idw: '1855848857195483136'
+        name: yoyoyo
+        orderRequirements: spvip
+        url: 'https://zh.uniapp.dcloud.io/tutorial/i18n.html'
+        taskType: 鑽石vip區
+        taskNum: 99
+        status: 3
+        sort: 5
+
+      files: null
+
+    teardown:
       - assert:
-          check: "验证返回响应中data不为空"
-          type: "not_eq"
-          value: null
-          jsonpath: "$.json.data"
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+
+
+
+
+
+
+  - name: "启动任务"
+    case_id: "bofa_admin_Task_7"
+    description: "校验启动任务数据"
+
+    request:
+      method: "POST"
+      url: "/cdb/dzdianzan/likeTask/startOrEndTask"
+      params: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: "json"
+      body:
+        id: 1175
+        status : 1
+
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+
+  - name: "结束任务"
+    case_id: "bofa_admin_Task_8"
+    description: "校验结束任务数据"
+
+    request:
+      method: "POST"
+      url: "/cdb/dzdianzan/likeTask/startOrEndTask"
+      params: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: "json"
+      body:
+        id: 1175
+        status: 3
+
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+
+
+
+
+  - name: "导出任务数据"
+    case_id: "bofa_admin_Task_9"
+    description: "校验导出任务数据"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzdianzan/likeTask/recordExportV2"
+      params:
+        page: 22
+        limit: 20
+        orderRequirements:
+        url:
+        taskType:
+        status:
+        exportFields:
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+

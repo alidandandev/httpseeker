@@ -239,3 +239,37 @@ test_steps:
           type: "not_eq"
           value: 0
           jsonpath: "$.json.data.total"
+
+  - name: "测试调用查询奖品类型  "
+    case_id: "bofa_admin_prizeTypeQuery_002"
+    description: "验证测试prizeTypeQuery_002 奖品类型  "
+
+    request:
+      method: "GET"
+      url: "/cdb/dict/getDicts/%E5%A5%96%E5%93%81%E7%B1%BB%E5%9E%8B"
+      params: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"

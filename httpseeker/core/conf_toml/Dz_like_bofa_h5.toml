@@ -6,8 +6,8 @@ name = 'Dz_like_bofa_h5'
 [report]
 title = "power_bank接口自动化测试报告"
 tester_name = 'Rookie'
-# jenkins allurz_
-jenkins_url = 'https://foryourself'
+# jenkins allure (固定地址，总是指向最新报告)
+jenkins_url = 'http://47.76.165.189:8080/job/Dz_Like_bofa_h5/allure/'
 
 # mysql 数据库（可选，如不需要请留空或删除配置）
 [mysql]
@@ -60,7 +60,7 @@ send = false
 # Telegram
 [telegram]
 bot_token = '6968270418:AAGlX7tNpfnIuueB2hAssZWzwuNCMjR6ryE'
-chat_id = ' -5069723666'  # 从 https://api.telegram.org/bot{TOKEN}/getUpdates 获取chat_id
+chat_id = ' -4781359846'  # 从  https://api.telegram.org/bot6968270418:AAGlX7tNpfnIuueB2hAssZWzwuNCMjR6ryE/getUpdates 获取chat_id
 proxies.http = ''
 proxies.https = ''
 send = true

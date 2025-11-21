@@ -264,3 +264,37 @@ test_steps:
           type: "eq"
           value: "success"
           jsonpath: "$.json.msg"
+
+  - name: "测试调用查询短信信息 查询平台类型 "
+    case_id: "bofa_admin_SMSMessage_platType_001"
+    description: "验证测试SMSMessage_platType_001 查询平台类型 "
+
+    request:
+      method: "GET"
+      url: "/cdb/dict/getDicts/%E7%9F%AD%E4%BF%A1%E5%B9%B3%E5%8F%B0"
+      params: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
