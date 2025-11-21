@@ -1465,6 +1465,11 @@ test_steps:
           type: "eq"
           value: "success"
           jsonpath: "$.json.msg"
+      - assert:
+          check: "验证返回响应中金额大于0"
+          type: "not_eq"
+          value: 0
+          jsonpath: "$.json.data.total"
       - extract:
           key: "frist_rechargeRecord_orderNumber"
           type: "cache"
@@ -1488,7 +1493,8 @@ test_steps:
         orderNumber: "${frist_rechargeRecord_orderNumber}"
         transactionType: 1
       files: null
-
+    setup:
+      - testcase: "bofa_admin_rechargeRecord_query_012"  # 先执行可用数据查询提取
     teardown:
       - assert:
           check: "验证请求回调不成功--code 9999"
