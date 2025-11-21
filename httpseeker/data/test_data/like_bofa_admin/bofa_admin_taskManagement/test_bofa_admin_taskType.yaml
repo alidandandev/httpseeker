@@ -1,8 +1,8 @@
 # 点赞博发web站点登录后默认API测试用例集合
 config:
   allure:
-    epic: "对bofa_admin后台管理系统中VIP管理进行操作"
-    feature: "admin后台管理系统中特殊 VIP"
+    epic: "对bofa_admin后台管理系统中任务管理"
+    feature: "admin后台管理系统中任务类型"
     story: "默认API接口测试"
     severity: "critical"
 
@@ -18,7 +18,6 @@ config:
   module: "default_apis_test"
 
 test_steps:
-
   - name: "后台登录接口"
     case_id: "bofa_admin_account_login_001"
     description: "验证测试获取bofa_admin_account_login 并获取后台登录后生成的token用于后续其他测试场景"
@@ -60,20 +59,33 @@ test_steps:
           type: "cache"
           jsonpath: "$.json.data.token"
 
-  - name: "批量发放特殊VIP"
-    case_id: "bofa_admin_VipListIssue_002"
-    description: "验证批量发放特殊VIP"
+
+  - name: "添加任务类型数据"
+    case_id: "bofa_admin_task_type_002"
+    description: "验证添加任务类型列表数据"
 
     request:
       method: "POST"
-      url: "/cdb/dzvip/special/batchAdd"
+      url: "/cdb/dzdianzan/likeTaskType"
       params: null
       headers:
         authorization: "${authorization_admin_token}"
       cookies: null
       body_type: "json"
       body:
-        account: 1016
+        id: ''
+        idw: ''
+        name: 鑽石vip區
+        imgUrl: ''
+        status: ''
+        sort: 0
+        describe: ''
+        specialStatus: 0
+        canSeeMode: 0
+        canSeeLimit: [ ]
+        canDoMode: 0
+        canDoLimit: [ ]
+
       files: null
 
     teardown:
@@ -89,19 +101,19 @@ test_steps:
           value: "success"
           jsonpath: "$.json.msg"
 
-  - name: "查询特殊 VIP 发放记录"
-    case_id: "bofa_admin_VipListIssue_003"
-    description: "验证查询特殊 VIP 发放记录"
+
+
+  - name: "查询 任务类型数据"
+    case_id: "bofa_admin_task_type_003"
+    description: "验证查询 任务类型列表数据"
 
     request:
       method: "GET"
-      url: "/cdb/dzvip/special/list"
+      url: "/cdb/dzdianzan/likeTaskType/list"
       params:
         page: 1
         limit: 20
-        account:
-        status:
-        vipType:
+        name:
       headers:
         authorization: "${authorization_admin_token}"
       cookies: null
@@ -129,22 +141,71 @@ test_steps:
           jsonpath: "$.json.data.total"
 
       - extract:
-          key: "VIPID"
+          key: "type_id"
           type: "cache"
           jsonpath: "$.json.data.records[0].id"
+      - extract:
+          key: "type_idw"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].idw"
 
-  - name: "删除特殊 VIP 发放记录"
-    case_id: "bofa_admin_VipLestIssue_004"
-    description: "验证删除特殊 VIP 发放记录接口"
+  - name: "修改任务类型数据"
+    case_id: "bofa_admin_task_type_004"
+    description: "验证修改任务类型数据接口"
 
     request:
-      method: "DELETE"
-      url: "/cdb/dzvip/special?id=${VIPID}"
+      method: "PUT"
+      url: "/cdb/dzdianzan/likeTaskType"
       params: null
       headers:
         authorization: "${authorization_admin_token}"
       cookies: null
-      body_type: null
+      body_type: "json"
+      body:
+        id: "${type_id}"
+        idw: '${type_idw}'
+        name: 鑽石vip區
+        imgUrl: ''
+        status: null
+        sort: 0
+        describe: ''
+        specialStatus: 0
+        canSeeMode: 0
+        canSeeLimit: [ ]
+        canDoMode: 0
+        canDoLimit: [ ]
+        requirements: null
+
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+
+
+
+  - name: "删除数据类型"
+    case_id: "bofa_admin_task_type_005"
+    description: "校验删除数据类型接口"
+
+    request:
+      method: "DELETE"
+      url: "/cdb/dzdianzan/likeTaskType?id=${type_id}"
+      params: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: "json"
       body: null
       files: null
 
@@ -163,26 +224,17 @@ test_steps:
 
 
 
-  - name: "导出未支付订单数据"
-    case_id: "bofa_admin_VipListRecord_005"
-    description: "校验导出未支付订单数据接口"
 
-    request:
-      method: "GET"
-      url: "/cdb/dzvip/special/exportXlsV2"
-      params:
-        page: 1
-        limit: 20
-        account:
-        status:
-        vipType:
-        exportFields:
-      headers:
-        authorization: "${authorization_admin_token}"
-      cookies: null
-      body_type: null
-      body: null
 
-      files: null
+
+
+
+
+
+
+
+
+
+
 
 

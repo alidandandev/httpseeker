@@ -1,8 +1,8 @@
 # 点赞博发web站点登录后默认API测试用例集合
 config:
   allure:
-    epic: "对bofa_admin后台管理系统中VIP管理进行操作"
-    feature: "admin后台管理系统中VIP购买记录"
+    epic: "对bofa_admin后台管理系统中任务管理"
+    feature: "admin后台管理系统中任务订单"
     story: "默认API接口测试"
     severity: "critical"
 
@@ -18,7 +18,6 @@ config:
   module: "default_apis_test"
 
 test_steps:
-
   - name: "后台登录接口"
     case_id: "bofa_admin_account_login_001"
     description: "验证测试获取bofa_admin_account_login 并获取后台登录后生成的token用于后续其他测试场景"
@@ -60,22 +59,26 @@ test_steps:
           type: "cache"
           jsonpath: "$.json.data.token"
 
-  # 3. VIP购买记录查询
-  - name: "查询VIP购买记录"
-    case_id: "bofa_admin_VipListRecord_002"
-    description: "验证查询VIP购买记录"
+  - name: "查询任务列表数据"
+    case_id: "bofa_admin_taskOrder_002"
+    description: "验证查询任务列表数据接口"
 
     request:
       method: "GET"
-      url: "/cdb/dzvip/vippurchase/list"
-      headers:
-        authorization: "${authorization_admin_token}"
+      url: "/cdb/dzdianzan/likeTaskOrder/list"
       params:
         page: 1
         limit: 20
-        whetherToPay: 2
-        expireTimes: "2025-11-17 00:00:00"
-        expireTimee: "2025-11-17 23:59:59"
+        url:
+        vip:
+        account:
+        status: 2
+        taskType:
+        idw:
+        sourceInvitationCode:
+        auditingName:
+      headers:
+        authorization: "${authorization_admin_token}"
       cookies: null
       body_type: null
       body: null
@@ -87,77 +90,83 @@ test_steps:
           type: "eq"
           value: 20000
           jsonpath: "$.json.code"
+
       - assert:
           check: "验证返回响应成功标识--msg"
           type: "eq"
           value: "success"
           jsonpath: "$.json.msg"
+
       - assert:
-          check: "验证返回响应中data内容返回记录数不为0"
+          check: "验证返回响应data为不空"
           type: "not_eq"
-          value: 0
-          jsonpath: "$.json.data.total"
+          value: null
+          jsonpath: "$.json.data"
 
-  # 4. 导出VIP购买记录
-  - name: "导出VIP数据购买记录"
-    case_id: "bofa_admin_VipListRecord_003"
-    description: "验证导出VIP数据购买记录接口"
+      - extract:
+          key: "orderID"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].id"
 
-    request:
-      method: "GET"
-      url: "/cdb/dzvip/vippurchase/vipPurchaseHistoryExportV2"
-      headers:
-        authorization: "${authorization_admin_token}"
-      params:
-        page: 1
-        limit: 20
-        whetherToPay: 2
-        expireTimes: "2025-11-17 00:00:00"
-        expireTimee: "2025-11-17 23:59:59"
-        exportFields: ""
-      cookies: null
-      body_type: null
-      body: null
-      files: null
-
-
-  # 5. 未支付订单查询
-  - name: "VIP未支付订单数据"
-    case_id: "bofa_admin_VipListRecord_004"
-    description: "验证VIP未支付订单数据接口"
+  - name: "批量审批任务订单"
+    case_id: "bofa_admin_taskOrder_003"
+    description: "验证批量审批任务订单接口"
 
     request:
-      method: "GET"
-      url: "/cdb/dzvip/vippurchase/list"
+      method: "POST"
+      url: "/cdb/dzdianzan/likeTaskOrder/batchApplyTaskOrder"
+      params: null
       headers:
         authorization: "${authorization_admin_token}"
-      params:
-        page: 1
-        limit: 20
-        whetherToPay: 1
-        expireTimes: "2025-08-19 20:38:57"
-        expireTimee: "2025-11-17 20:38:57"
       cookies: null
-      body_type: null
-      body: null
+      body_type: "json"
+      body:
+        ids:
+          - ${orderID}
+        remark: ''
+        isAudit: true
+        status: 3
+
       files: null
+
     teardown:
       - assert:
           check: "验证请求成功--code"
           type: "eq"
           value: 20000
           jsonpath: "$.json.code"
+
       - assert:
           check: "验证返回响应成功标识--msg"
           type: "eq"
           value: "success"
           jsonpath: "$.json.msg"
-      - assert:
-          check: "验证返回响应中data内容返回记录数不为0"
-          type: "not_eq"
-          value: 0
-          jsonpath: "$.json.data.total"
 
+  - name: "任务订单导出"
+    case_id: "bofa_admin_taskOrder_004"
+    description: "验证任务订单导出接口"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzdianzan/likeTaskOrder/recordExportV2"
+      params:
+        page: 1
+        limit: 20
+        url:
+        vip:
+        account:
+        taskType:
+        idw:
+        sourceInvitationCode:
+        auditingName:
+        exportFields:
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+
+      files: null
 
 
 
