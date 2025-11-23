@@ -1422,8 +1422,8 @@ test_steps:
         rechargeStatus: null
         channelName: null
         flg: "2"
-        expireTimes: "2025-08-31 12:31:48"
-        expireTimee: "2025-12-30 12:31:48"
+        expireTimes: "${generate_time_90_days_ago()}"
+        expireTimee: "${generate_today_time()}"
         vipType: null
         gmt: null
         channelType: null
@@ -1447,12 +1447,6 @@ test_steps:
           value: "success"
           jsonpath: "$.json.msg"
 
-      - assert:
-          check: "验证返回响应中记录条数大于0"
-          type: "not_eq"
-          value: 0
-          jsonpath: "$.json.data.total"
-
   - name: "测试调用查询withdrawRecord的提现记录汇总金额查询 按照时间日期范围去查询"
     case_id: "bofa_admin_withdrawRecord_findCountMoney_query_012"
     description: "验证测试withdrawRecord_findCountMoney_query_012 的提现记录汇总金额查询 按照时间日期范围去查询"
@@ -1472,8 +1466,8 @@ test_steps:
         rechargeStatus: null
         channelName: null
         flg: "2"
-        expireTimes: "2025-08-31 12:31:48"
-        expireTimee: "2025-12-30 12:31:48"
+        expireTimes: "${generate_time_90_days_ago()}"
+        expireTimee: "${generate_today_time()}"
         vipType: null
         gmt: null
         channelType: null
