@@ -538,8 +538,8 @@ test_steps:
       params:
         page: 1
         limit: 20
-        expireTimes: "2025-01-01 12:58:57"
-        expireTimee: "2025-12-30 12:58:57"
+        expireTimes: "${generate_time_90_days_ago()}"
+        expireTimee: "${generate_today_time()}"
         account: null
         status: null
         name: null
@@ -581,8 +581,8 @@ test_steps:
       params:
         page: 1
         limit: 20
-        expireTimes: "2025-01-01 12:58:57"
-        expireTimee: "2025-12-30 12:58:57"
+        expireTimes: "${generate_time_90_days_ago()}"
+        expireTimee: "${generate_today_time()}"
         account: null
         status: null
         name: null
