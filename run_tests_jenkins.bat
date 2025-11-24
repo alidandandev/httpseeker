@@ -42,7 +42,6 @@ if %errorlevel% neq 0 (
 REM 第七步：运行测试
 echo [INFO] Running tests...
 python httpseeker/cli.py ^
-    --env httpseeker/core/run_env/Dz_like_bofa_h5.env ^
     --conf_toml httpseeker/core/conf_toml/Dz_like_bofa_h5.toml ^
     --auth httpseeker/core/auth_yaml/Dz_like_bofa_h5.yaml ^
     --run
