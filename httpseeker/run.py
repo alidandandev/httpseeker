@@ -154,22 +154,43 @@ def startup(
             if not os.path.exists(httpseeker_path.allure_report_env_file):
                 shutil.copyfile(httpseeker_path.allure_env_file, httpseeker_path.allure_report_env_file)
 
-            # 生成 Allure HTML 报告
-            log.info('生成 Allure HTML 报告...')
-            subprocess.run(
-                [
-                    'allure',
-                    'generate',
-                    f'{httpseeker_path.allure_report_dir}',
-                    '-o',
-                    f'{httpseeker_path.allure_html_report_dir}',
-                    '--clean',
-                ]
-            )
-            log.info(f'Allure HTML 报告已生成: {httpseeker_path.allure_html_report_dir}')
+            # 检查 allure 命令是否可用
+            allure_cmd = shutil.which('allure')
+            if allure_cmd:
+                # 生成 Allure HTML 报告
+                log.info('生成 Allure HTML 报告...')
+                try:
+                    result = subprocess.run(
+                        [
+                            allure_cmd,
+                            'generate',
+                            f'{httpseeker_path.allure_report_dir}',
+                            '-o',
+                            f'{httpseeker_path.allure_html_report_dir}',
+                            '--clean',
+                        ],
+                        capture_output=True,
+                        text=True,
+                        encoding='utf-8'
+                    )
+                    if result.returncode == 0:
+                        log.info(f'Allure HTML 报告已生成: {httpseeker_path.allure_html_report_dir}')
+                    else:
+                        log.warning(f'Allure 报告生成失败: {result.stderr}')
+                except Exception as e:
+                    log.warning(f'Allure 报告生成异常: {e}')
+            else:
+                log.warning('Allure 命令未找到，跳过报告生成。请确保 Allure 已安装并添加到 PATH')
 
         if allure_serve:
-            subprocess.run(['allure', 'serve', f'{httpseeker_path.allure_report_dir}'])
+            allure_cmd = shutil.which('allure')
+            if allure_cmd:
+                try:
+                    subprocess.run([allure_cmd, 'serve', f'{httpseeker_path.allure_report_dir}'])
+                except Exception as e:
+                    log.warning(f'Allure serve 启动失败: {e}')
+            else:
+                log.warning('Allure 命令未找到，无法启动 serve')
 
 
 def run(

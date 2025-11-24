@@ -13,7 +13,7 @@ set PYTHONLEGACYWINDOWSSTDIO=utf-8
 set PYTHONUNBUFFERED=1
 set PYTHONUTF8=1
 set PYTEST_THEME=none
-set ENABLE_AUTO_REGISTER=true
+set ENABLE_AUTO_REGISTER=false
 
 REM 第三步：设置Java编码（用于Allure）
 set JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF-8
@@ -48,12 +48,19 @@ python httpseeker/cli.py ^
     --run
 
 REM 第八步：检查测试结果
-if not exist "httpseeker\report\allure_report" (
-    echo [WARNING] Allure report data not generated
-    exit /b 1
+if %errorlevel% neq 0 (
+    echo [ERROR] Tests failed with exit code %errorlevel%
+    exit /b %errorlevel%
 )
 
 echo [SUCCESS] Tests completed
-echo [INFO] Allure data: httpseeker\report\allure_report
-echo [INFO] HTML report: httpseeker\report\html_report
+
+REM 检查报告目录（不强制要求，因为 allure 可能未安装）
+if exist "httpseeker\report\allure_report" (
+    echo [INFO] Allure data: httpseeker\report\allure_report
+)
+if exist "httpseeker\report\html_report" (
+    echo [INFO] HTML report: httpseeker\report\html_report
+)
+
 exit /b 0
