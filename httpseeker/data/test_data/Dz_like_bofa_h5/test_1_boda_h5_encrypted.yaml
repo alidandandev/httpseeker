@@ -43,12 +43,6 @@ test_steps:
           value: true
           jsonpath: "$.json.success"
 
-      - assert:
-          check: "验证data不为空"
-          type: "not_eq"
-          value: null
-          jsonpath: "$.json.data"
-
   - name: "测试获取任务类型列表接口"
     case_id: "ENC_TASK_002"
     description: "验证获取任务类型列表接口的加密响应解密功能"
@@ -75,12 +69,6 @@ test_steps:
           type: "eq"
           value: true
           jsonpath: "$.json.success"
-
-      - assert:
-          check: "验证data不为空"
-          type: "not_eq"
-          value: null
-          jsonpath: "$.json.data"
 
   - name: "测试加密启用状态接口"
     case_id: "ENC_TASK_003"

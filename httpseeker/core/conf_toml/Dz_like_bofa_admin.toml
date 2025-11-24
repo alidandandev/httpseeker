@@ -67,7 +67,7 @@ send = true
 
 # 请求发送
 [request]
-global_env = ''
+global_env = 'Dz_like_bofa_admin.env'
 timeout = 10
 verify = false
 redirects = true
