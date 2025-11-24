@@ -47,12 +47,19 @@ python httpseeker/cli.py ^
     --run
 
 REM 第八步：检查测试结果
-if not exist "httpseeker\report\allure_report" (
-    echo [WARNING] Allure report data not generated
-    exit /b 1
+if %errorlevel% neq 0 (
+    echo [ERROR] Tests failed with exit code %errorlevel%
+    exit /b %errorlevel%
 )
 
 echo [SUCCESS] Tests completed
-echo [INFO] Allure data: httpseeker\report\allure_report
-echo [INFO] HTML report: httpseeker\report\html_report
+
+REM 检查报告目录（不强制要求，因为 allure 可能未安装）
+if exist "httpseeker\report\allure_report" (
+    echo [INFO] Allure data: httpseeker\report\allure_report
+)
+if exist "httpseeker\report\html_report" (
+    echo [INFO] HTML report: httpseeker\report\html_report
+)
+
 exit /b 0
