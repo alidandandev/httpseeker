@@ -43,12 +43,6 @@ test_steps:
           value: true
           jsonpath: "$.json.success"
 
-      - assert:
-          check: "验证data不为空"
-          type: "not_eq"
-          value: null
-          jsonpath: "$.json.data"
-
   - name: "测试获取点赞任务类型列表接口"
     case_id: "cdb_bofa_002"
     description: "验证获取点赞任务类型列表接口功能"

@@ -69,11 +69,17 @@ class AutoRegisterAndRecharge:
             response = self.session.post(url, json=payload, headers=headers)
             response.raise_for_status()
             result = response.json()
-            print(f"✓ 步骤2: 注册用户成功")
-            print(f"  - 手机号: {self.phone}")
-            print(f"  - 姓名: {real_name}")
-            print(f"  - 响应: {result}")
-            return result
+
+            # 检查注册是否真的成功
+            if result.get("code") == 20000 and result.get("success"):
+                print(f"✓ 步骤2: 注册用户成功")
+                print(f"  - 手机号: {self.phone}")
+                print(f"  - 姓名: {real_name}")
+                print(f"  - 响应: {result}")
+                return result
+            else:
+                error_msg = result.get('msg', 'Unknown error')
+                raise Exception(f"注册失败: {error_msg}, 完整响应: {result}")
         except Exception as e:
             print(f"✗ 步骤2: 注册用户失败: {e}")
             raise

@@ -1,13 +1,13 @@
 # 测试项目
 [project]
-name = 'Dz_like_bofa_h5'
+name = 'Dz_like_bofa_admin'
 
 # 测试报告
 [report]
 title = "power_bank接口自动化测试报告"
 tester_name = 'Rookie'
 # jenkins allure (固定地址，总是指向最新报告)
-jenkins_url = 'http://47.76.165.189:8080/job/Dz_Like_bofa_h5/allure/'
+jenkins_url = 'http://47.76.165.189:8080/job/Dz_Like_bofa_admin/allure/'
 
 # mysql 数据库（可选，如不需要请留空或删除配置）
 [mysql]
@@ -60,15 +60,14 @@ send = false
 # Telegram
 [telegram]
 bot_token = '6968270418:AAGlX7tNpfnIuueB2hAssZWzwuNCMjR6ryE'
-chat_id = ' -4781359846'  # 从  https://api.telegram.org/bot6968270418:AAGlX7tNpfnIuueB2hAssZWzwuNCMjR6ryE/getUpdates 获取chat_id
+chat_id = '-4781359846'
 proxies.http = ''
 proxies.https = ''
 send = true
 
-
 # 请求发送
 [request]
-global_env = 'Dz_like_bofa_h5.env'
+global_env = 'Dz_like_bofa_admin.env'
 timeout = 10
 verify = false
 redirects = true
@@ -78,5 +77,5 @@ retry = 3
 
 # 加密配置
 [encryption]
-enabled = true
+enabled = false
 key = "your-32-byte-secure-aes-key-1234"

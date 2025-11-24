@@ -29,13 +29,20 @@ def main():
 
 def pytest_sessionstart(session):
     """pytest 开始执行前运行 main()"""
-    print(">>> Running main() before tests ...")
-    success = main()
+    # 从环境变量控制是否启用自动注册
+    import os
+    enable_auto_register = os.environ.get('ENABLE_AUTO_REGISTER', 'false').lower() == 'true'
 
-    if not success:
-        raise RuntimeError("AutoRegisterAndRecharge 执行失败！")
+    if enable_auto_register:
+        print(">>> Running main() before tests ...")
+        success = main()
 
-    print(">>> main() completed.")
+        if not success:
+            raise RuntimeError("AutoRegisterAndRecharge 执行失败！")
+
+        print(">>> main() completed.")
+    else:
+        print(">>> 自动注册功能已禁用（如需启用，请设置环境变量 ENABLE_AUTO_REGISTER=true）")
 
 @pytest.fixture(scope='session', autouse=True)
 def session_fixture(tmp_path_factory):
@@ -136,7 +143,7 @@ def pytest_html_results_table_row(report, cells):
     :return:
     """
     cells.insert(1, html.td(getattr(report, 'description', None)))
-    cells.insert(3, html.td(datetime.now(), class_='col-time'))
+    cells.insert(3, html.td(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), class_='col-time'))
     cells.pop()
 
 
