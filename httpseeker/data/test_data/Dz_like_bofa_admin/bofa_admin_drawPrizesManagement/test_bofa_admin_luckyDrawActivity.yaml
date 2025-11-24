@@ -86,6 +86,74 @@ test_steps:
           type: "cache"
           jsonpath: "$.json.data.token"
 
+  - name: "测试调用查询抽奖活动类型  "
+    case_id: "bofa_admin_prizeActivityTypeQuery_001"
+    description: "验证测试prizeActivityTypeQuery_001 抽奖活动类型 "
+
+    request:
+      method: "GET"
+      url: "/cdb/dict/getDicts/%E6%B4%BB%E5%8A%A8%E7%B1%BB%E5%9E%8B"
+      params: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+  - name: "测试调用查询抽奖活动状态  "
+    case_id: "bofa_admin_prizeActivityStatusQuery_001"
+    description: "验证测试prizeActivityStatusQuery_001 抽奖活动状态  "
+
+    request:
+      method: "GET"
+      url: "/cdb/dict/getDicts/%E6%B4%BB%E5%8A%A8%E7%8A%B6%E6%80%81"
+      params: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
   - name: "测试调用查询幸运抽奖活动记录列表 luckydraw_list接口"
     case_id: "bofa_admin_luckydraw_list_001"
     description: "验证测试获取bofa_admin_luckydraw_list 查询幸运抽奖活动记录列表"

@@ -1,24 +1,23 @@
 # 点赞博发web站点登录后默认API测试用例集合
 config:
   allure:
-    epic: "对bofa_admin后台管理系统中VIP管理进行操作"
-    feature: "admin后台管理系统中特殊 VIP"
+    epic: "对bofa_admin后台管理系统中任务管理"
+    feature: "admin后台管理系统中任务订单"
     story: "默认API接口测试"
     severity: "critical"
 
   request:
-    env: "Dz_like_bofa_admin.env"  # 需要在run_env目录下创建qat.env文件
+    env: "like_bofa_admin_test.env"
     headers:
       Content-Type: "application/json"
     timeout: 30
     verify: false
     encryption_enabled: false
-    encryption_key: "your-32-byte-secure-aes-key-1234"  # 32字节的AES密钥
+    encryption_key: "your-32-byte-secure-aes-key-1234"
 
   module: "default_apis_test"
 
 test_steps:
-
   - name: "后台登录接口"
     case_id: "bofa_admin_account_login_001"
     description: "验证测试获取bofa_admin_account_login 并获取后台登录后生成的token用于后续其他测试场景"
@@ -60,20 +59,74 @@ test_steps:
           type: "cache"
           jsonpath: "$.json.data.token"
 
-  - name: "批量发放特殊VIP"
-    case_id: "bofa_admin_VipListIssue_002"
-    description: "验证批量发放特殊VIP"
+  - name: "查询任务列表数据"
+    case_id: "bofa_admin_taskOrder_002"
+    description: "验证查询任务列表数据接口"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzdianzan/likeTaskOrder/list"
+      params:
+        page: 1
+        limit: 20
+        url:
+        vip:
+        account:
+        status: 2
+        taskType:
+        idw:
+        sourceInvitationCode:
+        auditingName:
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应data为不空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+      - extract:
+          key: "orderID"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].id"
+
+  - name: "批量审批任务订单"
+    case_id: "bofa_admin_taskOrder_003"
+    description: "验证批量审批任务订单接口"
 
     request:
       method: "POST"
-      url: "/cdb/dzvip/special/batchAdd"
+      url: "/cdb/dzdianzan/likeTaskOrder/batchApplyTaskOrder"
       params: null
       headers:
         authorization: "${authorization_admin_token}"
       cookies: null
       body_type: "json"
       body:
-        account: 1016
+        ids:
+          - ${orderID}
+        remark: ''
+        isAudit: true
+        status: 3
+
       files: null
 
     teardown:
@@ -89,93 +142,23 @@ test_steps:
           value: "success"
           jsonpath: "$.json.msg"
 
-  - name: "查询特殊 VIP 发放记录"
-    case_id: "bofa_admin_VipListIssue_003"
-    description: "验证查询特殊 VIP 发放记录"
+  - name: "任务订单导出"
+    case_id: "bofa_admin_taskOrder_004"
+    description: "验证任务订单导出接口"
 
     request:
       method: "GET"
-      url: "/cdb/dzvip/special/list"
+      url: "/cdb/dzdianzan/likeTaskOrder/recordExportV2"
       params:
         page: 1
         limit: 20
+        url:
+        vip:
         account:
-        status:
-        vipType:
-      headers:
-        authorization: "${authorization_admin_token}"
-      cookies: null
-      body_type: null
-      body: null
-      files: null
-
-    teardown:
-      - assert:
-          check: "验证请求成功--code"
-          type: "eq"
-          value: 20000
-          jsonpath: "$.json.code"
-
-      - assert:
-          check: "验证返回响应成功标识--msg"
-          type: "eq"
-          value: "success"
-          jsonpath: "$.json.msg"
-
-      - assert:
-          check: "验证返回响应中data内容返回记录数不为0"
-          type: "not_eq"
-          value: 0
-          jsonpath: "$.json.data.total"
-
-      - extract:
-          key: "VIPID"
-          type: "cache"
-          jsonpath: "$.json.data.records[0].id"
-
-  - name: "删除特殊 VIP 发放记录"
-    case_id: "bofa_admin_VipLestIssue_004"
-    description: "验证删除特殊 VIP 发放记录接口"
-
-    request:
-      method: "DELETE"
-      url: "/cdb/dzvip/special?id=${VIPID}"
-      params: null
-      headers:
-        authorization: "${authorization_admin_token}"
-      cookies: null
-      body_type: null
-      body: null
-      files: null
-
-    teardown:
-      - assert:
-          check: "验证请求成功--code"
-          type: "eq"
-          value: 20000
-          jsonpath: "$.json.code"
-
-      - assert:
-          check: "验证返回响应成功标识--msg"
-          type: "eq"
-          value: "success"
-          jsonpath: "$.json.msg"
-
-
-
-  - name: "导出未支付订单数据"
-    case_id: "bofa_admin_VipListRecord_005"
-    description: "校验导出未支付订单数据接口"
-
-    request:
-      method: "GET"
-      url: "/cdb/dzvip/special/exportXlsV2"
-      params:
-        page: 1
-        limit: 20
-        account:
-        status:
-        vipType:
+        taskType:
+        idw:
+        sourceInvitationCode:
+        auditingName:
         exportFields:
       headers:
         authorization: "${authorization_admin_token}"
@@ -184,5 +167,6 @@ test_steps:
       body: null
 
       files: null
+
 
 

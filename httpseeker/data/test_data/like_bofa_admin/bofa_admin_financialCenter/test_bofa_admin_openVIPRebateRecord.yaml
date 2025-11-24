@@ -1,13 +1,13 @@
 # 点赞博发web站点登录后默认API测试用例集合
 config:
   allure:
-    epic: "对bofa_admin后台管理系统中共享钱包管理-用户购买钱包产品记录信息查询"
-    feature: "admin后台管理系统中 共享钱包管理-shareWalletRecord的用户购买钱包产品记录信息查询"
-    story: "默认API接口测试:test_bofa_admin_shareWalletRecord的用户购买钱包产品记录信息查询"
+    epic: "对bofa_admin后台管理系统中财务中心-开通VIP返佣记录查询"
+    feature: "admin后台管理系统中 财务中心-openVIPRebateRecord的开通VIP返佣记录查询"
+    story: "默认API接口测试:test_bofa_admin_openVIPRebateRecord的开通VIP返佣记录查询"
     severity: "critical"
 
   request:
-    env: "Dz_like_bofa_admin.env"  # 需要在run_env目录下创建qat.env文件
+    env: "like_bofa_admin_test.env"  # 需要在run_env目录下创建qat.env文件
     headers:
       Content-Type: "application/json"
     timeout: 30
@@ -86,23 +86,23 @@ test_steps:
           type: "cache"
           jsonpath: "$.json.data.token"
 
-  - name: "测试调用查询用户购买钱包产品记录 shareWalletRecord 默认无条件查询"
-    case_id: "bofa_admin_shareWalletRecord_query_001"
-    description: "验证测试shareWalletRecord_query_001 查询用户购买钱包产品记录 默认无条件查询,返回第一条记录提取关键字作为后续查询条件"
+  - name: "测试调用查询openVIPRebateRecord的开通VIP返佣记录查询 默认无条件查询"
+    case_id: "bofa_admin_openVIPRebateRecord_query_001"
+    description: "验证测试openVIPRebateRecord_query_001 的开通VIP返佣记录查询 默认无条件查询"
 
     request:
       method: "GET"
-      url: "/cdb/dzwallet/sharedrecord/list"
+      url: "/cdb/dzvip/viprebaterecord/list"
       params:
         page: 1
         limit: 20
+        account: null
+        idw: null
         expireTimes: null
         expireTimee: null
-        account: null
-        status: null
-        name: null
-        lockDate: null
         sourceInvitationCode: null
+        relevels: null
+        gmt: null
       headers:
         authorization: "${authorization_admin_token}"
       cookies: null
@@ -129,35 +129,39 @@ test_steps:
           value: 0
           jsonpath: "$.json.data.total"
       - extract:
-          key: "frist_shareWallet_record_account"
+          key: "frist_openVIPRebateRecord_relevels"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].relevels"
+      - extract:
+          key: "frist_openVIPRebateRecord_account"
           type: "cache"
           jsonpath: "$.json.data.records[0].account"
       - extract:
-          key: "frist_shareWallet_record_topAccount"
+          key: "frist_openVIPRebateRecord_idw"
           type: "cache"
-          jsonpath: "$.json.data.records[0].userInfo.user.account"
+          jsonpath: "$.json.data.records[0].idw"
       - extract:
-          key: "frist_shareWallet_record_walletProductName"
+          key: "frist_openVIPRebateRecord_ucode"
           type: "cache"
-          jsonpath: "$.json.data.records[0].name"
+          jsonpath: "$.json.data.records[0].userInfo.user.ucode"
 
-  - name: "测试调用查询用户购买钱包产品记录 shareWalletRecord 默认无条件查询时统计总收益金额"
-    case_id: "bofa_admin_shareWalletRecord_querySum_001"
-    description: "验证测试shareWalletRecord_querySum_001 查询用户购买钱包产品记录 默认无条件查询时统计总收益金额"
+  - name: "测试调用查询openVIPRebateRecord的开通VIP返佣记录查询 默认无条件查询"
+    case_id: "bofa_admin_openVIPRebateRecord_getAmountTotal_query_001"
+    description: "验证测试openVIPRebateRecord_getAmountTotal_query_001 的开通VIP返佣记录查询 默认无条件查询"
 
     request:
       method: "GET"
-      url: "/cdb/dzwallet/sharedrecord/sum"
+      url: "/cdb/dzvip/viprebaterecord/getAmountTotal"
       params:
         page: 1
         limit: 20
+        account: null
+        idw: null
         expireTimes: null
         expireTimee: null
-        account: null
-        status: null
-        name: null
-        lockDate: null
         sourceInvitationCode: null
+        relevels: null
+        gmt: null
       headers:
         authorization: "${authorization_admin_token}"
       cookies: null
@@ -179,28 +183,28 @@ test_steps:
           jsonpath: "$.json.msg"
 
       - assert:
-          check: "验证返回响应中金额不为空"
+          check: "验证返回响应中金额大于0"
           type: "not_eq"
-          value: null
+          value: 0
           jsonpath: "$.json.data"
 
-  - name: "测试调用查询用户购买钱包产品记录 shareWalletRecord 按用户名查询"
-    case_id: "bofa_admin_shareWalletRecord_query_002"
-    description: "验证测试shareWalletRecord_query_002 查询用户购买钱包产品记录 按用户名查询"
+  - name: "测试调用查询openVIPRebateRecord的开通VIP返佣记录查询 按会员账号查询"
+    case_id: "bofa_admin_openVIPRebateRecord_query_002"
+    description: "验证测试openVIPRebateRecord_query_002 的开通VIP返佣记录查询 按会员账号查询"
 
     request:
       method: "GET"
-      url: "/cdb/dzwallet/sharedrecord/list"
+      url: "/cdb/dzvip/viprebaterecord/list"
       params:
         page: 1
         limit: 20
+        account: "${frist_openVIPRebateRecord_account}"
+        idw: null
         expireTimes: null
         expireTimee: null
-        account: "${frist_shareWallet_record_account}"
-        status: null
-        name: null
-        lockDate: null
         sourceInvitationCode: null
+        relevels: null
+        gmt: null
       headers:
         authorization: "${authorization_admin_token}"
       cookies: null
@@ -227,23 +231,23 @@ test_steps:
           value: 0
           jsonpath: "$.json.data.total"
 
-  - name: "测试调用查询用户购买钱包产品记录 shareWalletRecord 按用户名查询并统计金额"
-    case_id: "bofa_admin_shareWalletRecord_querySum_002"
-    description: "验证测试shareWalletRecord_querySum_002 查询用户购买钱包产品记录 按用户名查询并统计金额"
+  - name: "测试调用查询openVIPRebateRecord的开通VIP返佣记录查询 按会员账号查询"
+    case_id: "bofa_admin_openVIPRebateRecord_getAmountTotal_query_002"
+    description: "验证测试openVIPRebateRecord_getAmountTotal_query_002 的开通VIP返佣记录查询 按会员账号查询"
 
     request:
       method: "GET"
-      url: "/cdb/dzwallet/sharedrecord/sum"
+      url: "/cdb/dzvip/viprebaterecord/getAmountTotal"
       params:
         page: 1
         limit: 20
+        account: "${frist_openVIPRebateRecord_account}"
+        idw: null
         expireTimes: null
         expireTimee: null
-        account: "${frist_shareWallet_record_account}"
-        status: null
-        name: null
-        lockDate: null
         sourceInvitationCode: null
+        relevels: null
+        gmt: null
       headers:
         authorization: "${authorization_admin_token}"
       cookies: null
@@ -265,28 +269,28 @@ test_steps:
           jsonpath: "$.json.msg"
 
       - assert:
-          check: "验证返回响应中金额不为空"
+          check: "验证返回响应中金额大于0"
           type: "not_eq"
-          value: null
+          value: 0
           jsonpath: "$.json.data"
 
-  - name: "测试调用查询用户购买钱包产品记录 shareWalletRecord 按顶级账户查询"
-    case_id: "bofa_admin_shareWalletRecord_query_003"
-    description: "验证测试shareWalletRecord_query_003 查询用户购买钱包产品记录 按顶级账户查询"
+  - name: "测试调用查询openVIPRebateRecord的开通VIP返佣记录查询 按团队邀请码查询"
+    case_id: "bofa_admin_openVIPRebateRecord_query_003"
+    description: "验证测试openVIPRebateRecord_query_003 的开通VIP返佣记录查询 按团队邀请码查询"
 
     request:
       method: "GET"
-      url: "/cdb/dzwallet/sharedrecord/list"
+      url: "/cdb/dzvip/viprebaterecord/list"
       params:
         page: 1
         limit: 20
+        account: null
+        idw: null
         expireTimes: null
         expireTimee: null
-        account: null
-        status: null
-        name: null
-        lockDate: null
-        sourceInvitationCode: "${frist_shareWallet_record_topAccount}"
+        sourceInvitationCode: "${frist_openVIPRebateRecord_ucode}"
+        relevels: null
+        gmt: null
       headers:
         authorization: "${authorization_admin_token}"
       cookies: null
@@ -313,23 +317,23 @@ test_steps:
           value: 0
           jsonpath: "$.json.data.total"
 
-  - name: "测试调用查询用户购买钱包产品记录 shareWalletRecord 按顶级账户查询并统计金额"
-    case_id: "bofa_admin_shareWalletRecord_querySum_003"
-    description: "验证测试shareWalletRecord_querySum_003 查询用户购买钱包产品记录 按顶级账户查询并统计金额"
+  - name: "测试调用查询openVIPRebateRecord的开通VIP返佣记录查询 按团队邀请码查询"
+    case_id: "bofa_admin_openVIPRebateRecord_getAmountTotal_query_003"
+    description: "验证测试openVIPRebateRecord_getAmountTotal_query_003 的开通VIP返佣记录查询 按团队邀请码查询"
 
     request:
       method: "GET"
-      url: "/cdb/dzwallet/sharedrecord/sum"
+      url: "/cdb/dzvip/viprebaterecord/getAmountTotal"
       params:
         page: 1
         limit: 20
+        account: null
+        idw: null
         expireTimes: null
         expireTimee: null
-        account: null
-        status: null
-        name: null
-        lockDate: null
-        sourceInvitationCode: "${frist_shareWallet_record_topAccount}"
+        sourceInvitationCode: "${frist_openVIPRebateRecord_ucode}"
+        relevels: null
+        gmt: null
       headers:
         authorization: "${authorization_admin_token}"
       cookies: null
@@ -351,28 +355,28 @@ test_steps:
           jsonpath: "$.json.msg"
 
       - assert:
-          check: "验证返回响应中金额不为空"
+          check: "验证返回响应中金额大于0"
           type: "not_eq"
-          value: null
+          value: 0
           jsonpath: "$.json.data"
 
-  - name: "测试调用查询用户购买钱包产品记录 shareWalletRecord 按所属钱包产品查询"
-    case_id: "bofa_admin_shareWalletRecord_query_004"
-    description: "验证测试shareWalletRecord_query_004 查询用户购买钱包产品记录 按所属钱包产品查询并统计金额"
+  - name: "测试调用查询openVIPRebateRecord的开通VIP返佣记录查询 按交易编号查询"
+    case_id: "bofa_admin_openVIPRebateRecord_query_004"
+    description: "验证测试openVIPRebateRecord_query_004 的开通VIP返佣记录查询 按交易编号查询"
 
     request:
       method: "GET"
-      url: "/cdb/dzwallet/sharedrecord/list"
+      url: "/cdb/dzvip/viprebaterecord/list"
       params:
         page: 1
         limit: 20
+        account: null
+        idw: "${frist_openVIPRebateRecord_idw}"
         expireTimes: null
         expireTimee: null
-        account: null
-        status: null
-        name: "${frist_shareWallet_record_walletProductName}"
-        lockDate: null
         sourceInvitationCode: null
+        relevels: null
+        gmt: null
       headers:
         authorization: "${authorization_admin_token}"
       cookies: null
@@ -399,23 +403,23 @@ test_steps:
           value: 0
           jsonpath: "$.json.data.total"
 
-  - name: "测试调用查询用户购买钱包产品记录 shareWalletRecord 按所属钱包产品查询"
-    case_id: "bofa_admin_shareWalletRecord_querySum_004"
-    description: "验证测试shareWalletRecord_querySum_004 查询用户购买钱包产品记录 按所属钱包产品查询并统计金额"
+  - name: "测试调用查询openVIPRebateRecord的开通VIP返佣记录查询 按交易编号查询"
+    case_id: "bofa_admin_openVIPRebateRecord_getAmountTotal_query_004"
+    description: "验证测试openVIPRebateRecord_getAmountTotal_query_004 的开通VIP返佣记录查询 按交易编号查询"
 
     request:
       method: "GET"
-      url: "/cdb/dzwallet/sharedrecord/sum"
+      url: "/cdb/dzvip/viprebaterecord/getAmountTotal"
       params:
         page: 1
         limit: 20
+        account: null
+        idw: "${frist_openVIPRebateRecord_idw}"
         expireTimes: null
         expireTimee: null
-        account: null
-        status: null
-        name: "${frist_shareWallet_record_walletProductName}"
-        lockDate: null
         sourceInvitationCode: null
+        relevels: null
+        gmt: null
       headers:
         authorization: "${authorization_admin_token}"
       cookies: null
@@ -437,28 +441,28 @@ test_steps:
           jsonpath: "$.json.msg"
 
       - assert:
-          check: "验证返回响应中金额不为空"
+          check: "验证返回响应中金额大于0"
           type: "not_eq"
-          value: null
+          value: 0
           jsonpath: "$.json.data"
 
-  - name: "测试调用查询用户购买钱包产品记录 shareWalletRecord 按记录当前所处状态查询"
-    case_id: "bofa_admin_shareWalletRecord_query_005"
-    description: "验证测试shareWalletRecord_query_005 查询用户购买钱包产品记录 按记录当前所处状态0=已结束查询"
+  - name: "测试调用查询openVIPRebateRecord的开通VIP返佣记录查询 按输入等级查询"
+    case_id: "bofa_admin_openVIPRebateRecord_query_005"
+    description: "验证测试openVIPRebateRecord_query_005 的开通VIP返佣记录查询 按输入等级查询"
 
     request:
       method: "GET"
-      url: "/cdb/dzwallet/sharedrecord/list"
+      url: "/cdb/dzvip/viprebaterecord/list"
       params:
         page: 1
         limit: 20
+        account: null
+        idw: null
         expireTimes: null
         expireTimee: null
-        account: null
-        status: "0"
-        name: null
-        lockDate: null
         sourceInvitationCode: null
+        relevels: "${frist_openVIPRebateRecord_relevels}"
+        gmt: null
       headers:
         authorization: "${authorization_admin_token}"
       cookies: null
@@ -485,23 +489,23 @@ test_steps:
           value: 0
           jsonpath: "$.json.data.total"
 
-  - name: "测试调用查询用户购买钱包产品记录 shareWalletRecord 按记录当前所处状态查询"
-    case_id: "bofa_admin_shareWalletRecord_querySum_005"
-    description: "验证测试shareWalletRecord_querySum_005 查询用户购买钱包产品记录 按记录当前所处状态查询并统计金额"
+  - name: "测试调用查询openVIPRebateRecord的开通VIP返佣记录查询 按输入等级查询"
+    case_id: "bofa_admin_openVIPRebateRecord_getAmountTotal_query_005"
+    description: "验证测试openVIPRebateRecord_getAmountTotal_query_005 的开通VIP返佣记录查询 按输入等级查询"
 
     request:
       method: "GET"
-      url: "/cdb/dzwallet/sharedrecord/sum"
+      url: "/cdb/dzvip/viprebaterecord/getAmountTotal"
       params:
         page: 1
         limit: 20
+        account: null
+        idw: null
         expireTimes: null
         expireTimee: null
-        account: "0"
-        status: null
-        name: null
-        lockDate: null
         sourceInvitationCode: null
+        relevels: "${frist_openVIPRebateRecord_relevels}"
+        gmt: null
       headers:
         authorization: "${authorization_admin_token}"
       cookies: null
@@ -523,28 +527,28 @@ test_steps:
           jsonpath: "$.json.msg"
 
       - assert:
-          check: "验证返回响应中金额不为空"
+          check: "验证返回响应中金额大于0"
           type: "not_eq"
-          value: null
+          value: 0
           jsonpath: "$.json.data"
 
-  - name: "测试调用查询用户购买钱包产品记录 shareWalletRecord 按时间日期范围查询"
-    case_id: "bofa_admin_shareWalletRecord_query_006"
-    description: "验证测试shareWalletRecord_query_006 查询用户购买钱包产品记录 按时间日期范围查询"
+  - name: "测试调用查询openVIPRebateRecord的开通VIP返佣记录查询 按时间日期范围查询"
+    case_id: "bofa_admin_openVIPRebateRecord_query_006"
+    description: "验证测试openVIPRebateRecord_query_006 的开通VIP返佣记录查询 按时间日期范围查询"
 
     request:
       method: "GET"
-      url: "/cdb/dzwallet/sharedrecord/list"
+      url: "/cdb/dzvip/viprebaterecord/list"
       params:
         page: 1
         limit: 20
+        account: null
+        idw: null
         expireTimes: "${generate_time_90_days_ago()}"
         expireTimee: "${generate_today_time()}"
-        account: null
-        status: null
-        name: null
-        lockDate: null
         sourceInvitationCode: null
+        relevels: null
+        gmt: null
       headers:
         authorization: "${authorization_admin_token}"
       cookies: null
@@ -565,29 +569,23 @@ test_steps:
           value: "success"
           jsonpath: "$.json.msg"
 
-      - assert:
-          check: "验证返回响应中记录条数大于0"
-          type: "not_eq"
-          value: 0
-          jsonpath: "$.json.data.total"
-
-  - name: "测试调用查询用户购买钱包产品记录 shareWalletRecord 按时间日期范围查询"
-    case_id: "bofa_admin_shareWalletRecord_querySum_006"
-    description: "验证测试shareWalletRecord_querySum_006 查询用户购买钱包产品记录 按时间日期范围查询并统计金额"
+  - name: "测试调用查询openVIPRebateRecord的开通VIP返佣记录查询 按时间日期范围查询"
+    case_id: "bofa_admin_openVIPRebateRecord_getAmountTotal_query_006"
+    description: "验证测试openVIPRebateRecord_getAmountTotal_query_006 的开通VIP返佣记录查询 按时间日期范围查询"
 
     request:
       method: "GET"
-      url: "/cdb/dzwallet/sharedrecord/sum"
+      url: "/cdb/dzvip/viprebaterecord/getAmountTotal"
       params:
         page: 1
         limit: 20
+        account: null
+        idw: null
         expireTimes: "${generate_time_90_days_ago()}"
         expireTimee: "${generate_today_time()}"
-        account: null
-        status: null
-        name: null
-        lockDate: null
         sourceInvitationCode: null
+        relevels: null
+        gmt: null
       headers:
         authorization: "${authorization_admin_token}"
       cookies: null
@@ -608,23 +606,23 @@ test_steps:
           value: "success"
           jsonpath: "$.json.msg"
 
-  - name: "测试调用查询用户购买钱包产品记录 shareWalletRecord记录  按默认查询后导出"
-    case_id: "bofa_admin_shareWalletRecord_ExportV2_001"
-    description: "验证测试shareWalletRecord_ExportV2_001 的shareWalletRecord记录 按默认查询后导出"
+  - name: "测试调用查询openVIPRebateRecord的开通VIP返佣记录查询 按默认查询后导出"
+    case_id: "bofa_admin_openVIPRebateRecord_ExportV2_001"
+    description: "验证测试openVIPRebateRecord_ExportV2_001 的开通VIP返佣记录查询 按默认查询后导出"
 
     request:
       method: "GET"
-      url: "/cdb/dzwallet/sharedrecord/sharedWalletRecordExportV2"
+      url: "/cdb/dzvip/viprebaterecord/viprebaterecordExportV2"
       params:
         page: 1
         limit: 20
+        account: null
+        idw: null
         expireTimes: null
         expireTimee: null
-        account: null
-        status: null
-        name: null
-        lockDate: null
         sourceInvitationCode: null
+        relevels: null
+        gmt: null
       headers:
         authorization: "${authorization_admin_token}"
       cookies: null

@@ -18,34 +18,8 @@ config:
   module: "default_apis_test"
 
 test_steps:
-  - name: "测试调用account_encryptionEnabled接口"
-    case_id: "bofa_admin_account_encryptionEnabled_001"
-    description: "验证测试获取bofa_admin_account_encryptionEnabled"
 
-    request:
-      method: "GET"
-      url: "/cdb/account/encryptionEnabled"
-      params: null
-      headers: null
-      cookies: null
-      body_type: null
-      body: null
-      files: null
-
-    teardown:
-      - assert:
-          check: "验证请求成功--code"
-          type: "eq"
-          value: 20000
-          jsonpath: "$.json.code"
-
-      - assert:
-          check: "验证返回响应成功标识"
-          type: "eq"
-          value: "success"
-          jsonpath: "$.json.msg"
-
-  - name: "测试调用account_login接口"
+  - name: "后台登录接口"
     case_id: "bofa_admin_account_login_001"
     description: "验证测试获取bofa_admin_account_login 并获取后台登录后生成的token用于后续其他测试场景"
 
@@ -57,7 +31,7 @@ test_steps:
       cookies: null
       body_type: "json"
       body:
-        username: "tiger"  # 后台登录账号
+        username: "admin"  # 后台登录账号
         password: "O4zAs9Mz4aoYOirIST4Xyg==" # 后台登录密码
         ggcode: ""
       files: null
@@ -87,7 +61,7 @@ test_steps:
           jsonpath: "$.json.data.token"
 
   - name: "查询 VIP 列表数据"
-    case_id: "bofa_admin_VipList_000"
+    case_id: "bofa_admin_VipList_001"
     description: "验证查询 VIP 列表数据接口"
 
     request:
@@ -131,7 +105,7 @@ test_steps:
 
 
   - name: "修改 VIP 内容接口"
-    case_id: "bofa_admin_VipList_003"
+    case_id: "bofa_admin_VipList_002"
     description: "验证修改 VIP 内容接口"
 
     request:
@@ -259,7 +233,7 @@ test_steps:
 
 
   - name: "删除 VIP 登记数据"
-    case_id: "bofa_admin_VipLest_002"
+    case_id: "bofa_admin_VipLest_003"
     description: "验证删除 VIP 登记数据接口"
 
     request:
@@ -292,7 +266,7 @@ test_steps:
 
 
   - name: "新增VIP 数据"
-    case_id: "bofa_admin_VipList_001"
+    case_id: "bofa_admin_VipList_004"
     description: "验证测试调用修改第一条轮播图记录dzbanner接口 修改bannerType类型为0已禁用 sortOrder=5"
 
     request:

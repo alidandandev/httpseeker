@@ -86,6 +86,40 @@ test_steps:
           type: "cache"
           jsonpath: "$.json.data.token"
 
+  - name: "测试调用查询在线客服 onlineService 类型查询"
+    case_id: "bofa_admin_onlineService_typeQuery_001"
+    description: "验证测试onlineService_typeQuery_001  客服类型查询 "
+
+    request:
+      method: "GET"
+      url: "/cdb/dict/getDicts/%E5%9C%A8%E7%BA%BF%E5%AE%A2%E6%9C%8D%E7%B1%BB%E5%9E%8B"
+      params: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
   - name: "测试调用新增在线客服 onlineService接口 "
     case_id: "bofa_admin_onlineService_add_001"
     description: "验证测试新增bofa_admin_onlineService_add 新增在线客服"

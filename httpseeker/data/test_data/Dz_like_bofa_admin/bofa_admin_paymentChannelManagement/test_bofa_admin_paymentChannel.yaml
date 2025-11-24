@@ -201,3 +201,71 @@ test_steps:
           type: "eq"
           value: "success"
           jsonpath: "$.json.msg"
+
+  - name: "测试调用查询paymentChannel的 查询网关通道 "
+    case_id: "bofa_admin_paymentChannel_gateQuery_001"
+    description: "验证测试paymentChannel_gateQuery_001 查询网关通道 "
+
+    request:
+      method: "GET"
+      url: "/cdb/dict/getDicts/%E6%94%AF%E4%BB%98%E9%80%9A%E9%81%93"
+      params: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+  - name: "测试调用查询paymentChannel的 查询币种 "
+    case_id: "bofa_admin_withdrawRecord_moneyTypeQuery_001"
+    description: "验证测试withdrawRecord_moneyTypeQuery_001 查询币种 "
+
+    request:
+      method: "GET"
+      url: "/cdb/dict/getDicts/%E5%B8%81%E7%A7%8D"
+      params: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"

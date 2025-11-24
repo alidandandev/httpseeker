@@ -227,8 +227,8 @@ test_steps:
       params:
         page: 1
         limit: 20
-        expireTimes: "2025-01-01 12:58:57"
-        expireTimee: "2025-12-30 12:58:57"
+        expireTimes: "${generate_time_90_days_ago()}"
+        expireTimee: "${generate_today_time()}"
         account: null
         rid: null
         sourceInvitationCode: null
@@ -251,3 +251,32 @@ test_steps:
           type: "eq"
           value: "success"
           jsonpath: "$.json.msg"
+
+  - name: "测试调用查询用户收记录 shareWalletIncomeRecord  按默认查询后导出"
+    case_id: "bofa_admin_shareWalletIncomeRecord_ExportV2_001"
+    description: "验证测试shareWalletIncomeRecord_ExportV2_001 的用户收记录录 按默认查询后导出"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzwallet/income/sharedWalletIncomeExportV2"
+      params:
+        page: 1
+        limit: 20
+        expireTimes: null
+        expireTimee: null
+        account: null
+        rid: null
+        sourceInvitationCode: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 200
+          jsonpath: "$.status_code"
