@@ -1,9 +1,9 @@
 # 点赞博发web站点登录后默认API测试用例集合
 config:
   allure:
-    epic: "对bofa_admin后台管理系统中用户积分管理中signInScoreSet的登录积分设置 进行相关api接口触发业务校验"
-    feature: "admin后台管理系统中用户积分管理中signInScoreSet的登录积分设置"
-    story: "默认API接口测试:test_bofa_admin_signInScoreSet的登录积分设置"
+    epic: "对基金池管理中爱心等级设置进行查询等api校验"
+    feature: "对基金池管理中爱心等级设置进行查询等api校验"
+    story: "默认API接口测试:test_bofa_admin_poolParameter的爱心等级信息"
     severity: "critical"
 
   request:
@@ -86,47 +86,17 @@ test_steps:
           type: "cache"
           jsonpath: "$.json.data.token"
 
-  - name: "测试调用新增 signInScoreSet的登录积分设置接口 "
-    case_id: "bofa_admin_signInScoreSet_add_001"
-    description: "验证测试新增bofa_admin_signInScoreSet_add 新增登录积分设置接口 "
-
-    request:
-      method: "POST"
-      url: "/cdb/dzscore/signInSet"
-      params: null
-      headers:
-        authorization: "${authorization_admin_token}"
-      cookies: null
-      body_type: "json"
-      body:
-        idw: null
-        dayIndex: "100"
-        rewardAmount: "100"
-      files: null
-
-    teardown:
-      - assert:
-          check: "验证请求成功--code"
-          type: "eq"
-          value: 20000
-          jsonpath: "$.json.code"
-
-      - assert:
-          check: "验证返回响应成功标识--msg"
-          type: "eq"
-          value: "success"
-          jsonpath: "$.json.msg"
-
-  - name: "测试调用查询signInScoreSet的登录积分设置接口 默认无条件查询"
-    case_id: "bofa_admin_signInScoreSete_query_001"
-    description: "验证测试获取bofa_admin_signInScoreSet_query 默认无条件查询 取第一条新增数据进行修改"
+  - name: "测试调用查询poolParameter的爱心等级信息"
+    case_id: "bofa_admin_poolParameter_query_001"
+    description: "验证测试获取bofa_admin_poolParameter_query_001 "
 
     request:
       method: "GET"
-      url: "/cdb/dzscore/signInSet/list"
+      url: "/cdb/dzpool/parameter/list"
       params:
         page: 1
         limit: 20
+        id: null
       headers:
         authorization: "${authorization_admin_token}"
       cookies: null
@@ -147,38 +117,135 @@ test_steps:
           value: "success"
           jsonpath: "$.json.msg"
 
+  - name: "测试调用新增poolParameter的爱心等级信息 "
+    case_id: "bofa_admin_poolParameter_add_001"
+    description: "验证测试新增bofa_admin_poolParameter_add 新增在线客服"
+
+    request:
+      method: "POST"
+      url: "/cdb/dzpool/parameter"
+      params: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: "json"
+      body:
+        id: ""
+        idw: ""
+        minimum: "100"
+        maximum: "1000"
+        name: "telegramTest111"
+        logo: "https://8xzlef11.oss-cn-hongkong.aliyuncs.com/aly/20251112/a8d5d407d6fa45458395f72049faf885api_202"
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+  - name: "测试调用查询poolParameter的爱心等级信息"
+    case_id: "bofa_admin_poolParameter_query_002"
+    description: "验证测试获取bofa_admin_poolParameter_query_002 查询第一条记录提取信息作为后续操作条件"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzpool/parameter/list"
+      params:
+        page: 1
+        limit: 20
+        id: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
       - assert:
           check: "验证返回响应中data中总条数不等于0"
           type: "not_eq"
           value: 0
           jsonpath: "$.json.data.total"
-
       - extract:
-          key: "new_signInScoreSet_id"
+          key: "new_poolParameter_id"
           type: "cache"
           jsonpath: "$.json.data.records[0].id"
       - extract:
-          key: "new_signInScoreSet_idw"
+          key: "new_poolParameter_idw"
           type: "cache"
           jsonpath: "$.json.data.records[0].idw"
 
-  - name: "测试对新增signInScoreSet的登录积分设置 进行修改"
-    case_id: "bofa_admin_signInScoreSet_modify_001"
-    description: "验证测试对新增登录积分设置 scorePrize进行修改"
+  - name: "测试调用查询poolParameter的爱心等级信息 按照id来查询"
+    case_id: "bofa_admin_poolParameter_query_003"
+    description: "验证测试获取bofa_admin_poolParameter_query_003 按照id来查询"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzpool/parameter/list"
+      params:
+        page: 1
+        limit: 20
+        id: "${new_poolParameter_id}"
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+    setup:
+      - testcase: "bofa_admin_poolParameter_query_002"
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+  - name: "测试调用poolParameter的爱心等级信息 按照id来修改"
+    case_id: "bofa_admin_poolParameter_modify_001"
+    description: "验证测试获取bofa_admin_poolParameter的爱心等级信息 按照id来修改"
 
     request:
       method: "PUT"
-      url: "/cdb/dzscore/signInSet"
+      url: "/cdb/dzpool/parameter"
       params: null
       headers:
         authorization: "${authorization_admin_token}"
       cookies: null
       body_type: "json"
       body:
-        id: "${new_signInScoreSet_id}"
-        dayIndex: "99"
-        idw: "${new_signInScoreSet_idw}"
-        rewardAmount: "99"
+        id: "${new_poolParameter_id}"
+        idw: "${new_poolParameter_idw}"
+        minimum: "100"
+        maximum: "2000"
+        name: "telegramTest111"
+        logo: "logo123"
       files: null
 
     teardown:
@@ -194,31 +261,31 @@ test_steps:
           value: "success"
           jsonpath: "$.json.msg"
 
-  - name: "测试对新增signInScoreSet的登录积分设置  进行删除  (操作栏没有删除功能，尝试一下次方法主要是避免数据一致增加不删除)"
-    case_id: "bofa_admin_signInScoreSet_del_001"
-    description: "验证测试对新增signInScoreSet的登录积分设置  进行删除"
+  - name: "测试调用poolParameter的爱心等级信息 按照id来删除"
+    case_id: "bofa_admin_poolParameter_del_001"
+    description: "验证测试获取bofa_admin_poolParameter的爱心等级信息 按照id来删除"
 
     request:
       method: "DELETE"
-      url: "/cdb/dzscore/signInSet"
+      url: "/cdb/dzpool/parameter"
       params:
-        id: "${new_scorePrize_id}"  # idw: "${new_scorePrize_idw}"
+        id: "${new_poolParameter_id}"
       headers:
         authorization: "${authorization_admin_token}"
       cookies: null
-      body_type: null
+      body_type: "json"
       body: null
       files: null
 
     teardown:
       - assert:
-          check: "验证请求异常--code 9999"
+          check: "验证请求成功--code"
           type: "eq"
-          value: 9999
+          value: 20000
           jsonpath: "$.json.code"
 
       - assert:
-          check: "验证返回响应 该操作未授权--msg"
+          check: "验证返回响应成功标识--msg"
           type: "eq"
-          value: "该操作未授权"
+          value: "success"
           jsonpath: "$.json.msg"
