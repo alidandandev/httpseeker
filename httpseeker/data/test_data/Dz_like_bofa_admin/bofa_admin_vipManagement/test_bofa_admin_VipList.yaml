@@ -1,0 +1,388 @@
+# 点赞博发web站点登录后默认API测试用例集合
+config:
+  allure:
+    epic: "对bofa_admin后台管理系统中VIP管理进行操作"
+    feature: "admin后台管理系统中 VIP 列表"
+    story: "默认API接口测试"
+    severity: "critical"
+
+  request:
+    env: "Dz_like_bofa_admin.env"  # 需要在run_env目录下创建qat.env文件
+    headers:
+      Content-Type: "application/json"
+    timeout: 30
+    verify: false
+    encryption_enabled: false
+    encryption_key: "your-32-byte-secure-aes-key-1234"  # 32字节的AES密钥
+
+  module: "default_apis_test"
+
+test_steps:
+
+  - name: "后台登录接口"
+    case_id: "bofa_admin_account_login_001"
+    description: "验证测试获取bofa_admin_account_login 并获取后台登录后生成的token用于后续其他测试场景"
+
+    request:
+      method: "POST"
+      url: "/cdb/account/login"
+      params: null
+      headers: null
+      cookies: null
+      body_type: "json"
+      body:
+        username: "admin"  # 后台登录账号
+        password: "O4zAs9Mz4aoYOirIST4Xyg==" # 后台登录密码
+        ggcode: ""
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+            check: "验证返回响应data为不空"
+            type: "not_eq"
+            value: null
+            jsonpath: "$.json.data"
+
+      - extract:
+          key: "authorization_admin_token"
+          type: "cache"
+          jsonpath: "$.json.data.token"
+
+  - name: "查询 VIP 列表数据"
+    case_id: "bofa_admin_VipList_001"
+    description: "验证查询 VIP 列表数据接口"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzvip/vipmessage/list"
+      params:
+        page: 1
+        limit: 20
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中data内容返回记录数不为0"
+          type: "not_eq"
+          value: 0
+          jsonpath: "$.json.data.total"
+
+      - extract:
+          key: "vip_id"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].id"
+
+
+
+
+  - name: "修改 VIP 内容接口"
+    case_id: "bofa_admin_VipList_002"
+    description: "验证修改 VIP 内容接口"
+
+    request:
+      method: "PUT"
+      url: "/cdb/dzvip/vipmessage"
+      params: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: "json"
+      body:
+        limitNum: 10
+        id: 6
+        idw: '1612270101869932544'
+        name: v1
+        nick: v1
+        vipType: v1
+        dailyIncome: 20
+        reviewIncome: 1
+        forwardIncome: 1
+        numberOfTasks: 100
+        dzstatus: 1
+        specialStatus: 0
+        validDate: 1
+        vipImg: >-
+          https://zantu.oss-cn-hongkong.aliyuncs.com/qwe/20240723/0c76a26784aa430fbb4b6652d173ef4dapi_97
+        vipBackGround: >-
+          https://zantu.oss-cn-hongkong.aliyuncs.com/qwe/20240919/40ab97070eac4abe938a85a0a6207078api_81
+        sellingPrice: 100
+        withdrawalFee: 10.111111
+        minimumWithdrawal: 1
+        maximumWithdrawal: 10000
+        l1OpenVipRebate: 0
+        l2OpenVipRebate: 0
+        l3OpenVipRebate: 0
+        l4OpenVipRebate: 0
+        l5OpenVipRebate: 0
+        l1TaskRebate: 0
+        l2TaskRebate: 0
+        l3TaskRebate: 0
+        gearCode: f
+        feeMode: 0
+        feeRange: null
+        orderLimitMode: 0
+        orderLimit:
+          - weekend: MONDAY
+            isEnabled: false
+            startTime: ''
+            endTime: ''
+          - weekend: TUESDAY
+            isEnabled: false
+            startTime: ''
+            endTime: ''
+          - weekend: WEDNESDAY
+            isEnabled: false
+            startTime: ''
+            endTime: ''
+          - weekend: THURSDAY
+            isEnabled: false
+            startTime: ''
+            endTime: ''
+          - weekend: FRIDAY
+            isEnabled: false
+            startTime: ''
+            endTime: ''
+          - weekend: SATURDAY
+            isEnabled: false
+            startTime: ''
+            endTime: ''
+          - weekend: SUNDAY
+            isEnabled: false
+            startTime: ''
+            endTime: ''
+        withdrawLimitMode: 0
+        withdrawLimit:
+          - weekend: MONDAY
+            isEnabled: false
+            startTime: ''
+            endTime: ''
+          - weekend: TUESDAY
+            isEnabled: false
+            startTime: ''
+            endTime: ''
+          - weekend: WEDNESDAY
+            isEnabled: false
+            startTime: ''
+            endTime: ''
+          - weekend: THURSDAY
+            isEnabled: false
+            startTime: ''
+            endTime: ''
+          - weekend: FRIDAY
+            isEnabled: false
+            startTime: ''
+            endTime: ''
+          - weekend: SATURDAY
+            isEnabled: false
+            startTime: ''
+            endTime: ''
+          - weekend: SUNDAY
+            isEnabled: false
+            startTime: ''
+            endTime: ''
+        taskPassword:
+          - password: '123456'
+            startTime: '00:00:00'
+            endTime: '23:59:59'
+            isEnabled: true
+            numberOfTasks: 5
+
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+
+  - name: "删除 VIP 登记数据"
+    case_id: "bofa_admin_VipLest_003"
+    description: "验证删除 VIP 登记数据接口"
+
+    request:
+      method: "DELETE"
+      url: "/cdb/dzvip/vipmessage"
+      params:
+        id: "${vip_id}"
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+
+
+
+
+  - name: "新增VIP 数据"
+    case_id: "bofa_admin_VipList_004"
+    description: "验证测试调用修改第一条轮播图记录dzbanner接口 修改bannerType类型为0已禁用 sortOrder=5"
+
+    request:
+      method: "POST"
+      url: "/cdb/dzvip/vipmessage"
+      params: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: "json"
+      body:
+        limitNum: '1'
+        id: ''
+        idw: ''
+        sourceInvitationCode: ''
+        name: 测试数据请勿手动删除
+        nick: ' 32323'
+        vipType: v11
+        dailyIncome: '1'
+        reviewIncome: '1'
+        forwardIncome: '1'
+        numberOfTasks: '1'
+        dzstatus: 3
+        specialStatus: 0
+        validDate: '1'
+        vipImg: ''
+        vipBackGround: ''
+        sellingPrice: '1'
+        withdrawalFee: 10
+        minimumWithdrawal: '1'
+        maximumWithdrawal: '11'
+        l1OpenVipRebate: 0
+        l2OpenVipRebate: 0
+        l3OpenVipRebate: 0
+        l4OpenVipRebate: 0
+        l5OpenVipRebate: 0
+        l1TaskRebate: 0
+        l2TaskRebate: 0
+        l3TaskRebate: 0
+        gearCode: e
+        feeMode: 0
+        feeRange: null
+        orderLimitMode: 0
+        orderLimit:
+          - weekend: MONDAY
+            isEnabled: false
+            startTime: ''
+            endTime: ''
+          - weekend: TUESDAY
+            isEnabled: false
+            startTime: ''
+            endTime: ''
+          - weekend: WEDNESDAY
+            isEnabled: false
+            startTime: ''
+            endTime: ''
+          - weekend: THURSDAY
+            isEnabled: false
+            startTime: ''
+            endTime: ''
+          - weekend: FRIDAY
+            isEnabled: false
+            startTime: ''
+            endTime: ''
+          - weekend: SATURDAY
+            isEnabled: false
+            startTime: ''
+            endTime: ''
+          - weekend: SUNDAY
+            isEnabled: false
+            startTime: ''
+            endTime: ''
+        withdrawLimitMode: 0
+        withdrawLimit:
+          - weekend: MONDAY
+            isEnabled: false
+            startTime: ''
+            endTime: ''
+          - weekend: TUESDAY
+            isEnabled: false
+            startTime: ''
+            endTime: ''
+          - weekend: WEDNESDAY
+            isEnabled: false
+            startTime: ''
+            endTime: ''
+          - weekend: THURSDAY
+            isEnabled: false
+            startTime: ''
+            endTime: ''
+          - weekend: FRIDAY
+            isEnabled: false
+            startTime: ''
+            endTime: ''
+          - weekend: SATURDAY
+            isEnabled: false
+            startTime: ''
+            endTime: ''
+          - weekend: SUNDAY
+            isEnabled: false
+            startTime: ''
+            endTime: ''
+        taskPassword: [ ]
+
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+

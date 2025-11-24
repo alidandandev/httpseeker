@@ -25,7 +25,7 @@ from httpseeker.utils.request import case_data_parse as case_data
 from httpseeker.utils.send_report.dingding import DingDing
 from httpseeker.utils.send_report.email import SendEmail
 from httpseeker.utils.send_report.feishu import FeiShu
-from httpseeker.utils.send_report.telegram import Telegram
+# from httpseeker.utils.send_report.telegram import Telegram  # 已禁用，使用独立模块
 from httpseeker.utils.send_report.wechat import WeChat
 from httpseeker.utils.time_control import get_current_time
 
@@ -145,8 +145,9 @@ def startup(
     if httpseeker_config.WECHAT_SEND:
         WeChat(test_result).send()
 
-    if httpseeker_config.TELEGRAM_SEND:
-        Telegram(test_result).send()
+    # Telegram 推送已禁用，如需使用请使用独立的 telegram_notifier 模块
+    # if httpseeker_config.TELEGRAM_SEND:
+    #     Telegram(test_result).send()
 
     if allure:
         if os.path.exists(httpseeker_path.allure_report_dir):
@@ -236,6 +237,32 @@ def run(
         if auth_path is not None:
             os.environ['HTTPSEEKER_AUTH_PATH'] = auth_path
 
+        # 重新加载配置（清除缓存后重新导入）
+        if conf_path is not None or global_env is not None or auth_path is not None:
+            from httpseeker.core.get_conf import cache_httpseeker_config
+            from httpseeker.core.path_conf import cache_httpseeker_path
+
+            cache_httpseeker_config.cache_clear()
+            cache_httpseeker_path.cache_clear()
+
+            # 重新导入所有依赖配置的模块
+            import importlib
+            import httpseeker.core.get_conf as get_conf_module
+            import httpseeker.core.path_conf as path_conf_module
+            import httpseeker.utils.file_control as file_control_module
+            import httpseeker.utils.case_auto_generator as case_auto_generator_module
+
+            importlib.reload(get_conf_module)
+            importlib.reload(path_conf_module)
+            importlib.reload(file_control_module)
+            importlib.reload(case_auto_generator_module)
+
+            # 更新全局引用
+            global httpseeker_config, httpseeker_path, auto_generate_testcases
+            from httpseeker.core.get_conf import httpseeker_config
+            from httpseeker.core.path_conf import httpseeker_path
+            from httpseeker.utils.case_auto_generator import auto_generate_testcases
+
         banner = f"""\n
         ╦ ╦╔╦╗╔╦╗╔═╗  ╔═╗╔═╗╔═╗╦╔═╔═╗╦═╗
         ╠═╣ ║  ║ ╠═╝  ╚═╗║╣ ║╣ ╠╩╗║╣ ╠╦╝
@@ -245,6 +272,7 @@ def run(
         Version: {get_version(cli=False)}
         """
         log.info(banner)
+        log.info(f'📋 当前项目: {httpseeker_config.PROJECT_NAME}')
         redis_client.init()
         case_data.clean_cache_data(clean_cache)
         case_data.case_data_init(pydantic_verify)
@@ -274,7 +302,15 @@ def run(
         log.error(f'运行异常：{e}')
         import traceback
 
-        SendEmail({'error': traceback.format_exc()}).send_error()
+        # 只在邮件配置有效时才发送错误通知
+        if httpseeker_config.EMAIL_SEND and httpseeker_config.EMAIL_SERVER:
+            try:
+                SendEmail({'error': traceback.format_exc()}).send_error()
+            except Exception as email_error:
+                log.debug(f'邮件发送失败: {email_error}')
+
+        # 打印完整的错误堆栈以便调试
+        log.error(f'完整错误信息:\n{traceback.format_exc()}')
 
 
 if __name__ == '__main__':
