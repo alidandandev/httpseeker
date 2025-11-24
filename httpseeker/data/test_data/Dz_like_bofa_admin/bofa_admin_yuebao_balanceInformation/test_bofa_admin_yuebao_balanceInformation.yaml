@@ -1,0 +1,173 @@
+# bofa站点admin后台首页
+config:
+  allure:
+    epic: "bofa站点admin后台"
+    feature: "余额宝_余额信息"
+    story: "页面所有数据接口"
+    severity: "critical"
+
+  request:
+    env: "Dz_like_bofa_admin.env"  # 需要在run_env目录下创建test.env文件
+    headers:
+      Content-Type: "application/json"
+    timeout: 30
+    verify: false
+
+  module: "yuebao_balInfo"
+
+test_steps:
+  - name: "登录"
+    case_id: "cdb_bofa_login_001"
+    description: "登录拿token"
+
+    request:
+      method: "POST"
+      url: "/cdb/account/login"
+      params: null
+      headers: null
+      cookies: null
+      body_type: "json"
+      body:
+        username: ethans
+        password: 75OIo26rz2WLN02K4ZH6yQ==
+        ggcode: ${get_login_google_auth_code()}
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+      - extract:
+          key: "token"
+          type: "cache"
+          jsonpath: "$.json.data.token"
+
+  # ========== 步骤2: 余额宝模块-余额信息子模块-列表数据（搜索/重置）==========
+  - name: "列表数据（搜索/重置）"
+    case_id: "cdb_bofa_yuebao_balInfo_001"
+    description: "系统管理模块-用户管理子模块-列表数据（搜索/重置）"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzbalance/user/balance/wallet/list?page=1&limit=20&sortBy=desc"
+      params: null
+      headers:
+        Authorization: "${token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+      - extract:
+          key: "id"
+          type: "cache"
+          jsonpath: $.json.data.records[0].userInfo.id
+
+  # ========== 步骤3: 余额宝模块-余额信息子模块-上分==========
+  - name: "上分"
+    case_id: "cdb_bofa_yuebao_balInfo_002"
+    description: "系统管理模块-用户管理子模块-上分"
+
+    request:
+      method: "PUT"
+      url: "/cdb/dzbalance/user/balance/wallet/upDownPoints?id=${id}&type=0&money=10&remark=auto"
+      params: null
+      headers:
+        Authorization: "${token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+  # ========== 步骤4: 余额宝模块-余额信息子模块-下分==========
+  - name: "下分"
+    case_id: "cdb_bofa_yuebao_balInfo_003"
+    description: "系统管理模块-用户管理子模块-下分"
+
+    request:
+      method: "PUT"
+      url: "/cdb/dzbalance/user/balance/wallet/upDownPoints?id=${id}&type=1&money=10&remark=auto"
+      params: null
+      headers:
+        Authorization: "${token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+
+
+
+

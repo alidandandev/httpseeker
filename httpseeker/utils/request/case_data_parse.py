@@ -6,6 +6,7 @@ import json
 import sys
 
 from collections import defaultdict
+from datetime import datetime, date
 
 import pytest
 
@@ -21,6 +22,16 @@ from httpseeker.schemas.case_data import CaseCacheData
 from httpseeker.utils.file_control import get_file_hash, get_file_property, search_all_case_data_files
 from httpseeker.utils.pydantic_parser import parse_error
 from httpseeker.utils.request.ids_extract import get_ids
+
+
+class DateTimeEncoder(json.JSONEncoder):
+    """自定义 JSON encoder，处理 datetime 和 date 对象"""
+    def default(self, obj):
+        if isinstance(obj, datetime):
+            return obj.strftime('%Y-%m-%d %H:%M:%S')
+        elif isinstance(obj, date):
+            return obj.strftime('%Y-%m-%d')
+        return super().default(obj)
 
 
 def clean_cache_data(clean_cache: bool) -> None:
@@ -53,12 +64,12 @@ def case_data_init(pydantic_verify: bool) -> None:
         case_data.update({'filename': filename, 'file_hash': file_hash})
         redis_case_data = redis_client.get(f'{redis_client.case_data_prefix}:{filename}', logging=False)
         if redis_case_data is None:
-            redis_client.set(f'{redis_client.case_data_prefix}:{filename}', json.dumps(case_data, ensure_ascii=False))
+            redis_client.set(f'{redis_client.case_data_prefix}:{filename}', json.dumps(case_data, ensure_ascii=False, cls=DateTimeEncoder))
         else:
             redis_file_hash = json.loads(redis_case_data).get('file_hash')
             if file_hash != redis_file_hash:
                 redis_client.rset(
-                    f'{redis_client.case_data_prefix}:{filename}', json.dumps(case_data, ensure_ascii=False)
+                    f'{redis_client.case_data_prefix}:{filename}', json.dumps(case_data, ensure_ascii=False, cls=DateTimeEncoder)
                 )
     if pydantic_verify:
         case_data_list = redis_client.get_prefix(f'{redis_client.case_data_prefix}:')

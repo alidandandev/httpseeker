@@ -1,0 +1,609 @@
+# 点赞博发web站点登录后默认API测试用例集合
+config:
+  allure:
+    epic: "对bofa_admin后台管理系统中共享钱包管理-用户购买钱包产品记录信息查询"
+    feature: "admin后台管理系统中 共享钱包管理-shareWalletRecord的用户购买钱包产品记录信息查询"
+    story: "默认API接口测试:test_bofa_admin_shareWalletRecord的用户购买钱包产品记录信息查询"
+    severity: "critical"
+
+  request:
+    env: "Dz_like_bofa_admin.env"  # 需要在run_env目录下创建qat.env文件
+    headers:
+      Content-Type: "application/json"
+    timeout: 30
+    verify: false
+    encryption_enabled: false
+    encryption_key: "your-32-byte-secure-aes-key-1234"  # 32字节的AES密钥
+
+  module: "default_apis_test"
+
+test_steps:
+  - name: "测试调用account_encryptionEnabled接口"
+    case_id: "bofa_admin_account_encryptionEnabled_001"
+    description: "验证测试获取bofa_admin_account_encryptionEnabled"
+
+    request:
+      method: "GET"
+      url: "/cdb/account/encryptionEnabled"
+      params: null
+      headers: null
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+  - name: "测试调用account_login接口"
+    case_id: "bofa_admin_account_login_001"
+    description: "验证测试获取bofa_admin_account_login 并获取后台登录后生成的token用于后续其他测试场景"
+
+    request:
+      method: "POST"
+      url: "/cdb/account/login"
+      params: null
+      headers: null
+      cookies: null
+      body_type: "json"
+      body:
+        username: "tiger"  # 后台登录账号
+        password: "O4zAs9Mz4aoYOirIST4Xyg==" # 后台登录密码
+        ggcode: ""
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+            check: "验证返回响应data为不空"
+            type: "not_eq"
+            value: null
+            jsonpath: "$.json.data."
+
+      - extract:
+          key: "authorization_admin_token"
+          type: "cache"
+          jsonpath: "$.json.data.token"
+
+  - name: "测试调用查询用户购买钱包产品记录 shareWalletRecord 默认无条件查询"
+    case_id: "bofa_admin_shareWalletRecord_query_001"
+    description: "验证测试shareWalletRecord_query_001 查询用户购买钱包产品记录 默认无条件查询,返回第一条记录提取关键字作为后续查询条件"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzwallet/sharedrecord/list"
+      params:
+        page: 1
+        limit: 20
+        expireTimes: null
+        expireTimee: null
+        account: null
+        status: null
+        name: null
+        lockDate: null
+        sourceInvitationCode: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中记录条数大于0"
+          type: "not_eq"
+          value: 0
+          jsonpath: "$.json.data.total"
+      - extract:
+          key: "frist_shareWallet_record_account"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].account"
+      - extract:
+          key: "frist_shareWallet_record_topAccount"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].userInfo.user.account"
+      - extract:
+          key: "frist_shareWallet_record_walletProductName"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].name"
+
+  - name: "测试调用查询用户购买钱包产品记录 shareWalletRecord 默认无条件查询时统计总收益金额"
+    case_id: "bofa_admin_shareWalletRecord_querySum_001"
+    description: "验证测试shareWalletRecord_querySum_001 查询用户购买钱包产品记录 默认无条件查询时统计总收益金额"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzwallet/sharedrecord/sum"
+      params:
+        page: 1
+        limit: 20
+        expireTimes: null
+        expireTimee: null
+        account: null
+        status: null
+        name: null
+        lockDate: null
+        sourceInvitationCode: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中金额不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+  - name: "测试调用查询用户购买钱包产品记录 shareWalletRecord 按用户名查询"
+    case_id: "bofa_admin_shareWalletRecord_query_002"
+    description: "验证测试shareWalletRecord_query_002 查询用户购买钱包产品记录 按用户名查询"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzwallet/sharedrecord/list"
+      params:
+        page: 1
+        limit: 20
+        expireTimes: null
+        expireTimee: null
+        account: "${frist_shareWallet_record_account}"
+        status: null
+        name: null
+        lockDate: null
+        sourceInvitationCode: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中记录条数大于0"
+          type: "not_eq"
+          value: 0
+          jsonpath: "$.json.data.total"
+
+  - name: "测试调用查询用户购买钱包产品记录 shareWalletRecord 按用户名查询并统计金额"
+    case_id: "bofa_admin_shareWalletRecord_querySum_002"
+    description: "验证测试shareWalletRecord_querySum_002 查询用户购买钱包产品记录 按用户名查询并统计金额"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzwallet/sharedrecord/sum"
+      params:
+        page: 1
+        limit: 20
+        expireTimes: null
+        expireTimee: null
+        account: "${frist_shareWallet_record_account}"
+        status: null
+        name: null
+        lockDate: null
+        sourceInvitationCode: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中金额不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+  - name: "测试调用查询用户购买钱包产品记录 shareWalletRecord 按顶级账户查询"
+    case_id: "bofa_admin_shareWalletRecord_query_003"
+    description: "验证测试shareWalletRecord_query_003 查询用户购买钱包产品记录 按顶级账户查询"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzwallet/sharedrecord/list"
+      params:
+        page: 1
+        limit: 20
+        expireTimes: null
+        expireTimee: null
+        account: null
+        status: null
+        name: null
+        lockDate: null
+        sourceInvitationCode: "${frist_shareWallet_record_topAccount}"
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中记录条数大于0"
+          type: "not_eq"
+          value: 0
+          jsonpath: "$.json.data.total"
+
+  - name: "测试调用查询用户购买钱包产品记录 shareWalletRecord 按顶级账户查询并统计金额"
+    case_id: "bofa_admin_shareWalletRecord_querySum_003"
+    description: "验证测试shareWalletRecord_querySum_003 查询用户购买钱包产品记录 按顶级账户查询并统计金额"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzwallet/sharedrecord/sum"
+      params:
+        page: 1
+        limit: 20
+        expireTimes: null
+        expireTimee: null
+        account: null
+        status: null
+        name: null
+        lockDate: null
+        sourceInvitationCode: "${frist_shareWallet_record_topAccount}"
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中金额不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+  - name: "测试调用查询用户购买钱包产品记录 shareWalletRecord 按所属钱包产品查询"
+    case_id: "bofa_admin_shareWalletRecord_query_004"
+    description: "验证测试shareWalletRecord_query_004 查询用户购买钱包产品记录 按所属钱包产品查询并统计金额"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzwallet/sharedrecord/list"
+      params:
+        page: 1
+        limit: 20
+        expireTimes: null
+        expireTimee: null
+        account: null
+        status: null
+        name: "${frist_shareWallet_record_walletProductName}"
+        lockDate: null
+        sourceInvitationCode: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中记录条数大于0"
+          type: "not_eq"
+          value: 0
+          jsonpath: "$.json.data.total"
+
+  - name: "测试调用查询用户购买钱包产品记录 shareWalletRecord 按所属钱包产品查询"
+    case_id: "bofa_admin_shareWalletRecord_querySum_004"
+    description: "验证测试shareWalletRecord_querySum_004 查询用户购买钱包产品记录 按所属钱包产品查询并统计金额"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzwallet/sharedrecord/sum"
+      params:
+        page: 1
+        limit: 20
+        expireTimes: null
+        expireTimee: null
+        account: null
+        status: null
+        name: "${frist_shareWallet_record_walletProductName}"
+        lockDate: null
+        sourceInvitationCode: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中金额不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+  - name: "测试调用查询用户购买钱包产品记录 shareWalletRecord 按记录当前所处状态查询"
+    case_id: "bofa_admin_shareWalletRecord_query_005"
+    description: "验证测试shareWalletRecord_query_005 查询用户购买钱包产品记录 按记录当前所处状态0=已结束查询"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzwallet/sharedrecord/list"
+      params:
+        page: 1
+        limit: 20
+        expireTimes: null
+        expireTimee: null
+        account: null
+        status: "0"
+        name: null
+        lockDate: null
+        sourceInvitationCode: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中记录条数大于0"
+          type: "not_eq"
+          value: 0
+          jsonpath: "$.json.data.total"
+
+  - name: "测试调用查询用户购买钱包产品记录 shareWalletRecord 按记录当前所处状态查询"
+    case_id: "bofa_admin_shareWalletRecord_querySum_005"
+    description: "验证测试shareWalletRecord_querySum_005 查询用户购买钱包产品记录 按记录当前所处状态查询并统计金额"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzwallet/sharedrecord/sum"
+      params:
+        page: 1
+        limit: 20
+        expireTimes: null
+        expireTimee: null
+        account: "0"
+        status: null
+        name: null
+        lockDate: null
+        sourceInvitationCode: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中金额不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+  - name: "测试调用查询用户购买钱包产品记录 shareWalletRecord 按时间日期范围查询"
+    case_id: "bofa_admin_shareWalletRecord_query_006"
+    description: "验证测试shareWalletRecord_query_006 查询用户购买钱包产品记录 按时间日期范围查询"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzwallet/sharedrecord/list"
+      params:
+        page: 1
+        limit: 20
+        expireTimes: "2025-01-01 12:58:57"
+        expireTimee: "2025-12-30 12:58:57"
+        account: null
+        status: null
+        name: null
+        lockDate: null
+        sourceInvitationCode: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+          check: "验证返回响应中记录条数大于0"
+          type: "not_eq"
+          value: 0
+          jsonpath: "$.json.data.total"
+
+  - name: "测试调用查询用户购买钱包产品记录 shareWalletRecord 按时间日期范围查询"
+    case_id: "bofa_admin_shareWalletRecord_querySum_006"
+    description: "验证测试shareWalletRecord_querySum_006 查询用户购买钱包产品记录 按时间日期范围查询并统计金额"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzwallet/sharedrecord/sum"
+      params:
+        page: 1
+        limit: 20
+        expireTimes: "2025-01-01 12:58:57"
+        expireTimee: "2025-12-30 12:58:57"
+        account: null
+        status: null
+        name: null
+        lockDate: null
+        sourceInvitationCode: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
