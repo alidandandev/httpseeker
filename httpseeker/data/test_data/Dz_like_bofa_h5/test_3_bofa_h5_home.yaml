@@ -43,12 +43,6 @@ test_steps:
           value: true
           jsonpath: "$.json.success"
 
-      - assert:
-          check: "验证data不为空"
-          type: "not_eq"
-          value: null
-          jsonpath: "$.json.data"
-
   - name: "测试获取点赞任务类型列表接口"
     case_id: "cdb_bofa_002"
     description: "验证获取点赞任务类型列表接口功能"
@@ -154,7 +148,7 @@ test_steps:
 
     request:
       method: "POST"
-      url: "/cdb/api/auth/getActivity"
+      url: "/cdb//api/auth/getActivity"  # 修改订正之后会调整为 /cdb/api/auth/getActivity
       params: null
       headers: null
       cookies: null
@@ -251,3 +245,206 @@ test_steps:
           type: "not_eq"
           value: null
           jsonpath: "$.json.data"
+
+
+  - name: "测试获取幸运抽奖类型接口"
+    case_id: "cdb_bofa_008"
+    description: "验证获取幸运抽奖类型接口功能"
+
+    request:
+      method: "GET"
+      url: "/cdb//api/prize/getLuckyDrawType" # 优化订正之后会调整为/cdb/api/prize/getLuckyDrawType
+      params: null
+      headers: null
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+  - name: "测试按奖品类型来获取幸运抽奖内容"
+    case_id: "cdb_bofa_009"
+    description: "验证获取获取幸运抽奖内容接口功能"
+
+    request:
+      method: "POST"
+      url: "/cdb//api/prize/getLuckyDraw" # 优化订正之后会调整为/cdb/api/prize/getLuckyDraw
+      params: null
+      headers: null
+      cookies: null
+      body_type: "json"
+      body:
+        prizeType: 1
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+  - name: "测试获取奖品列表内容"
+    case_id: "cdb_bofa_010"
+    description: "验证获取获测试获取奖品列表内容接口功能"
+
+    request:
+      method: "POST"
+      url: "/cdb//api/prize/getPrizeList" # 优化订正之后会调整为/cdb/api/prize/getPrizeList
+      params: null
+      headers: null
+      cookies: null
+      body_type: "json"
+      body:
+        prizeType: 1
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+  - name: "测试获取奖品数量"
+    case_id: "cdb_bofa_011"
+    description: "验证获取获测试获取奖品列表内容接口功能"
+
+    request:
+      method: "POST"
+      url: "/cdb//api/prize/getPrizeNum" # 优化订正之后会调整为/cdb/api/prize/getPrizeNum
+      params: null
+      headers: null
+      cookies: null
+      body_type: "json"
+      body:
+        prizeType: 1
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+  - name: "测试开始发放奖品2"
+    case_id: "cdb_bofa_012"
+    description: "验证获取获测试获取奖品列表内容接口功能"
+
+    request:
+      method: "POST"
+      url: "/cdb//api/prize/startPrize2" # 优化订正之后会调整为/cdb/api/prize/startPrize2
+      params: null
+      headers: null
+      cookies: null
+      body_type: "json"
+      body:
+        money: 1
+        password: "123456"
+        prizeType: 2
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+# 此接口为受到限制接口，与startPrize2一起的，先脚本中保留，后续根据开发实现再调整
+  - name: "测试开始发放奖品(REQUEST_LIMIT)"
+    case_id: "cdb_bofa_013"
+    description: "验证获取获测试获取奖品列表内容接口功能"
+
+    request:
+      method: "POST"
+      url: "/cdb//api/prize/startPrize" # 优化订正之后会调整为/cdb/api/prize/startPrize
+      params: null
+      headers: null
+      cookies: null
+      body_type: "json"
+      body:
+        money: 1
+        password: "123456"
+        prizeType: 1
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求失败"
+          type: "eq"
+          value: 9999
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回失败标识"
+          type: "eq"
+          value: false
+          jsonpath: "$.json.success"

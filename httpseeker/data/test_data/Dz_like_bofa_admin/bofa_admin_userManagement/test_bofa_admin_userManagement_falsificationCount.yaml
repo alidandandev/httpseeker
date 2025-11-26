@@ -1,0 +1,244 @@
+# bofa站点admin后台首页
+config:
+  allure:
+    epic: "bofa站点admin后台"
+    feature: "用户管理_造假统计"
+    story: "页面所有数据接口"
+    severity: "critical"
+
+  request:
+    env: "Dz_like_bofa_admin.env"  # 需要在run_env目录下创建test.env文件
+    headers:
+      Content-Type: "application/json"
+    timeout: 30
+    verify: false
+
+  module: "userMgmt_falsStats"
+
+test_steps:
+  - name: "登录"
+    case_id: "cdb_bofa_login_001"
+    description: "登录拿token"
+
+    request:
+      method: "POST"
+      url: "/cdb/account/login"
+      params: null
+      headers: null
+      cookies: null
+      body_type: "json"
+      body:
+        username: ethans
+        password: 75OIo26rz2WLN02K4ZH6yQ==
+        ggcode: ${get_login_google_auth_code()}
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+      - extract:
+          key: "token"
+          type: "cache"
+          jsonpath: "$.json.data.token"
+
+  # ========== 步骤2: 用户管理模块-造假统计子模块-添加（账号：166278677）==========
+  - name: "添加"
+    case_id: "cdb_bofa_userMgmt_falsStats_001"
+    description: "用户管理模块-造假数据子模块-添加"
+
+    request:
+      method: "POST"
+      url: "/cdb/dzuser/falsetotal"
+      params: null
+      headers:
+        Authorization: "${token}"
+      cookies: null
+      body_type:  "json"
+      body:
+        "id": null
+        "account": "166278677"
+        "profitOfTheDay": "1"
+        "totalRevenue": "1"
+        "totalWithdrawalAmount": "1"
+        "teamSize": "1"
+        "teamReport": "1"
+        "balance": "1"
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+  # ========== 步骤3: 用户管理模块-造假统计子模块-列表数据（搜索/重置）==========
+  - name: "列表数据（搜索/重置）"
+    case_id: "cdb_bofa_userMgmt_falsStats_002"
+    description: "用户管理模块-造假数据子模块-列表数据（搜索/重置）"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzuser/falsetotal/list?page=1&limit=20&account="
+      params: null
+      headers:
+        Authorization: "${token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+      - extract:
+          key: "id"
+          type: "cache"
+          jsonpath: "$.json.data.records[*].id"
+
+  # ========== 步骤3: 用户管理模块-造假统计子模块-修改（账号：166278677）==========
+  - name: "修改"
+    case_id: "cdb_bofa_userMgmt_falsStats_002"
+    description: "用户管理模块-造假数据子模块-修改"
+
+    request:
+      method: "PUT"
+      url: "/cdb/dzuser/falsetotal"
+      params: null
+      headers:
+        Authorization: "${token}"
+      cookies: null
+      body_type:  "json"
+      body:
+        "id": ${id}
+        "account": "166278677"
+        "profitOfTheDay": "2"
+        "totalRevenue": "2"
+        "totalWithdrawalAmount": "2"
+        "teamSize": "2"
+        "teamReport": "2"
+        "balance": "2"
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+  # ========== 步骤4: 用户管理模块-造假统计子模块-列表数据（搜索/重置）==========
+  - name: "列表数据（搜索/重置）"
+    case_id: "cdb_bofa_userMgmt_falsStats_003"
+    description: "用户管理模块-造假数据子模块-列表数据（搜索/重置）"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzuser/falsetotal/list?page=1&limit=20&account="
+      params: null
+      headers:
+        Authorization: "${token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+      - assert:
+          check: "验证data不为空"
+          type: "not_eq"
+          value: null
+          jsonpath: "$.json.data"
+
+      - extract:
+          key: "id"
+          type: "cache"
+          jsonpath: "$.json.data.records[*].id"
+
+  # ========== 步骤5: 用户管理模块-造假统计子模块-删除==========
+  - name: "删除"
+    case_id: "cdb_bofa_userMgmt_falsStats_004"
+    description: "用户管理模块-造假数据子模块-删除"
+
+    request:
+      method: "DELETE"
+      url: "/cdb/dzuser/falsetotal?id=${id}"
+      params: null
+      headers:
+        Authorization: "${token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回成功标识"
+          type: "eq"
+          value: true
+          jsonpath: "$.json.success"
+
+
+

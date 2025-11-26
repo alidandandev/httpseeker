@@ -1344,8 +1344,8 @@ test_steps:
         channelName: null
         account: null
         orderNumber: null
-        expireTimes: "2025-08-31 12:31:48"
-        expireTimee: "2025-12-30 12:31:48"
+        expireTimes: "${generate_time_90_days_ago()}"
+        expireTimee: "${generate_today_time()}"
         sourceInvitationCode: null
         countryCodeNumber: null
         vipType: null
@@ -1387,8 +1387,8 @@ test_steps:
         channelName: null
         account: null
         orderNumber: null
-        expireTimes: "2025-08-31 12:31:48"
-        expireTimee: "2025-12-30 12:31:48"
+        expireTimes: "${generate_time_90_days_ago()}"
+        expireTimee: "${generate_today_time()}"
         sourceInvitationCode: null
         countryCodeNumber: null
         vipType: null
@@ -1415,13 +1415,6 @@ test_steps:
           type: "eq"
           value: "success"
           jsonpath: "$.json.msg"
-
-      - assert:
-          check: "验证返回响应中金额大于0"
-          type: "not_eq"
-          value: 0
-          jsonpath: "$.json.data"
-
 
   - name: "测试调用查询rechargeRecord的充值记录查询 按充值记录状态来查询待回调第一条记录"
     case_id: "bofa_admin_rechargeRecord_query_012"
@@ -1465,6 +1458,11 @@ test_steps:
           type: "eq"
           value: "success"
           jsonpath: "$.json.msg"
+      - assert:
+          check: "验证返回响应中金额大于0"
+          type: "not_eq"
+          value: 0
+          jsonpath: "$.json.data.total"
       - extract:
           key: "frist_rechargeRecord_orderNumber"
           type: "cache"
@@ -1488,7 +1486,8 @@ test_steps:
         orderNumber: "${frist_rechargeRecord_orderNumber}"
         transactionType: 1
       files: null
-
+    setup:
+      - testcase: "bofa_admin_rechargeRecord_query_012"  # 先执行可用数据查询提取
     teardown:
       - assert:
           check: "验证请求回调不成功--code 9999"

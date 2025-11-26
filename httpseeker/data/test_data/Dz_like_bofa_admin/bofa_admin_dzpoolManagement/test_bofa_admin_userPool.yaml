@@ -1,0 +1,118 @@
+# 点赞博发web站点登录后默认API测试用例集合
+config:
+  allure:
+    epic: "对基金池管理中用户爱心值进行查询等api校验"
+    feature: "对基金池管理中用户爱心值进行查询等api校验"
+    story: "默认API接口测试:test_bofa_admin_userPool的用户爱心值"
+    severity: "critical"
+
+  request:
+    env: "like_bofa_admin_test.env"  # 需要在run_env目录下创建qat.env文件
+    headers:
+      Content-Type: "application/json"
+    timeout: 30
+    verify: false
+    encryption_enabled: false
+    encryption_key: "your-32-byte-secure-aes-key-1234"  # 32字节的AES密钥
+
+  module: "default_apis_test"
+
+test_steps:
+  - name: "测试调用account_encryptionEnabled接口"
+    case_id: "bofa_admin_account_encryptionEnabled_001"
+    description: "验证测试获取bofa_admin_account_encryptionEnabled"
+
+    request:
+      method: "GET"
+      url: "/cdb/account/encryptionEnabled"
+      params: null
+      headers: null
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+  - name: "测试调用account_login接口"
+    case_id: "bofa_admin_account_login_001"
+    description: "验证测试获取bofa_admin_account_login 并获取后台登录后生成的token用于后续其他测试场景"
+
+    request:
+      method: "POST"
+      url: "/cdb/account/login"
+      params: null
+      headers: null
+      cookies: null
+      body_type: "json"
+      body:
+        username: "tiger"  # 后台登录账号
+        password: "O4zAs9Mz4aoYOirIST4Xyg==" # 后台登录密码
+        ggcode: ""
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+            check: "验证返回响应data为不空"
+            type: "not_eq"
+            value: null
+            jsonpath: "$.json.data."
+
+      - extract:
+          key: "authorization_admin_token"
+          type: "cache"
+          jsonpath: "$.json.data.token"
+
+  - name: "测试调用查询userPool的用户爱心值"
+    case_id: "bofa_admin_userPool_query_001"
+    description: "验证测试获取bofa_admin_userPool_query_001 "
+
+    request:
+      method: "GET"
+      url: "/cdb/dzuser/pool/list"
+      params:
+        page: 1
+        limit: 20
+        id: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"

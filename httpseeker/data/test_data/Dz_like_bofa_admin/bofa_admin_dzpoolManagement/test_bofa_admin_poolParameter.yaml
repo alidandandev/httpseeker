@@ -1,0 +1,291 @@
+# 点赞博发web站点登录后默认API测试用例集合
+config:
+  allure:
+    epic: "对基金池管理中爱心等级设置进行查询等api校验"
+    feature: "对基金池管理中爱心等级设置进行查询等api校验"
+    story: "默认API接口测试:test_bofa_admin_poolParameter的爱心等级信息"
+    severity: "critical"
+
+  request:
+    env: "like_bofa_admin_test.env"  # 需要在run_env目录下创建qat.env文件
+    headers:
+      Content-Type: "application/json"
+    timeout: 30
+    verify: false
+    encryption_enabled: false
+    encryption_key: "your-32-byte-secure-aes-key-1234"  # 32字节的AES密钥
+
+  module: "default_apis_test"
+
+test_steps:
+  - name: "测试调用account_encryptionEnabled接口"
+    case_id: "bofa_admin_account_encryptionEnabled_001"
+    description: "验证测试获取bofa_admin_account_encryptionEnabled"
+
+    request:
+      method: "GET"
+      url: "/cdb/account/encryptionEnabled"
+      params: null
+      headers: null
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+  - name: "测试调用account_login接口"
+    case_id: "bofa_admin_account_login_001"
+    description: "验证测试获取bofa_admin_account_login 并获取后台登录后生成的token用于后续其他测试场景"
+
+    request:
+      method: "POST"
+      url: "/cdb/account/login"
+      params: null
+      headers: null
+      cookies: null
+      body_type: "json"
+      body:
+        username: "tiger"  # 后台登录账号
+        password: "O4zAs9Mz4aoYOirIST4Xyg==" # 后台登录密码
+        ggcode: ""
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+      - assert:
+            check: "验证返回响应data为不空"
+            type: "not_eq"
+            value: null
+            jsonpath: "$.json.data."
+
+      - extract:
+          key: "authorization_admin_token"
+          type: "cache"
+          jsonpath: "$.json.data.token"
+
+  - name: "测试调用查询poolParameter的爱心等级信息"
+    case_id: "bofa_admin_poolParameter_query_001"
+    description: "验证测试获取bofa_admin_poolParameter_query_001 "
+
+    request:
+      method: "GET"
+      url: "/cdb/dzpool/parameter/list"
+      params:
+        page: 1
+        limit: 20
+        id: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+  - name: "测试调用新增poolParameter的爱心等级信息 "
+    case_id: "bofa_admin_poolParameter_add_001"
+    description: "验证测试新增bofa_admin_poolParameter_add 新增在线客服"
+
+    request:
+      method: "POST"
+      url: "/cdb/dzpool/parameter"
+      params: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: "json"
+      body:
+        id: ""
+        idw: ""
+        minimum: "100"
+        maximum: "1000"
+        name: "telegramTest111"
+        logo: "https://8xzlef11.oss-cn-hongkong.aliyuncs.com/aly/20251112/a8d5d407d6fa45458395f72049faf885api_202"
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+  - name: "测试调用查询poolParameter的爱心等级信息"
+    case_id: "bofa_admin_poolParameter_query_002"
+    description: "验证测试获取bofa_admin_poolParameter_query_002 查询第一条记录提取信息作为后续操作条件"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzpool/parameter/list"
+      params:
+        page: 1
+        limit: 20
+        id: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+      - assert:
+          check: "验证返回响应中data中总条数不等于0"
+          type: "not_eq"
+          value: 0
+          jsonpath: "$.json.data.total"
+      - extract:
+          key: "new_poolParameter_id"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].id"
+      - extract:
+          key: "new_poolParameter_idw"
+          type: "cache"
+          jsonpath: "$.json.data.records[0].idw"
+
+  - name: "测试调用查询poolParameter的爱心等级信息 按照id来查询"
+    case_id: "bofa_admin_poolParameter_query_003"
+    description: "验证测试获取bofa_admin_poolParameter_query_003 按照id来查询"
+
+    request:
+      method: "GET"
+      url: "/cdb/dzpool/parameter/list"
+      params:
+        page: 1
+        limit: 20
+        id: "${new_poolParameter_id}"
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: null
+      body: null
+      files: null
+    setup:
+      - testcase: "bofa_admin_poolParameter_query_002"
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+  - name: "测试调用poolParameter的爱心等级信息 按照id来修改"
+    case_id: "bofa_admin_poolParameter_modify_001"
+    description: "验证测试获取bofa_admin_poolParameter的爱心等级信息 按照id来修改"
+
+    request:
+      method: "PUT"
+      url: "/cdb/dzpool/parameter"
+      params: null
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: "json"
+      body:
+        id: "${new_poolParameter_id}"
+        idw: "${new_poolParameter_idw}"
+        minimum: "100"
+        maximum: "2000"
+        name: "telegramTest111"
+        logo: "logo123"
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"
+
+  - name: "测试调用poolParameter的爱心等级信息 按照id来删除"
+    case_id: "bofa_admin_poolParameter_del_001"
+    description: "验证测试获取bofa_admin_poolParameter的爱心等级信息 按照id来删除"
+
+    request:
+      method: "DELETE"
+      url: "/cdb/dzpool/parameter"
+      params:
+        id: "${new_poolParameter_id}"
+      headers:
+        authorization: "${authorization_admin_token}"
+      cookies: null
+      body_type: "json"
+      body: null
+      files: null
+
+    teardown:
+      - assert:
+          check: "验证请求成功--code"
+          type: "eq"
+          value: 20000
+          jsonpath: "$.json.code"
+
+      - assert:
+          check: "验证返回响应成功标识--msg"
+          type: "eq"
+          value: "success"
+          jsonpath: "$.json.msg"

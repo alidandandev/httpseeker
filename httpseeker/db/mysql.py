@@ -100,25 +100,33 @@ class MysqlDB:
                 return None
             try:
 
-                def format_row(row: dict) -> None:
+                def format_row(row: dict) -> dict:
+                    """格式化单行数据，将特殊类型转换为可序列化的类型"""
+                    formatted_data = {}
                     for k, v in row.items():
                         if isinstance(v, decimal.Decimal):
+                            # 处理 Decimal 类型：整数转 int，小数转 float
                             if v % 1 == 0:
-                                data[k] = int(v)
-                            data[k] = float(v)
+                                formatted_data[k] = int(v)
+                            else:
+                                formatted_data[k] = float(v)
                         elif isinstance(v, datetime.datetime):
-                            data[k] = str(v)
+                            # 将 datetime 对象转换为字符串
+                            formatted_data[k] = str(v)
                         else:
-                            data[k] = v
+                            formatted_data[k] = v
+                    return formatted_data
 
                 if isinstance(query_data, dict):
-                    format_row(query_data)
+                    # 单行数据
+                    data = format_row(query_data)
                     return data
                 if isinstance(query_data, list):
+                    # 多行数据
                     data_list = []
-                    for i in query_data:
-                        format_row(i)
-                        data_list.append(i)
+                    for row in query_data:
+                        formatted_row = format_row(row)
+                        data_list.append(formatted_row)
                     return data_list
             except Exception as e:
                 log.error(f'序列化 SQL 查询结果失败: {e}')
