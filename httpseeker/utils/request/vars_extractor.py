@@ -33,13 +33,21 @@ class VarsExtractor:
         :param env:
         :return:
         """
+        # 保存不可序列化的字段（如文件对象）
+        non_serializable_fields = {}
         if isinstance(target, dict):
+            # 排除 files 字段（包含文件对象，不可 JSON 序列化）
+            if 'files' in target and target['files'] is not None:
+                non_serializable_fields['files'] = target.pop('files')
             str_target = json.dumps(target, ensure_ascii=False)
         else:
             str_target = target
 
         match = self.vars_re.search(str_target)
         if not match:
+            # 恢复不可序列化的字段
+            if non_serializable_fields:
+                target.update(non_serializable_fields)
             return target
 
         # 获取环境名称
@@ -73,7 +81,11 @@ class VarsExtractor:
                     raise VariableError(f'变量 {var_key} 替换失败: {e}')
 
         if isinstance(target, dict):
-            return json.loads(str_target)
+            result = json.loads(str_target)
+            # 恢复不可序列化的字段
+            if non_serializable_fields:
+                result.update(non_serializable_fields)
+            return result
 
         return str_target
 

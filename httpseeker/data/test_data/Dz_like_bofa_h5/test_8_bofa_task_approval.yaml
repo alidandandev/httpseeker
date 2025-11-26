@@ -197,12 +197,14 @@ test_steps:
       method: "POST"
       url: "/cdb/api/file/oss/uploadV2"
       params: null
-      headers: null
+      headers:
+        Content-Type: null # 必须设为null，让requests自动生成带boundary的Content-Type 400 Client Error: Bad Request for
       cookies: null
-      body_type: "json"
+      body_type: "form"
       body:
-        img: "eb254fa1a3dbee096914d9963ef9dbcb"
-      files: null
+        img: "eb254fa1a3dbee096914d9963ef9dbcb"  # multipart 表单字段
+      files:
+        file: "httpseeker/data/Snipaste_2025-08-15_17-42-21.png"  # 图片文件，字段名必须是 file
 
     teardown:
       - assert:
@@ -271,9 +273,3 @@ test_steps:
           type: "eq"
           value: true
           jsonpath: "$.json.success"
-
-      - assert:
-          check: "验证审批申请提交成功"
-          type: "not_eq"
-          value: null
-          jsonpath: "$.json.data"

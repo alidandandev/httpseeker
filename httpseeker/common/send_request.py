@@ -219,6 +219,15 @@ class SendRequests:
         }
         try:
             request_data_parsed: dict = var_extractor.vars_replace(request_data_parsed, parsed_data['env'])  # type: ignore # noqa: ignore
+
+            # 过滤 headers 中的 None 值（用于 multipart/form-data 时移除全局 Content-Type）
+            if request_data_parsed.get('headers'):
+                request_data_parsed['headers'] = {
+                    k: v for k, v in request_data_parsed['headers'].items() if v is not None
+                }
+                if not request_data_parsed['headers']:
+                    request_data_parsed['headers'] = None
+
             body = request_data_parsed.pop('body')
 
             # 保存原始body用于日志记录
@@ -255,6 +264,45 @@ class SendRequests:
             elif parsed_data['body_type'] == BodyType.binary:
                 if request_engin == EnginType.httpx:
                     request_data_parsed.update({'content': body})
+            elif parsed_data['body_type'] == BodyType.form_data:
+                # multipart/form-data: 将 body 字段和文件字段合并为统一的 tuple 格式
+                # 顺序：先 body 字段（非文件），再 files 字段（文件）- 与 JMeter 一致
+                import os
+                import mimetypes
+                final_files = {}
+
+                # 1. 先添加 body 字段（非文件字段）
+                if body and isinstance(body, dict):
+                    original_body = body
+                    for k, v in body.items():
+                        # 格式: (filename, data, content_type) - filename=None 表示非文件字段
+                        final_files[k] = (None, str(v), 'multipart/form-data; charset=UTF-8')
+
+                # 2. 再添加 files 字段（文件字段），转换为统一的 tuple 格式
+                existing_files = request_data_parsed.get('files')
+                if existing_files:
+                    if isinstance(existing_files, dict):
+                        for k, v in existing_files.items():
+                            if isinstance(v, tuple):
+                                final_files[k] = v
+                            else:
+                                # 文件对象，获取文件名并检测 MIME 类型
+                                filename = os.path.basename(v.name) if hasattr(v, 'name') else None
+                                content_type = mimetypes.guess_type(filename)[0] if filename else 'application/octet-stream'
+                                final_files[k] = (filename, v, content_type)
+                    elif isinstance(existing_files, list):
+                        for item in existing_files:
+                            if isinstance(item, tuple) and len(item) >= 2:
+                                k = item[0]
+                                v = item[1]
+                                if isinstance(v, tuple):
+                                    final_files[k] = v
+                                else:
+                                    filename = os.path.basename(v.name) if hasattr(v, 'name') else None
+                                    content_type = mimetypes.guess_type(filename)[0] if filename else 'application/octet-stream'
+                                    final_files[k] = (filename, v, content_type)
+
+                request_data_parsed['files'] = final_files if final_files else None
             else:
                 request_data_parsed.update({'data': body})
             parsed_data.update(
