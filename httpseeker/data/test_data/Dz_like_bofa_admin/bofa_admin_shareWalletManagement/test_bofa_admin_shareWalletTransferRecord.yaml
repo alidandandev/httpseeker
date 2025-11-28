@@ -100,8 +100,7 @@ test_steps:
         expireTimee: null
         account: null
         sourceInvitationCode: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -148,8 +147,7 @@ test_steps:
         expireTimee: null
         account: "${frist_shareWalletTransfer_record_account}"
         sourceInvitationCode: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -188,8 +186,7 @@ test_steps:
         expireTimee: null
         account: null
         sourceInvitationCode: "${frist_shareWalletTransfer_record_topAccount}"
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -228,8 +225,7 @@ test_steps:
         expireTimee: "${generate_today_time()}"
         account: null
         sourceInvitationCode: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null

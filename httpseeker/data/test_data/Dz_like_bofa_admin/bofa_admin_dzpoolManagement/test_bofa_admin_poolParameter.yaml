@@ -97,8 +97,7 @@ test_steps:
         page: 1
         limit: 20
         id: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -125,8 +124,7 @@ test_steps:
       method: "POST"
       url: "/cdb/dzpool/parameter"
       params: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: "json"
       body:
@@ -162,8 +160,7 @@ test_steps:
         page: 1
         limit: 20
         id: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -206,8 +203,7 @@ test_steps:
         page: 1
         limit: 20
         id: "${new_poolParameter_id}"
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -235,8 +231,7 @@ test_steps:
       method: "PUT"
       url: "/cdb/dzpool/parameter"
       params: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: "json"
       body:
@@ -270,8 +265,7 @@ test_steps:
       url: "/cdb/dzpool/parameter"
       params:
         id: "${new_poolParameter_id}"
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: "json"
       body: null

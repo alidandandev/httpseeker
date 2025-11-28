@@ -99,8 +99,7 @@ test_steps:
         account: null
         prizeType: null
         superAccount: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -133,8 +132,7 @@ test_steps:
       method: "POST"
       url: "/cdb/dzprize/prizenum/upOrDownPoints"
       params: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: "json"
       body:
@@ -170,8 +168,7 @@ test_steps:
       method: "POST"
       url: "/cdb/dzprize/prizenum/upOrDownPoints"
       params: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: "json"
       body:
@@ -206,8 +203,7 @@ test_steps:
       method: "POST"
       url: "/cdb/dzprize/prizenum/upOrDownPoints"
       params: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: "json"
       body:
@@ -242,8 +238,7 @@ test_steps:
       method: "POST"
       url: "/cdb/dzprize/prizenum/upOrDownPoints"
       params: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: "json"
       body:
@@ -283,8 +278,7 @@ test_steps:
         account: "990982220"
         prizeType: null
         superAccount: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -322,8 +316,7 @@ test_steps:
         account: null
         prizeType: null
         superAccount: "cora"
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -361,8 +354,7 @@ test_steps:
         account: null
         prizeType: "1"
         superAccount: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -395,8 +387,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dict/getDicts/%E6%B4%BB%E5%8A%A8%E7%B1%BB%E5%9E%8B"
       params: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null

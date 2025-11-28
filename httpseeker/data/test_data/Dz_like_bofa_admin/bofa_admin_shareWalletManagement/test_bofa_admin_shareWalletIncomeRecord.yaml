@@ -101,8 +101,7 @@ test_steps:
         account: null
         rid: null
         sourceInvitationCode: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -150,8 +149,7 @@ test_steps:
         account: "${frist_shareWalletIncome_record_account}"
         rid: null
         sourceInvitationCode: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -191,8 +189,7 @@ test_steps:
         account: null
         rid: null
         sourceInvitationCode: "${frist_shareWalletIncome_record_topAccount}"
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -232,8 +229,7 @@ test_steps:
         account: null
         rid: null
         sourceInvitationCode: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -267,8 +263,7 @@ test_steps:
         account: null
         rid: null
         sourceInvitationCode: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null

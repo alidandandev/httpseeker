@@ -97,8 +97,7 @@ test_steps:
         page: 1
         limit: 20
         id: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null

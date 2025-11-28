@@ -98,8 +98,7 @@ test_steps:
         limit: 20
         account: null
         prizeType: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -136,8 +135,7 @@ test_steps:
         limit: 20
         account: "0724"
         prizeType: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -174,8 +172,7 @@ test_steps:
         limit: 20
         account: null
         prizeType: "1"
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -214,8 +211,7 @@ test_steps:
         prizeType: null
         expireTimes: "2025-07-04 15:21:07"
         expireTimee: "2025-11-04 15:21:07"
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -248,8 +244,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dict/getDicts/%E5%A5%96%E5%93%81%E7%B1%BB%E5%9E%8B"
       params: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null

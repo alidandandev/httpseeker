@@ -98,8 +98,7 @@ test_steps:
         limit: 20
         account: null
         prizeType: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -136,8 +135,7 @@ test_steps:
         limit: 20
         account: "76543456453"
         prizeType: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -170,8 +168,7 @@ test_steps:
       method: "POST"
       url: "/cdb/dzprize/monopolyUser/resettingUserState"
       params: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null

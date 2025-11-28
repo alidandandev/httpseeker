@@ -94,9 +94,7 @@ test_steps:
       method: "POST"
       url: "/cdb/dzsys/paymentchannel"
       params: null
-      headers:
-        authorization: "${authorization_admin_token}"
-        x-safe-password: "123456"
+      headers: null
       cookies: null
       body_type: "json"
       body:
@@ -141,8 +139,7 @@ test_steps:
       params:
         page: 1
         limit: 20
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -182,8 +179,7 @@ test_steps:
       params:
         page: 1
         limit: 20
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: "json"
       body: null
@@ -210,8 +206,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dict/getDicts/%E6%94%AF%E4%BB%98%E9%80%9A%E9%81%93"
       params: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -244,8 +239,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dict/getDicts/%E5%B8%81%E7%A7%8D"
       params: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null

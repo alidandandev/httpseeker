@@ -94,8 +94,7 @@ test_steps:
       method: "POST"
       url: "/cdb/dzsys/tutorialcenter"
       params: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: "json"
       body:
@@ -132,8 +131,7 @@ test_steps:
         page: 1
         limit: 20
         type: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -177,8 +175,7 @@ test_steps:
         page: 1
         limit: 20
         type: "2"
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -211,8 +208,7 @@ test_steps:
       method: "PUT"
       url: "/cdb/dzsys/tutorialcenter"
       params: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: "json"
       body:
@@ -247,8 +243,7 @@ test_steps:
       url: "/cdb/dzsys/tutorialcenter"
       params:
         id: "${new_tutorialCenter_id}"
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -275,8 +270,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dict/getDicts/%E6%95%99%E7%A8%8B%E7%B1%BB%E5%9E%8B"
       params: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null

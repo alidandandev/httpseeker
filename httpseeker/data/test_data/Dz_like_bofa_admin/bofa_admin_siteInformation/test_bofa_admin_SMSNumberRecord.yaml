@@ -97,8 +97,7 @@ test_steps:
         page: 1
         limit: 20
         phone: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -137,8 +136,7 @@ test_steps:
         page: 1
         limit: 20
         phone: "0842000001"
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null

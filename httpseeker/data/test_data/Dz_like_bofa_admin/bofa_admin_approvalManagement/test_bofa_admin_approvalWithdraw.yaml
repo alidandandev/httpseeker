@@ -112,8 +112,7 @@ test_steps:
         maxnumber:
         gmt:
         channelType:
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -166,8 +165,7 @@ test_steps:
         maxnumber:
         gmt:
         channelType:
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -223,8 +221,7 @@ test_steps:
         channelType:
         exportFields:
 
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null

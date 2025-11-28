@@ -94,8 +94,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dict/getDicts/ViP%E7%B1%BB%E5%9E%8B"
       params: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -128,8 +127,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dict/getDicts/%E4%BF%A1%E8%AA%89%E5%88%86%E7%8A%B6%E6%80%81"
       params: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -167,8 +165,7 @@ test_steps:
         account: null
         status: null
         vipType: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -218,8 +215,7 @@ test_steps:
         account: "${user_account_0}"
         status: null
         vipType: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -257,8 +253,7 @@ test_steps:
         account: null
         status: "1"   # 1:正常状态
         vipType: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -296,8 +291,7 @@ test_steps:
         account: null
         status: null
         vipType: "v1,v0,v2"
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -330,8 +324,7 @@ test_steps:
       method: "POST"
       url: "/cdb/dzcredit/usercredit/upOrDownCreditBatch"
       params: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: "json"
       body:
@@ -359,8 +352,7 @@ test_steps:
       method: "POST"
       url: "/cdb/dzcredit/usercredit/upOrDownCreditBatch"
       params: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: "json"
       body:
@@ -393,8 +385,7 @@ test_steps:
         account: null
         status: null
         vipType: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null

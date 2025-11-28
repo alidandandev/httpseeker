@@ -98,8 +98,7 @@ test_steps:
         limit: 20
         name: ""
         status: ""
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -132,8 +131,7 @@ test_steps:
       method: "POST"
       url: "/cdb/dzwallet/product"
       params: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: "json"
       body:
@@ -176,8 +174,7 @@ test_steps:
         limit: 20
         name: "tiger wallet product"
         status: ""
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -222,8 +219,7 @@ test_steps:
         limit: 20
         name: ""
         status: "1"
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -256,8 +252,7 @@ test_steps:
       method: "PUT"
       url: "/cdb/dzwallet/product"
       params: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: "json"
       body:
@@ -297,8 +292,7 @@ test_steps:
       url: "/cdb/dzwallet/product"
       params:
         id: "${new_wallet_product_id}"
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null

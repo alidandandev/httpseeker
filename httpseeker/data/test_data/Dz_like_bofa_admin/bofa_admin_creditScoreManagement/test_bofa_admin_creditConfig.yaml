@@ -94,8 +94,7 @@ test_steps:
       method: "POST"
       url: "/cdb/dzcredit/creditconfig"
       params: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: "json"
       body:
@@ -130,8 +129,7 @@ test_steps:
         page: 1
         limit: 20
         idw: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -175,8 +173,7 @@ test_steps:
         page: 1
         limit: 20
         idw: "${new_creditConfig_idw}"
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -209,8 +206,7 @@ test_steps:
       method: "PUT"
       url: "/cdb/dzcredit/creditconfig"
       params: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: "json"
       body:
@@ -243,8 +239,7 @@ test_steps:
       url: "/cdb/dzcredit/creditconfig"
       params:
         id: "${new_creditConfig_id}"
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null

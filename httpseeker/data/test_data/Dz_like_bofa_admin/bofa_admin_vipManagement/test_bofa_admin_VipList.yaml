@@ -70,8 +70,7 @@ test_steps:
       params:
         page: 1
         limit: 20
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -112,8 +111,7 @@ test_steps:
       method: "PUT"
       url: "/cdb/dzvip/vipmessage"
       params: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: "json"
       body:
@@ -241,8 +239,7 @@ test_steps:
       url: "/cdb/dzvip/vipmessage"
       params:
         id: "${vip_id}"
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -273,8 +270,7 @@ test_steps:
       method: "POST"
       url: "/cdb/dzvip/vipmessage"
       params: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: "json"
       body:

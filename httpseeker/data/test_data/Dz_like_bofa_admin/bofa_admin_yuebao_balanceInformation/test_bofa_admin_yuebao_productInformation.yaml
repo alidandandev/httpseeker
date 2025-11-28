@@ -16,47 +16,6 @@ config:
   module: "yuebao_prodInfo"
 
 test_steps:
-  - name: "登录"
-    case_id: "cdb_bofa_login_001"
-    description: "登录拿token"
-
-    request:
-      method: "POST"
-      url: "/cdb/account/login"
-      params: null
-      headers: null
-      cookies: null
-      body_type: "json"
-      body:
-        username: ethans
-        password: 75OIo26rz2WLN02K4ZH6yQ==
-        ggcode: ${get_login_google_auth_code()}
-      files: null
-
-    teardown:
-      - assert:
-          check: "验证请求成功"
-          type: "eq"
-          value: 20000
-          jsonpath: "$.json.code"
-
-      - assert:
-          check: "验证返回成功标识"
-          type: "eq"
-          value: true
-          jsonpath: "$.json.success"
-
-      - assert:
-          check: "验证data不为空"
-          type: "not_eq"
-          value: null
-          jsonpath: "$.json.data"
-
-      - extract:
-          key: "token"
-          type: "cache"
-          jsonpath: "$.json.data.token"
-
   # ========== 步骤2: 余额宝模块-产品信息子模块-添加产品接口==========
   - name: "添加产品接口"
     case_id: "cdb_bofa_yuebao_prodInfo_001"
@@ -66,8 +25,7 @@ test_steps:
       method: "POST"
       url: "/cdb/dzbalance/balance/wallet"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: "json"
       body:
@@ -102,8 +60,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dzbalance/balance/wallet/list?page=1&limit=20"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -142,8 +99,7 @@ test_steps:
       method: "POST"
       url: "/cdb/dzbalance/balance/wallet"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: "json"
       body:
@@ -178,8 +134,7 @@ test_steps:
       method: "DELETE"
       url: "/cdb/dzbalance/balance/wallet?id=${id}"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: null
       body: null

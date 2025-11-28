@@ -94,8 +94,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dict/getDicts/%E6%B4%BB%E5%8A%A8%E7%B1%BB%E5%9E%8B"
       params: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -136,8 +135,7 @@ test_steps:
         redemptionStatus: null
         expireTimes: null
         expireTimee: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -178,8 +176,7 @@ test_steps:
         redemptionStatus: null
         expireTimes: null
         expireTimee: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -219,8 +216,7 @@ test_steps:
         redemptionStatus: null
         expireTimes: null
         expireTimee: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -260,8 +256,7 @@ test_steps:
         redemptionStatus: null
         expireTimes: null
         expireTimee: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -301,8 +296,7 @@ test_steps:
         redemptionStatus: "0"
         expireTimes: null
         expireTimee: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -342,8 +336,7 @@ test_steps:
         redemptionStatus: null
         expireTimes: "${generate_time_90_days_ago()}"
         expireTimee: "${generate_today_time()}"
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -383,8 +376,7 @@ test_steps:
         redemptionStatus: null
         expireTimes: null
         expireTimee: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null

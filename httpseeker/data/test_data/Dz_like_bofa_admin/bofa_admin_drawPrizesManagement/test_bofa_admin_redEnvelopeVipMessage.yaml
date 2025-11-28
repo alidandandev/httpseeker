@@ -94,8 +94,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dict/getDicts/ViP%E7%B1%BB%E5%9E%8B"
       params: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -128,8 +127,7 @@ test_steps:
       method: "POST"
       url: "/cdb/dz/red/envelope/vipmessage"
       params: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: "json"
       body:
@@ -164,8 +162,7 @@ test_steps:
       params:
         page: 1
         limit: 20
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -207,8 +204,7 @@ test_steps:
       method: "PUT"
       url: "/cdb/dz/red/envelope/vipmessage"
       params: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: "json"
       body:
@@ -242,8 +238,7 @@ test_steps:
       url: "/cdb/dz/red/envelope/vipmessage"
       params:
         id: "${new_red_envelope_id}"
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: "json"
       body: null

@@ -68,8 +68,7 @@ test_steps:
       method: "POST"
       url: "/cdb/dzvip/special/batchAdd"
       params: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: "json"
       body:
@@ -102,8 +101,7 @@ test_steps:
         account:
         status:
         vipType:
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -141,8 +139,7 @@ test_steps:
       method: "DELETE"
       url: "/cdb/dzvip/special?id=${VIPID}"
       params: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -177,8 +174,7 @@ test_steps:
         status:
         vipType:
         exportFields:
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null

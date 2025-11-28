@@ -108,8 +108,7 @@ test_steps:
         gmt:
         channelName:
         channelType:
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -158,8 +157,7 @@ test_steps:
         channelName:
         channelType:
         exportFields:
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -203,8 +201,7 @@ test_steps:
         depositAddress:
         channelName:
         channelType:
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -256,8 +253,7 @@ test_steps:
         depositAddress:
         channelName:
         channelType:
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null

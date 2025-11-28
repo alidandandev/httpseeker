@@ -156,6 +156,12 @@ class AuthPlugins:
                 body_data['username'] = auth_config.get('username', '')
                 body_data['password'] = auth_config.get('password', '')
 
+            # 支持谷歌验证码 (ggcode)
+            if 'ggcode_secret' in auth_config:
+                from httpseeker.core.hooks import get_login_google_auth_code
+                ggcode_secret = auth_config['ggcode_secret']
+                body_data['ggcode'] = get_login_google_auth_code(ggcode_secret)
+
             # 检查是否需要加密
             encryption_enabled = auth_config.get('encryption_enabled', False)
             if encryption_enabled:
@@ -262,6 +268,39 @@ class AuthPlugins:
                 raise AuthError('TK Token 获取失败，请检查登录接口响应或 token 提取表达式')
             self._set_cache(cache_key, token, self.timeout)
             log.info(f'✓ TK Token 获取成功并已缓存（有效期: {self.timeout}秒）')
+        return token
+
+    @property
+    def authorization(self) -> str:
+        """Authorization 头认证（不带 Bearer 前缀）"""
+        cache_key = f'{redis_client.token_prefix}:authorization'
+        cache_token = self._get_cache(cache_key)
+        if cache_token:
+            token = cache_token
+            log.debug('✓ 使用缓存的 Authorization Token')
+        else:
+            log.info('缓存中无 Authorization Token，开始调用登录接口获取...')
+            res = self.request_auth()
+            response_data = res.json()
+
+            # 检查是否需要解密响应
+            auth_config = self.auth_data[f'{self.auth_type}']
+            encryption_enabled = auth_config.get('encryption_enabled', False)
+            if encryption_enabled:
+                from httpseeker.utils.encryption_filter import EncryptionFilter
+                encryption_key = auth_config.get('encryption_key')
+                encryption_filter = EncryptionFilter(
+                    encryption_enabled=True,
+                    encryption_key=encryption_key
+                )
+                response_data = encryption_filter.decrypt_response_data(response_data)
+
+            jp_token = findall(self.auth_data[f'{self.auth_type}']['token_key'], response_data)
+            token = jp_token[0]
+            if not token:
+                raise AuthError('Authorization Token 获取失败，请检查登录接口响应或 token 提取表达式')
+            self._set_cache(cache_key, token, self.timeout)
+            log.info(f'✓ Authorization Token 获取成功并已缓存（有效期: {self.timeout}秒）')
         return token
 
 

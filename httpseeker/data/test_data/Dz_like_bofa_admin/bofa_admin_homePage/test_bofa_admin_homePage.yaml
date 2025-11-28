@@ -16,47 +16,6 @@ config:
   module: "homepage"
 
 test_steps:
-  - name: "登录"
-    case_id: "cdb_bofa_login_001"
-    description: "登录拿token"
-
-    request:
-      method: "POST"
-      url: "/cdb/account/login"
-      params: null
-      headers: null
-      cookies: null
-      body_type: "json"
-      body:
-        username: ethans
-        password: 75OIo26rz2WLN02K4ZH6yQ==
-        ggcode: ${get_login_google_auth_code()}
-      files: null
-
-    teardown:
-      - assert:
-          check: "验证请求成功"
-          type: "eq"
-          value: 20000
-          jsonpath: "$.json.code"
-
-      - assert:
-          check: "验证返回成功标识"
-          type: "eq"
-          value: true
-          jsonpath: "$.json.success"
-
-      - assert:
-          check: "验证data不为空"
-          type: "not_eq"
-          value: null
-          jsonpath: "$.json.data"
-
-      - extract:
-          key: "token"
-          type: "cache"
-          jsonpath: "$.json.data.token"
-
   # ========== 步骤2: 首页模块检查获取网站图标图片接口 ==========
   - name: "获取网站图标图片"
     case_id: "cdb_bofa_homepage_001"
@@ -66,8 +25,7 @@ test_steps:
       method: "GET"
       url: "/cdb/sys/ioc/getFaviconImg"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -101,8 +59,7 @@ test_steps:
       method: "GET"
       url: "/cdb/account/info"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -136,8 +93,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dzdianzan/likeTaskOrder/getTaskNum"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -171,8 +127,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dzsys/dashboard/getVersion"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -206,8 +161,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dzsys/dashboard/dashBoardOne"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -241,8 +195,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dzsys/dashboard/dashBoardTwo"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -276,8 +229,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dzsys/dashboard/dashBoardFive"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -311,8 +263,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dzsys/dashboard/dashBoardSix"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -346,8 +297,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dzsys/dashboard/dashBoardSeven"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -381,8 +331,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dzsys/dashboard/dashBoardEight"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -416,8 +365,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dzsys/dashboard/dashBoardNine"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -451,8 +399,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dzsys/dashboard/dashBoardTen"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -486,8 +433,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dzsys/dashboard/todayTaskIncome"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -521,8 +467,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dzsys/dashboard/todayTaskIncomeV2"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -556,8 +501,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dzsys/dashboard/getECharts"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -591,8 +535,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dzsys/dashboard/withdraw-fee"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -626,8 +569,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dzvip/vipmessage/findVipCount"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -661,8 +603,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dzsys/dashboard/getECharts1"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -696,8 +637,7 @@ test_steps:
       method: "GET"
       url: "/cdb/account/encryptionEnabled"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: null
       body: null

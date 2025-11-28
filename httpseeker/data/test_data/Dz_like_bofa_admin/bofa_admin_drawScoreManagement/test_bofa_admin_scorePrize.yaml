@@ -94,8 +94,7 @@ test_steps:
       method: "POST"
       url: "/cdb/dzscore/scorePrize"
       params: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: "json"
       body:
@@ -136,8 +135,7 @@ test_steps:
         limit: 20
         prizeName: null
         prizeType: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -174,8 +172,7 @@ test_steps:
         limit: 20
         prizeName: "test prize001"
         prizeType: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -221,8 +218,7 @@ test_steps:
         limit: 20
         prizeName: null
         prizeType: "8"  # 8:夺宝积分
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -255,8 +251,7 @@ test_steps:
       method: "PUT"
       url: "/cdb/dzscore/scorePrize"
       params: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: "json"
       body:
@@ -294,8 +289,7 @@ test_steps:
       url: "/cdb/dzscore/scorePrize"
       params:
         id: "${new_scorePrize_id}"
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null

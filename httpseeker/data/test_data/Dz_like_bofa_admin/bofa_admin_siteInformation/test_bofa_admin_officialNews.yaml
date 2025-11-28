@@ -94,8 +94,7 @@ test_steps:
       method: "POST"
       url: "/cdb/dzsys/officialnews"
       params: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: "json"
       body:
@@ -134,8 +133,7 @@ test_steps:
         officialType: null
         language: null
         title: "tiger test official news"
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -181,8 +179,7 @@ test_steps:
         officialType: "17"  # 17:宣传网站
         language: null
         title: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -220,8 +217,7 @@ test_steps:
         officialType: null
         language: "ZH_EN"
         title: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -254,8 +250,7 @@ test_steps:
       method: "PUT"
       url: "/cdb/dzsys/officialnews"
       params: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: "json"
       body:
@@ -290,8 +285,7 @@ test_steps:
       url: "/cdb/dzsys/officialnews"
       params:
         id: "${new_officialNews_id}"
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -318,8 +312,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dict/getDicts/%E5%85%AC%E5%91%8A%E7%B1%BB%E5%9E%8B"
       params: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -352,8 +345,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dict/getDicts/%E8%AF%AD%E7%A7%8D"
       params: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null

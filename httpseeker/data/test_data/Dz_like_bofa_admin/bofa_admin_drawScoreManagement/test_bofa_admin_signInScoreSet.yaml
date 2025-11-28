@@ -94,8 +94,7 @@ test_steps:
       method: "POST"
       url: "/cdb/dzscore/signInSet"
       params: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: "json"
       body:
@@ -127,8 +126,7 @@ test_steps:
       params:
         page: 1
         limit: 20
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -170,8 +168,7 @@ test_steps:
       method: "PUT"
       url: "/cdb/dzscore/signInSet"
       params: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: "json"
       body:
@@ -203,8 +200,7 @@ test_steps:
       url: "/cdb/dzscore/signInSet"
       params:
         id: "${new_scorePrize_id}"  # idw: "${new_scorePrize_idw}"
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
