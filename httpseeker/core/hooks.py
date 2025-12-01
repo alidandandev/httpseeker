@@ -54,19 +54,6 @@ def generate_five_digit_number() -> int:
     """
     return random.randint(10000, 99999)
 
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-import pyotp
-import datetime
-import operator
-import random
-
-
-from faker import Faker
-
-faker = Faker(locale='zh_CN')
-
-
 def current_time() -> datetime.datetime:
     """
     :return: 获取当前时间

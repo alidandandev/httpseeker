@@ -45,47 +45,6 @@ test_steps:
           value: "success"
           jsonpath: "$.json.msg"
 
-  - name: "测试调用account_login接口"
-    case_id: "bofa_admin_account_login_001"
-    description: "验证测试获取bofa_admin_account_login 并获取后台登录后生成的token用于后续其他测试场景"
-
-    request:
-      method: "POST"
-      url: "/cdb/account/login"
-      params: null
-      headers: null
-      cookies: null
-      body_type: "json"
-      body:
-        username: "tiger"  # 后台登录账号
-        password: "O4zAs9Mz4aoYOirIST4Xyg==" # 后台登录密码
-        ggcode: ""
-      files: null
-
-    teardown:
-      - assert:
-          check: "验证请求成功--code"
-          type: "eq"
-          value: 20000
-          jsonpath: "$.json.code"
-
-      - assert:
-          check: "验证返回响应成功标识--msg"
-          type: "eq"
-          value: "success"
-          jsonpath: "$.json.msg"
-
-      - assert:
-            check: "验证返回响应data为不空"
-            type: "not_eq"
-            value: null
-            jsonpath: "$.json.data."
-
-      - extract:
-          key: "authorization_admin_token"
-          type: "cache"
-          jsonpath: "$.json.data.token"
-
   - name: "测试调用查询抽奖活动类型  "
     case_id: "bofa_admin_prizeActivityTypeQuery_001"
     description: "验证测试prizeActivityTypeQuery_001 抽奖活动类型 "
@@ -94,8 +53,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dict/getDicts/%E6%B4%BB%E5%8A%A8%E7%B1%BB%E5%9E%8B"
       params: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -136,8 +94,7 @@ test_steps:
         redemptionStatus: null
         expireTimes: null
         expireTimee: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -178,8 +135,7 @@ test_steps:
         redemptionStatus: null
         expireTimes: null
         expireTimee: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -219,8 +175,7 @@ test_steps:
         redemptionStatus: null
         expireTimes: null
         expireTimee: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -260,8 +215,7 @@ test_steps:
         redemptionStatus: null
         expireTimes: null
         expireTimee: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -301,8 +255,7 @@ test_steps:
         redemptionStatus: "0"
         expireTimes: null
         expireTimee: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -342,8 +295,7 @@ test_steps:
         redemptionStatus: null
         expireTimes: "${generate_time_90_days_ago()}"
         expireTimee: "${generate_today_time()}"
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -383,8 +335,7 @@ test_steps:
         redemptionStatus: null
         expireTimes: null
         expireTimee: null
-      headers:
-        authorization: "${authorization_admin_token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
