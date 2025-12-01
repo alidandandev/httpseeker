@@ -1,7 +1,26 @@
 # 是否启用全局自动认证
-is_auth: false
-# 认证类型，请填写为认证方式的键值，如：bearer_token, tk
-auth_type: bearer_token
+is_auth: true
+# 认证类型，请填写为认证方式的键值，如：bearer_token, tk, authorization
+auth_type: authorization
+##
+## authorization token 认证（Authorization头，不带Bearer前缀）
+##
+authorization:
+  url: https://sea2admin.amigosqat.com/cdb/account/login
+  username: ethans
+  password: 75OIo26rz2WLN02K4ZH6yQ==
+  # 谷歌验证器密钥，用于自动生成登录所需的ggcode
+  ggcode_secret: VSXYK3DI7ZTQCV4C
+  headers:
+    Content-Type: application/json
+    User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36
+  # 是否启用加密
+  encryption_enabled: false
+  encryption_key: "your-32-byte-secure-aes-key-1234"
+  # jsonpath表达式，用于从响应中提取token
+  token_key: $.data.token
+  # token有效期，单位: 秒
+  timeout: 3600
 ##
 ## tk token 认证（自定义请求头字段名为tk）
 ##

@@ -16,47 +16,6 @@ config:
   module: "userMgmt_falsStats"
 
 test_steps:
-  - name: "登录"
-    case_id: "cdb_bofa_login_001"
-    description: "登录拿token"
-
-    request:
-      method: "POST"
-      url: "/cdb/account/login"
-      params: null
-      headers: null
-      cookies: null
-      body_type: "json"
-      body:
-        username: ethans
-        password: 75OIo26rz2WLN02K4ZH6yQ==
-        ggcode: ${get_login_google_auth_code()}
-      files: null
-
-    teardown:
-      - assert:
-          check: "验证请求成功"
-          type: "eq"
-          value: 20000
-          jsonpath: "$.json.code"
-
-      - assert:
-          check: "验证返回成功标识"
-          type: "eq"
-          value: true
-          jsonpath: "$.json.success"
-
-      - assert:
-          check: "验证data不为空"
-          type: "not_eq"
-          value: null
-          jsonpath: "$.json.data"
-
-      - extract:
-          key: "token"
-          type: "cache"
-          jsonpath: "$.json.data.token"
-
   # ========== 步骤2: 用户管理模块-造假统计子模块-添加（账号：166278677）==========
   - name: "添加"
     case_id: "cdb_bofa_userMgmt_falsStats_001"
@@ -66,8 +25,7 @@ test_steps:
       method: "POST"
       url: "/cdb/dzuser/falsetotal"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type:  "json"
       body:
@@ -103,8 +61,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dzuser/falsetotal/list?page=1&limit=20&account="
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -143,8 +100,7 @@ test_steps:
       method: "PUT"
       url: "/cdb/dzuser/falsetotal"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type:  "json"
       body:
@@ -180,8 +136,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dzuser/falsetotal/list?page=1&limit=20&account="
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -220,8 +175,7 @@ test_steps:
       method: "DELETE"
       url: "/cdb/dzuser/falsetotal?id=${id}"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: null
       body: null

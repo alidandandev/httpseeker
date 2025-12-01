@@ -16,47 +16,6 @@ config:
   module: "SysMgmt_RolMgmt"
 
 test_steps:
-  - name: "登录"
-    case_id: "cdb_bofa_login_001"
-    description: "登录拿token"
-
-    request:
-      method: "POST"
-      url: "/cdb/account/login"
-      params: null
-      headers: null
-      cookies: null
-      body_type: "json"
-      body:
-        username: ethans
-        password: 75OIo26rz2WLN02K4ZH6yQ==
-        ggcode: ${get_login_google_auth_code()}
-      files: null
-
-    teardown:
-      - assert:
-          check: "验证请求成功"
-          type: "eq"
-          value: 20000
-          jsonpath: "$.json.code"
-
-      - assert:
-          check: "验证返回成功标识"
-          type: "eq"
-          value: true
-          jsonpath: "$.json.success"
-
-      - assert:
-          check: "验证data不为空"
-          type: "not_eq"
-          value: null
-          jsonpath: "$.json.data"
-
-      - extract:
-          key: "token"
-          type: "cache"
-          jsonpath: "$.json.data.token"
-
   # ========== 步骤2: 系统管理模块-角色管理子模块-获取部门列表接口 ==========
   - name: "获取部门列表"
     case_id: "cdb_bofa_SysMgmt_RolMgmt_001"
@@ -66,8 +25,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dept/list"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -101,8 +59,7 @@ test_steps:
       method: "POST"
       url: "/cdb/role"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: "json"
       body:
@@ -134,8 +91,7 @@ test_steps:
       method: "GET"
       url: "/cdb/role/list?page=1&limit=20&name=&code="
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: "json"
       body:
@@ -184,8 +140,7 @@ test_steps:
       method: "POST"
       url: "/cdb/role"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: "json"
       body:
@@ -218,8 +173,7 @@ test_steps:
       method: "POST"
       url: "/cdb/role/savePermisson?roleId=${id}&permissions=${PERMISSIONS}"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: "json"
       body:
@@ -246,8 +200,7 @@ test_steps:
       method: "DELETE"
       url: "/cdb/role?roleId=${id}"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: "json"
       body:

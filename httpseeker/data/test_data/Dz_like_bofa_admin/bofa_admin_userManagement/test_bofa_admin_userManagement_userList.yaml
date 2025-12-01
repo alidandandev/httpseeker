@@ -16,47 +16,6 @@ config:
   module: "userMgmt_userList"
 
 test_steps:
-  - name: "登录"
-    case_id: "cdb_bofa_login_001"
-    description: "登录拿token"
-
-    request:
-      method: "POST"
-      url: "/cdb/account/login"
-      params: null
-      headers: null
-      cookies: null
-      body_type: "json"
-      body:
-        username: ethans
-        password: 75OIo26rz2WLN02K4ZH6yQ==
-        ggcode: ${get_login_google_auth_code()}
-      files: null
-
-    teardown:
-      - assert:
-          check: "验证请求成功"
-          type: "eq"
-          value: 20000
-          jsonpath: "$.json.code"
-
-      - assert:
-          check: "验证返回成功标识"
-          type: "eq"
-          value: true
-          jsonpath: "$.json.success"
-
-      - assert:
-          check: "验证data不为空"
-          type: "not_eq"
-          value: null
-          jsonpath: "$.json.data"
-
-      - extract:
-          key: "token"
-          type: "cache"
-          jsonpath: "$.json.data.token"
-
   # ========== 步骤2: 用户管理模块-用户列表子模块-获取VIP类型==========
   - name: "获取VIP类型"
     case_id: "cdb_bofa_userMgmt_userList_001"
@@ -66,8 +25,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dict/getDicts/ViP%E7%B1%BB%E5%9E%8B"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -101,8 +59,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dzuser/user/getPartList?page=1&limit=10&str=&dzstatus=&vipType=&expVipType=&userType=1&registerIp=&lastIp=&levels=0&expireTimes=&expireTimee=&expStartTime=&expEndTime=&sourceInvitationCode=&walletAddress=&gmt=&countryCodeNumber=&realName=&lastIpCity=&email="
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -141,8 +98,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dzsys/country/getListAll"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -176,8 +132,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dzuser/user/userStatistics"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -211,8 +166,7 @@ test_steps:
       method: "POST"
       url: "/cdn-cgi/rum?"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: "json"
       body:
@@ -299,8 +253,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dzuser/user/getLinuxIp"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -334,8 +287,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dict/getDicts/%E8%B4%A6%E5%8F%B7%E7%8A%B6%E6%80%81"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -369,8 +321,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dzuser/user/getUserInfoByAccount?id=${id}"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -404,8 +355,7 @@ test_steps:
       method: "POST"
       url: "/cdb/dzuser/user"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type:  "json"
       body:
@@ -461,8 +411,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dzuser/user/userInfoExportV2?page=1&limit=10&str=&dzstatus=&vipType=&expVipType=&userType=1&registerIp=&lastIp=&levels=0&expireTimes=&expireTimee=&expStartTime=&expEndTime=&sourceInvitationCode=&walletAddress=&gmt=&countryCodeNumber=&realName=&lastIpCity=&email=&exportFields="
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type:  null
       body: null
@@ -484,8 +433,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dzuser/walletaddress/list?page=1&limit=20&account=56518&platformName=&walletAddress=&walletName=&channelType="
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type:  null
       body: null
@@ -519,8 +467,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dzwallet/shared/pay-type/option"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type:  null
       body: null
@@ -554,8 +501,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dict/getDicts/%E6%94%AF%E4%BB%98%E9%80%9A%E9%81%93"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type:  null
       body: null
@@ -589,8 +535,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dzuser/user/getPartList?page=1&limit=10&str=&dzstatus=&vipType=&expVipType=&userType=1&registerIp=&lastIp=&levels=0&expireTimes=&expireTimee=&expStartTime=&expEndTime=&sourceInvitationCode=&walletAddress=&gmt=&countryCodeNumber=&realName=&lastIpCity=&email="
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -749,8 +694,7 @@ test_steps:
       method: "PUT"
       url: "/cdb/dzuser/user"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: "json"
       body:
@@ -806,8 +750,7 @@ test_steps:
       method: "POST"
       url: "/cdb/dzuser/user/updateUserByStatus"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: "json"
       body:
@@ -901,8 +844,7 @@ test_steps:
       method: "POST"
       url: "/cdb/dzuser/user/updateUserByStatus"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: "json"
       body:
@@ -996,8 +938,7 @@ test_steps:
       method: "POST"
       url: "/cdb/dzuser/user/updateUserByStatus"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: "json"
       body:
@@ -1091,8 +1032,7 @@ test_steps:
       method: "POST"
       url: "/cdb/dzuser/user/updateUserByStatus"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: "json"
       body:
@@ -1186,8 +1126,7 @@ test_steps:
       method: "POST"
       url: "/cdb/dzuser/user/updateUserByStatus"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: "json"
       body:
@@ -1281,8 +1220,7 @@ test_steps:
       method: "POST"
       url: "/cdb/dzuser/user/updateUserByStatus"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: "json"
       body:
@@ -1376,8 +1314,7 @@ test_steps:
       method: "POST"
       url: "/cdb/dzuser/user/updateUserByStatus"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: "json"
       body:
@@ -1471,8 +1408,7 @@ test_steps:
       method: "POST"
       url: "/cdb/dzuser/user/updateUserByStatus"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: "json"
       body:
@@ -1566,8 +1502,7 @@ test_steps:
       method: "POST"
       url: "/cdb/dzuser/user/updateUserByStatus"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: "json"
       body:
@@ -1661,8 +1596,7 @@ test_steps:
       method: "POST"
       url: "/cdb/dzuser/user/updateUserByStatus"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: "json"
       body:
@@ -1756,8 +1690,7 @@ test_steps:
       method: "POST"
       url: "/cdb/dzuser/user/updateUserByStatus"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: "json"
       body:
@@ -1851,8 +1784,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dzuser/user/updateInvitation?id=286213&value=${get_invitation_code()}"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -1880,8 +1812,7 @@ test_steps:
       method: "POST"
       url: "/cdb/dzuser/user/updateUserByStatus"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: "json"
       body:
@@ -1975,8 +1906,7 @@ test_steps:
       method: "PUT"
       url: "/cdb/dzuser/user/userVipUpdate"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type:  "json"
       body:
@@ -2008,8 +1938,7 @@ test_steps:
       method: "PUT"
       url: "/cdb/dzuser/user/userVipExpUpdate"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type:  "json"
       body:
@@ -2041,8 +1970,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dzuser/user/getPartList?page=1&limit=10&str=57764&dzstatus=&vipType=&expVipType=&userType=1&registerIp=&lastIp=&levels=0&expireTimes=&expireTimee=&expStartTime=&expEndTime=&sourceInvitationCode=&walletAddress=&gmt=&countryCodeNumber=&realName=&lastIpCity=&email="
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -2081,8 +2009,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dzuser/user/getSuperiorSubordinate?page=1&limit=10&str=${invitationCode}&walletAddress=&dzstatus=&vipType=&userType=&registerIp=&lastIp=&flag=1&userId=286213"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type:  null
       body: null
@@ -2110,8 +2037,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dzuser/user/getSuperiorSubordinate?page=1&limit=10&str=${invitationCode}&walletAddress=&dzstatus=&vipType=v1&userType=&registerIp=&lastIp=&flag=0&userId=286213"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type:  null
       body: null
@@ -2139,8 +2065,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dzuser/user/vipChangeRecord?page=1&limit=10&uid=286213"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type:  null
       body: null
@@ -2169,7 +2094,6 @@ test_steps:
       url: "/cdb/dzuser/user/straightBuckle"
       params: null
       headers:
-        Authorization: "${token}"
         X-Safe-Password: "${get_action_google_auth_code()}"
       cookies: null
       body_type:  "json"
@@ -2203,7 +2127,6 @@ test_steps:
       url: "/cdb/dzuser/user/straightBuckle"
       params: null
       headers:
-        Authorization: "${token}"
         X-Safe-Password: "${get_action_google_auth_code()}"
       cookies: null
       body_type:  "json"
@@ -2238,7 +2161,6 @@ test_steps:
       url: "/cdb/dzuser/user/updateWalletAddr?id=286213&value=0xabc5acbc4b5666a6da6fd8286981104c598100aa"
       params: null
       headers:
-        Authorization: "${token}"
         X-Safe-Password: "${get_action_google_auth_code()}"
       cookies: null
       body_type: null
@@ -2268,7 +2190,6 @@ test_steps:
       url: "/cdb/dzuser/walletaddress"
       params: null
       headers:
-        Authorization: "${token}"
         X-Safe-Password: "${get_action_google_auth_code()}"
       cookies: null
       body_type:  "json"
@@ -2306,8 +2227,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dzuser/walletaddress/list?page=1&limit=20&account=57764&platformName=&walletAddress=&walletName=&channelType="
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: null
       body:  null
@@ -2341,7 +2261,6 @@ test_steps:
       url: "/cdb/dzuser/walletaddress"
       params: null
       headers:
-        Authorization: "${token}"
         X-Safe-Password: "${get_action_google_auth_code()}"
       cookies: null
       body_type:  "json"
@@ -2379,7 +2298,6 @@ test_steps:
       url: "/cdb/dzuser/walletaddress?id=${third_party_address_ID}"
       params: null
       headers:
-        Authorization: "${token}"
         X-Safe-Password: "${get_action_google_auth_code()}"
       cookies: null
       body_type:  "json"
@@ -2409,7 +2327,6 @@ test_steps:
       url: "/cdb/dzuser/user/secretFreeLogin?id=286213"
       params: null
       headers:
-        Authorization: "${token}"
         X-Safe-Password: "${get_action_google_auth_code()}"
       cookies: null
       body_type:  null
@@ -2438,8 +2355,7 @@ test_steps:
       method: "PUT"
       url: "/cdb/dzuser/user/userVipUpdate"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type:  "json"
       body:
@@ -2470,8 +2386,7 @@ test_steps:
       method: "PUT"
       url: "/cdb/dzuser/user/userVipExpUpdate"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type:  "json"
       body:
@@ -2503,8 +2418,7 @@ test_steps:
       method: "POST"
       url: "/cdb/dzuser/user/batchLimitBuyCdbList"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type:  "json"
       body:
@@ -2535,8 +2449,7 @@ test_steps:
       method: "POST"
       url: "/cdb/dzuser/user/batchLimitBuyCdbList"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type:  "json"
       body:
@@ -2567,8 +2480,7 @@ test_steps:
       method: "POST"
       url: "/cdb/dzuser/user/batchLimitDrawingList"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type:  "json"
       body:
@@ -2599,8 +2511,7 @@ test_steps:
       method: "POST"
       url: "/cdb/dzuser/user/batchLimitDrawingList"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type:  "json"
       body:
@@ -2631,8 +2542,7 @@ test_steps:
       method: "POST"
       url: "/cdb/dzuser/user/batchLimitProfitList"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type:  "json"
       body:
@@ -2663,8 +2573,7 @@ test_steps:
       method: "POST"
       url: "/cdb/dzuser/user/batchLimitProfitList"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type:  "json"
       body:
@@ -2695,8 +2604,7 @@ test_steps:
       method: "POST"
       url: "/cdb/dzuser/user/batchUserList"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type:  "json"
       body:
@@ -2727,8 +2635,7 @@ test_steps:
       method: "POST"
       url: "/cdb/dzuser/user/batchUserList"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type:  "json"
       body:
@@ -2759,8 +2666,7 @@ test_steps:
       method: "POST"
       url: "/cdb/dzuser/user/batchUser"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type:  "json"
       body:
@@ -2791,8 +2697,7 @@ test_steps:
       method: "POST"
       url: "/cdb/dzuser/user/batchUser"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type:  "json"
       body:
@@ -2823,8 +2728,7 @@ test_steps:
       method: "POST"
       url: "/cdb/dzuser/user/batchLimitProfit"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type:  "json"
       body:
@@ -2855,8 +2759,7 @@ test_steps:
       method: "POST"
       url: "/cdb/dzuser/user/batchLimitProfit"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type:  "json"
       body:
@@ -2887,8 +2790,7 @@ test_steps:
       method: "POST"
       url: "/cdb/dzuser/user/batchLimitDrawing"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type:  "json"
       body:
@@ -2919,8 +2821,7 @@ test_steps:
       method: "POST"
       url: "/cdb/dzuser/user/batchLimitDrawing"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type:  "json"
       body:

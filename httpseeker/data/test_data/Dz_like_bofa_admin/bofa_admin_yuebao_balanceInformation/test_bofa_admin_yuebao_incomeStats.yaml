@@ -16,47 +16,6 @@ config:
   module: "yuebao_incmStats"
 
 test_steps:
-  - name: "登录"
-    case_id: "cdb_bofa_login_001"
-    description: "登录拿token"
-
-    request:
-      method: "POST"
-      url: "/cdb/account/login"
-      params: null
-      headers: null
-      cookies: null
-      body_type: "json"
-      body:
-        username: ethans
-        password: 75OIo26rz2WLN02K4ZH6yQ==
-        ggcode: ${get_login_google_auth_code()}
-      files: null
-
-    teardown:
-      - assert:
-          check: "验证请求成功"
-          type: "eq"
-          value: 20000
-          jsonpath: "$.json.code"
-
-      - assert:
-          check: "验证返回成功标识"
-          type: "eq"
-          value: true
-          jsonpath: "$.json.success"
-
-      - assert:
-          check: "验证data不为空"
-          type: "not_eq"
-          value: null
-          jsonpath: "$.json.data"
-
-      - extract:
-          key: "token"
-          type: "cache"
-          jsonpath: "$.json.data.token"
-
   # ========== 步骤2: 余额宝模块-收益统计子模块-获取列表数据(查询/重置)==========
   - name: "获取列表数据(查询/重置)"
     case_id: "cdb_bofa_yuebao_incmStats_001"
@@ -66,8 +25,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dzbalance/balance/wallet/change/record/incomeRatio/list?page=1&limit=10&startTime=${generate_time_90_days_ago()}&endTime=${generate_today_time()}"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -101,8 +59,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dzbalance/balance/wallet/change/record/incomeRatio/list?page=1&limit=10&startTime=${generate_today_start_time()}&endTime=${generate_today_time()}"
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
@@ -136,8 +93,7 @@ test_steps:
       method: "GET"
       url: "/cdb/dzbalance/balance/wallet/change/record/incomeRatio/export?page=1&limit=10&startTime=${generate_time_90_days_ago()}&endTime=2025-11-09+23:59:59&exportFields="
       params: null
-      headers:
-        Authorization: "${token}"
+      headers: null
       cookies: null
       body_type: null
       body: null
