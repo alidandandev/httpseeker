@@ -45,47 +45,6 @@ test_steps:
           value: "success"
           jsonpath: "$.json.msg"
 
-  - name: "测试调用account_login接口"
-    case_id: "bofa_admin_account_login_001"
-    description: "验证测试获取bofa_admin_account_login 并获取后台登录后生成的token用于后续其他测试场景"
-
-    request:
-      method: "POST"
-      url: "/cdb/account/login"
-      params: null
-      headers: null
-      cookies: null
-      body_type: "json"
-      body:
-        username: "tiger"  # 后台登录账号
-        password: "O4zAs9Mz4aoYOirIST4Xyg==" # 后台登录密码
-        ggcode: ""
-      files: null
-
-    teardown:
-      - assert:
-          check: "验证请求成功--code"
-          type: "eq"
-          value: 20000
-          jsonpath: "$.json.code"
-
-      - assert:
-          check: "验证返回响应成功标识--msg"
-          type: "eq"
-          value: "success"
-          jsonpath: "$.json.msg"
-
-      - assert:
-            check: "验证返回响应data为不空"
-            type: "not_eq"
-            value: null
-            jsonpath: "$.json.data"
-
-      - extract:
-          key: "authorization_admin_token"
-          type: "cache"
-          jsonpath: "$.json.data.token"
-
   - name: "查询 VIP 购买记录"
     case_id: "bofa_admin_VipListRecord_000"
     description: "验证查询 VIP 购买记录"
@@ -102,8 +61,8 @@ test_steps:
         afterViPType:
         paymentMethod:
         whetherToPay: 2
-        expireTimes: 2025-11-17 00:00:00
-        expireTimee: 2025-11-17 23:59:59
+        expireTimes: "2025-11-17 00:00:00"
+        expireTimee: "2025-11-17 23:59:59"
         sourceInvitationCode:
         gmt:
         channelName:
@@ -150,8 +109,8 @@ test_steps:
         afterViPType:
         paymentMethod:
         whetherToPay: 2
-        expireTimes: 2025-11-17 00:00:00
-        expireTimee: 2025-11-17 23:59:59
+        expireTimes: "2025-11-17 00:00:00"
+        expireTimee: "2025-11-17 23:59:59"
         sourceInvitationCode:
         gmt:
         channelName:
@@ -194,8 +153,8 @@ test_steps:
         afterViPType:
         paymentMethod:
         whetherToPay: 1
-        expireTimes: 2025-08-19 20:38:57
-        expireTimee: 2025-11-17 20:38:57
+        expireTimes: "2025-08-19 20:38:57"
+        expireTimee: "2025-11-17 20:38:57"
         sourceInvitationCode:
         gmt:
         depositAddress:
@@ -246,8 +205,8 @@ test_steps:
         afterViPType:
         paymentMethod:
         whetherToPay: 1
-        expireTimes: 2025-08-19 20:38:57
-        expireTimee: 2025-11-17 20:38:57
+        expireTimes: "2025-08-19 20:38:57"
+        expireTimee: "2025-11-17 20:38:57"
         sourceInvitationCode:
         gmt:
         depositAddress:
