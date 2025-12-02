@@ -28,16 +28,6 @@ class HttpSeekerConfig:
         if global_env:
             self.settings['request']['global_env'] = global_env
 
-        # 检查是否通过Jenkins环境变量动态获取构建URL
-        jenkins_build_url = os.environ.get('BUILD_URL')
-        if jenkins_build_url:
-            # Jenkins环境变量存在，生成固定的allure报告地址（不包含构建编号）
-            # 示例: http://host/job/jobname/123/ -> http://host/job/jobname/allure/
-            import re
-            # 移除最后的构建编号部分（通常是数字/）
-            base_url = re.sub(r'/\d+/?$', '/', jenkins_build_url)
-            self.settings['report']['jenkins_url'] = base_url.rstrip('/') + '/allure/'
-
         try:
             # 项目目录名
             self.PROJECT_NAME = glom(self.settings, 'project.name')
