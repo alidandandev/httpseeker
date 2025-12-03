@@ -2094,7 +2094,8 @@ test_steps:
       url: "/cdb/dzuser/user/straightBuckle"
       params: null
       headers:
-        X-Safe-Password: "${get_action_google_auth_code()}"
+        X-Safe-Password: "${get_google_auth_code(action)}"
+        X-Safe-Money: "1"
       cookies: null
       body_type:  "json"
       body:
@@ -2127,7 +2128,7 @@ test_steps:
       url: "/cdb/dzuser/user/straightBuckle"
       params: null
       headers:
-        X-Safe-Password: "${get_action_google_auth_code()}"
+        X-Safe-Password: "${get_google_auth_code(action)}"
       cookies: null
       body_type:  "json"
       body:
@@ -2161,7 +2162,7 @@ test_steps:
       url: "/cdb/dzuser/user/updateWalletAddr?id=286213&value=0xabc5acbc4b5666a6da6fd8286981104c598100aa"
       params: null
       headers:
-        X-Safe-Password: "${get_action_google_auth_code()}"
+        X-Safe-Password: "${get_google_auth_code(action)}"
       cookies: null
       body_type: null
       body: null
@@ -2190,7 +2191,7 @@ test_steps:
       url: "/cdb/dzuser/walletaddress"
       params: null
       headers:
-        X-Safe-Password: "${get_action_google_auth_code()}"
+        X-Safe-Password: "${get_google_auth_code(action)}"
       cookies: null
       body_type:  "json"
       body:
@@ -2261,7 +2262,7 @@ test_steps:
       url: "/cdb/dzuser/walletaddress"
       params: null
       headers:
-        X-Safe-Password: "${get_action_google_auth_code()}"
+        X-Safe-Password: "${get_google_auth_code(action)}"
       cookies: null
       body_type:  "json"
       body:
@@ -2298,7 +2299,7 @@ test_steps:
       url: "/cdb/dzuser/walletaddress?id=${third_party_address_ID}"
       params: null
       headers:
-        X-Safe-Password: "${get_action_google_auth_code()}"
+        X-Safe-Password: "${get_google_auth_code(action)}"
       cookies: null
       body_type:  "json"
       body: null
@@ -2327,7 +2328,7 @@ test_steps:
       url: "/cdb/dzuser/user/secretFreeLogin?id=286213"
       params: null
       headers:
-        X-Safe-Password: "${get_action_google_auth_code()}"
+        X-Safe-Password: "${get_google_auth_code(action)}"
       cookies: null
       body_type:  null
       body: null

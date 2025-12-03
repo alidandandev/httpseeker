@@ -61,7 +61,7 @@ test_steps:
     description: "系统管理模块-用户管理子模块-上分"
 
     request:
-      method: "PUT"
+      method: "POST"
       url: "/cdb/dzbalance/user/balance/wallet/upDownPoints?id=${id}&type=0&money=10&remark=auto"
       params: null
       headers: null
@@ -95,7 +95,7 @@ test_steps:
     description: "系统管理模块-用户管理子模块-下分"
 
     request:
-      method: "PUT"
+      method: "POST"
       url: "/cdb/dzbalance/user/balance/wallet/upDownPoints?id=${id}&type=1&money=10&remark=auto"
       params: null
       headers: null

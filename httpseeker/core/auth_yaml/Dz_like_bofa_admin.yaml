@@ -7,10 +7,10 @@ auth_type: authorization
 ##
 authorization:
   url: https://sea2admin.amigosqat.com/cdb/account/login
-  username: ethans
-  password: 75OIo26rz2WLN02K4ZH6yQ==
+  username: apiops
+  password: O4zAs9Mz4aoYOirIST4Xyg==
   # 谷歌验证器密钥，用于自动生成登录所需的ggcode
-  ggcode_secret: VSXYK3DI7ZTQCV4C
+  ggcode_secret: QD2KRURQOUSDFLXS
   headers:
     Content-Type: application/json
     User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36
@@ -26,7 +26,7 @@ authorization:
 ##
 tk:
   url: https://sea2admin.amigosqat.com/cdb/account/login
-  username: admin
+  username: apiops
   password: O4zAs9Mz4aoYOirIST4Xyg==
   ggcode:
   headers:
@@ -44,7 +44,7 @@ tk:
 ##
 bearer_token:
   url: https://bofa.ye81s.com/cdb/api/auth/login_v1
-  username: 18818881888
+  username: apiops
   password: O4zAs9Mz4aoYOirIST4Xyg==
   headers:
     Content-Type: application/json
