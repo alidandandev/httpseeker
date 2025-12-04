@@ -132,6 +132,11 @@ class HttpSeekerConfig:
                 else None,
             }
             self.REQUEST_RETRY = glom(self.settings, 'request.retry')
+
+            # 谷歌验证码密钥（可选配置，提供默认值）
+            self.GOOGLE_AUTH_KEYS = {}
+            if 'google_auth' in self.settings:
+                self.GOOGLE_AUTH_KEYS = self.settings['google_auth']
         except KeyError as e:
             raise ConfigInitError(f'配置解析失败：缺失参数 {str(e)}，请核对项目配置文件')
 

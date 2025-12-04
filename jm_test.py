@@ -55,7 +55,7 @@ def decrypt_response(response_data):
 # 使用示例
 if __name__ == "__main__":
     # 加密例子
-    data = {"data":"q6PpRg9eubVjDCEexSfOgHo+0Y6tZuJWgIpHYfH9FVZDw8+vyjrBal00eIpTJ5Xb3q0G79bOZV/AggGXv+TPwGCdA3kG96A3wSkE9WU57xw="}
+    data = {"data":"oGNYB3DRQvjKLzYwU7+zAnHdNcT5l1XsJsNusNgLfSAa95MEMtgeG7rvqjd3NtQG49Xho22fpIBk1vTp+JqP3918dturjT+/8JwdjSv7ATtTDlr+yMK8SAbATsDsl1XW"}
     decrypt_response(data)
     data = {"data":"tGTC54e29uj506drsnOpYyBRFhRH0LKw77hq8PTkTu0rOiWQie34Lp22y3DfOHKJd1zyIbmGGpbSC22ygcuJkxu28mQMltNngmMVZS/sqO8="}
     decrypt_response(data)

@@ -158,9 +158,9 @@ class AuthPlugins:
 
             # 支持谷歌验证码 (ggcode)
             if 'ggcode_secret' in auth_config:
-                from httpseeker.core.hooks import get_login_google_auth_code
+                import pyotp
                 ggcode_secret = auth_config['ggcode_secret']
-                body_data['ggcode'] = get_login_google_auth_code(ggcode_secret)
+                body_data['ggcode'] = pyotp.TOTP(ggcode_secret).now()
 
             # 检查是否需要加密
             encryption_enabled = auth_config.get('encryption_enabled', False)

@@ -48,7 +48,7 @@ test_steps:
       url: "/cdb/dzuser/walletaddress"
       params: null
       headers:
-        X-Safe-Password: "${get_action_google_auth_code()}"
+        X-Safe-Password: "${get_google_auth_code(action)}"
       cookies: null
       body_type: "json"
       body:
@@ -125,7 +125,7 @@ test_steps:
       url: "/cdb/dzuser/walletaddress"
       params: null
       headers:
-        X-Safe-Password: "${get_action_google_auth_code()}"
+        X-Safe-Password: "${get_google_auth_code(action)}"
       cookies: null
       body_type: "json"
       body:
@@ -162,7 +162,7 @@ test_steps:
       url: "/cdb/dzuser/walletaddress?id=${id}"
       params: null
       headers:
-        X-Safe-Password: "${get_action_google_auth_code()}"
+        X-Safe-Password: "${get_google_auth_code(action)}"
       cookies: null
       body_type:  null
       body: null
