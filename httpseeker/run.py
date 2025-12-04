@@ -146,9 +146,9 @@ def startup(
         WeChat(test_result).send()
 
     # Telegram 推送已禁用，如需使用请使用独立的 telegram_notifier 模块
-    # if httpseeker_config.TELEGRAM_SEND:
-    #     from httpseeker.utils.send_report.telegram import Telegram
-    #     Telegram(test_result).send()
+    if httpseeker_config.TELEGRAM_SEND:
+        from httpseeker.utils.send_report.telegram import Telegram
+        Telegram(test_result).send()
 
     if allure:
         if os.path.exists(httpseeker_path.allure_report_dir):

@@ -1,4 +1,4 @@
-# bofa站点admin后台首页
+# bofa站点admin后台-余额宝-余额信息
 config:
   allure:
     epic: "bofa站点admin后台"
@@ -7,7 +7,7 @@ config:
     severity: "critical"
 
   request:
-    env: "Dz_like_bofa_admin.env"  # 需要在run_env目录下创建test.env文件
+    env: "Dz_like_bofa_admin.env"
     headers:
       Content-Type: "application/json"
     timeout: 30
@@ -16,14 +16,14 @@ config:
   module: "yuebao_balInfo"
 
 test_steps:
-  # ========== 步骤2: 余额宝模块-余额信息子模块-列表数据（搜索/重置）==========
-  - name: "列表数据（搜索/重置）"
+  # ========== 步骤1: 余额宝模块-余额信息子模块-查询用户列表==========
+  - name: "查询用户列表"
     case_id: "cdb_bofa_yuebao_balInfo_001"
-    description: "系统管理模块-用户管理子模块-列表数据（搜索/重置）"
+    description: "余额宝模块-余额信息子模块-查询用户列表，提取用户ID"
 
     request:
       method: "GET"
-      url: "/cdb/dzbalance/user/balance/wallet/list?page=1&limit=20&sortBy=desc"
+      url: "/cdb/dzuser/user/getPartList?page=1&limit=10&str=&dzstatus=&vipType=&expVipType=&userType=1&registerIp=&lastIp=&levels=0&expireTimes=&expireTimee=&expStartTime=&expEndTime=&sourceInvitationCode=&walletAddress=&gmt=&countryCodeNumber=&realName=&lastIpCity=&email="
       params: null
       headers: null
       cookies: null
@@ -51,23 +51,29 @@ test_steps:
           jsonpath: "$.json.data"
 
       - extract:
-          key: "id"
+          key: "uid"
           type: "cache"
-          jsonpath: $.json.data.records[0].userInfo.id
+          jsonpath: "$.json.data.records[0].id"
 
-  # ========== 步骤3: 余额宝模块-余额信息子模块-上分==========
+  # ========== 步骤2: 余额宝模块-余额信息子模块-上分==========
   - name: "上分"
     case_id: "cdb_bofa_yuebao_balInfo_002"
-    description: "系统管理模块-用户管理子模块-上分"
+    description: "余额宝模块-余额信息子模块-上分（20000）"
 
     request:
-      method: "PUT"
-      url: "/cdb/dzbalance/user/balance/wallet/upDownPoints?id=${id}&type=0&money=10&remark=auto"
+      method: "POST"
+      url: "/cdb/dzuser/user/straightBuckle"
       params: null
-      headers: null
+      headers:
+        X-Safe-Password: "${get_google_auth_code(action)}"
+        X-Safe-Money: "20000"
       cookies: null
-      body_type: null
-      body: null
+      body_type: "json"
+      body:
+        "money": "20000"
+        "type": 1
+        "uid": ${uid}
+        "remark": ""
       files: null
 
     teardown:
@@ -83,25 +89,24 @@ test_steps:
           value: true
           jsonpath: "$.json.success"
 
-      - assert:
-          check: "验证data不为空"
-          type: "not_eq"
-          value: null
-          jsonpath: "$.json.data"
-
-  # ========== 步骤4: 余额宝模块-余额信息子模块-下分==========
+  # ========== 步骤3: 余额宝模块-余额信息子模块-下分==========
   - name: "下分"
     case_id: "cdb_bofa_yuebao_balInfo_003"
-    description: "系统管理模块-用户管理子模块-下分"
+    description: "余额宝模块-余额信息子模块-下分（1000）"
 
     request:
-      method: "PUT"
-      url: "/cdb/dzbalance/user/balance/wallet/upDownPoints?id=${id}&type=1&money=10&remark=auto"
+      method: "POST"
+      url: "/cdb/dzuser/user/straightBuckle"
       params: null
-      headers: null
+      headers:
+        X-Safe-Password: "${get_google_auth_code(action)}"
       cookies: null
-      body_type: null
-      body: null
+      body_type: "json"
+      body:
+        "money": "1000"
+        "type": 2
+        "uid": ${uid}
+        "remark": ""
       files: null
 
     teardown:
@@ -116,14 +121,3 @@ test_steps:
           type: "eq"
           value: true
           jsonpath: "$.json.success"
-
-      - assert:
-          check: "验证data不为空"
-          type: "not_eq"
-          value: null
-          jsonpath: "$.json.data"
-
-
-
-
-

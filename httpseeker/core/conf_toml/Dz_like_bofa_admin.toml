@@ -79,3 +79,8 @@ retry = 3
 [encryption]
 enabled = false
 key = "your-32-byte-secure-aes-key-1234"
+
+# 谷歌验证码密钥配置
+[google_auth]
+login = "QD2KRURQOUSDFLXS"      # 登录用的谷歌验证码密钥
+action = "55PS77NFM7CCEK5S"     # 操作用的谷歌验证码密钥
