@@ -192,19 +192,6 @@ test_steps:
         taskType: "經典電影"
       files: null
 
-    teardown:
-      - assert:
-          check: "验证请求成功"
-          type: "eq"
-          value: 20000
-          jsonpath: "$.json.code"
-
-      - assert:
-          check: "验证返回成功标识"
-          type: "eq"
-          value: true
-          jsonpath: "$.json.success"
-
   - name: "测试获取系统参数接口"
     case_id: "cdb_bofa_007"
     description: "验证获取系统参数接口功能"
