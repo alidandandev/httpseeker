@@ -95,7 +95,7 @@ test_steps:
 
   - name: "导出 VIP 数据购买记录"
     case_id: "bofa_admin_VipListRecord_001"
-    description: "验证导出 VIP 数据购买记录接口"
+    description: "验证导出 VIP 数据购买记录接口（返回Excel文件）"
 
     request:
       method: "GET"
@@ -120,21 +120,14 @@ test_steps:
       cookies: null
       body_type: null
       body: null
-
       files: null
 
     teardown:
       - assert:
-          check: "验证请求成功--code"
+          check: "验证响应状态码为200"
           type: "eq"
-          value: 20000
-          jsonpath: "$.json.code"
-
-      - assert:
-          check: "验证返回响应成功标识--msg"
-          type: "eq"
-          value: "success"
-          jsonpath: "$.json.msg"
+          value: 200
+          jsonpath: "$.status_code"
 
 
   - name: "VIP 未支付订单数据"
@@ -153,8 +146,8 @@ test_steps:
         afterViPType:
         paymentMethod:
         whetherToPay: 1
-        expireTimes: "2025-08-19 20:38:57"
-        expireTimee: "2025-11-17 20:38:57"
+        expireTimes: "2025-09-19 20:38:57"
+        expireTimee: "2025-12-04 20:38:57"
         sourceInvitationCode:
         gmt:
         depositAddress:
@@ -191,11 +184,11 @@ test_steps:
 
   - name: "导出未支付订单数据"
     case_id: "bofa_admin_VipListRecord_003"
-    description: "校验导出未支付订单数据接口"
+    description: "校验导出未支付订单数据接口（返回Excel文件）"
 
     request:
       method: "GET"
-      url: "/cdb/dzvip/vipmessage"
+      url: "/cdb/dzvip/vippurchase/vipPurchaseHistoryExportV2"
       params:
         idw:
         page: 1
@@ -205,30 +198,24 @@ test_steps:
         afterViPType:
         paymentMethod:
         whetherToPay: 1
-        expireTimes: "2025-08-19 20:38:57"
-        expireTimee: "2025-11-17 20:38:57"
+        expireTimes: "2025-09-19 20:38:57"
+        expireTimee: "2025-12-04 20:38:57"
         sourceInvitationCode:
         gmt:
         depositAddress:
         channelName:
         channelType:
+        exportFields:
       headers: null
       cookies: null
       body_type: null
       body: null
-
       files: null
 
     teardown:
       - assert:
-          check: "验证请求成功--code"
+          check: "验证响应状态码为200"
           type: "eq"
-          value: 20000
-          jsonpath: "$.json.code"
-
-      - assert:
-          check: "验证返回响应成功标识--msg"
-          type: "eq"
-          value: "success"
-          jsonpath: "$.json.msg"
+          value: 200
+          jsonpath: "$.status_code"
 

@@ -131,7 +131,7 @@ test_steps:
         limit: 20
         account: null
         prizeType: null
-        superAccount: "fred3"
+        superAccount: "fred"
         redemptionStatus: null
         expireTimes: null
         expireTimee: null
@@ -169,7 +169,7 @@ test_steps:
       params:
         page: 1
         limit: 20
-        account: "4567654543"
+        account: "18757029665"
         prizeType: null
         superAccount: null
         redemptionStatus: null

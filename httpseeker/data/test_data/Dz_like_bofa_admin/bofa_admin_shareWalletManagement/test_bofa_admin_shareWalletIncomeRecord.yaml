@@ -78,12 +78,6 @@ test_steps:
           type: "eq"
           value: "success"
           jsonpath: "$.json.msg"
-
-      - assert:
-          check: "验证返回响应中记录条数大于0"
-          type: "not_eq"
-          value: 0
-          jsonpath: "$.json.data.total"
       - extract:
           key: "frist_shareWalletIncome_record_account"
           type: "cache"

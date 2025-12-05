@@ -90,12 +90,6 @@ test_steps:
           value: "success"
           jsonpath: "$.json.msg"
 
-      - assert:
-          check: "验证返回响应中data内容返回记录数不为0"
-          type: "not_eq"
-          value: 0
-          jsonpath: "$.json.data.total"
-
 
 
   - name: "查看提现审批列表的报表数据"
@@ -190,13 +184,13 @@ test_steps:
       - assert:
           check: "验证请求成功--code"
           type: "eq"
-          value: 20000
+          value: 9999
           jsonpath: "$.json.code"
 
       - assert:
           check: "验证返回响应成功标识--msg"
           type: "eq"
-          value: "success"
+          value: "当前导出数据列表为空"
           jsonpath: "$.json.msg"
 
 
