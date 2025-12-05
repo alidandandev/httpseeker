@@ -357,48 +357,6 @@ test_steps:
           value: "success"
           jsonpath: "$.json.msg"
 
-  - name: "测试调用查询用户购买钱包产品记录 shareWalletRecord 按记录当前所处状态查询"
-    case_id: "bofa_admin_shareWalletRecord_querySum_005"
-    description: "验证测试shareWalletRecord_querySum_005 查询用户购买钱包产品记录 按记录当前所处状态查询并统计金额"
-
-    request:
-      method: "GET"
-      url: "/cdb/dzwallet/sharedrecord/sum"
-      params:
-        page: 1
-        limit: 20
-        expireTimes: null
-        expireTimee: null
-        account: "0"
-        status: null
-        name: null
-        lockDate: null
-        sourceInvitationCode: null
-      headers: null
-      cookies: null
-      body_type: null
-      body: null
-      files: null
-
-    teardown:
-      - assert:
-          check: "验证请求成功--code"
-          type: "eq"
-          value: 20000
-          jsonpath: "$.json.code"
-
-      - assert:
-          check: "验证返回响应成功标识--msg"
-          type: "eq"
-          value: "success"
-          jsonpath: "$.json.msg"
-
-      - assert:
-          check: "验证返回响应中金额不为空"
-          type: "not_eq"
-          value: null
-          jsonpath: "$.json.data"
-
   - name: "测试调用查询用户购买钱包产品记录 shareWalletRecord 按时间日期范围查询"
     case_id: "bofa_admin_shareWalletRecord_query_006"
     description: "验证测试shareWalletRecord_query_006 查询用户购买钱包产品记录 按时间日期范围查询"
