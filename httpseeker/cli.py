@@ -95,12 +95,22 @@ class HttpSeekerCLI:
             required=False,
         ),
     ] = None
+    yaml_file: Annotated[
+        str | None,
+        cappa.Arg(
+            value_name='<YAML文件>',
+            long='--yaml',
+            default=None,
+            help='直接指定 YAML 数据文件运行 (例如: httpseeker/data/test_data/项目名/模块名/test_xxx.yaml)',
+            required=False,
+        ),
+    ] = None
     subcmd: Subcommands[TestCaseCLI | ImportCLI | None] = None
 
     def __call__(self) -> None:
         if self.version:
             get_version()
-        if self.run_test:
+        if self.run_test or self.yaml_file:
             if self.version or self.subcmd:
                 console.print('\n❌ 暂不支持 -r/--run 命令与其他 CLI 命令同时使用')
                 raise cappa.Exit(code=1)
@@ -121,8 +131,37 @@ class HttpSeekerCLI:
                     auth_path = os.path.abspath(auth_path)
                 extra_kwargs['auth_path'] = auth_path
 
+            # 处理 --yaml 参数：将 YAML 路径转换为对应的 Python 测试文件路径
+            run_args = []
+            if self.yaml_file:
+                yaml_path = self.yaml_file
+                if not os.path.isabs(yaml_path):
+                    yaml_path = os.path.abspath(yaml_path)
+
+                if not os.path.exists(yaml_path):
+                    console.print(f'\n❌ YAML 文件不存在: {yaml_path}')
+                    raise cappa.Exit(code=1)
+
+                if not yaml_path.endswith('.yaml') and not yaml_path.endswith('.yml'):
+                    console.print(f'\n❌ 请指定 YAML 文件: {yaml_path}')
+                    raise cappa.Exit(code=1)
+
+                # 将 data/test_data 路径转换为 testcases 路径
+                # 例如: httpseeker/data/test_data/Dz_like_bofa_admin/xxx/test_xxx.yaml
+                #   ->  httpseeker/testcases/Dz_like_bofa_admin/xxx/test_xxx.py
+                py_path = yaml_path.replace('/data/test_data/', '/testcases/')
+                py_path = py_path.replace('.yaml', '.py').replace('.yml', '.py')
+
+                if not os.path.exists(py_path):
+                    console.print(f'\n⚠️ 测试文件不存在，将自动生成: {py_path}')
+
+                run_args.append(py_path)
+
             if isinstance(self.run_test, list):
-                run(*self.run_test, **extra_kwargs)
+                run_args.extend(self.run_test)
+
+            if run_args:
+                run(*run_args, **extra_kwargs)
             else:
                 run(**extra_kwargs)
 

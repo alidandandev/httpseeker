@@ -103,7 +103,8 @@ test_steps:
         operateNum: 5
         status: 1
         remark: "test tiger wallet product"
-        configMode: [{"lockDate": 90,"incomeRatio": 0.003}]
+        lockDate: 90
+        incomeRatio: 0.014
         sort: 2
         maxMoney: 500
       files: null
@@ -224,7 +225,8 @@ test_steps:
         operateNum: 8
         status: 1
         remark: "test tiger wallet product"
-        configMode: [{"lockDate": 90,"incomeRatio": 0.003 },{"lockDate": 10,"incomeRatio": 0.001}]
+        lockDate: 90
+        incomeRatio: 0.003
         sort: 3
         maxMoney: 800
       files: null
