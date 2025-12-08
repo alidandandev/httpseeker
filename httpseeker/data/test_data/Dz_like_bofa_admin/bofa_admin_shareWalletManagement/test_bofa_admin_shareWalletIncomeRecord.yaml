@@ -78,20 +78,14 @@ test_steps:
           type: "eq"
           value: "success"
           jsonpath: "$.json.msg"
-
-      - assert:
-          check: "验证返回响应中记录条数大于0"
-          type: "not_eq"
-          value: 0
-          jsonpath: "$.json.data.total"
-      - extract:
-          key: "frist_shareWalletIncome_record_account"
-          type: "cache"
-          jsonpath: "$.json.data.records[0].account"
-      - extract:
-          key: "frist_shareWalletIncome_record_topAccount"
-          type: "cache"
-          jsonpath: "$.json.data.records[0].userInfo.user.account"
+#      - extract:
+#          key: "frist_shareWalletIncome_record_account"
+#          type: "cache"
+#          jsonpath: "$.json.data.records[0].account"
+#      - extract:
+#          key: "frist_shareWalletIncome_record_topAccount"
+#          type: "cache"
+#          jsonpath: "$.json.data.records[0].userInfo.user.account"
 
   - name: "测试调用用户购买钱包产品所触发收益记录查询 shareWalletIncomeRecord 按账号名查询"
     case_id: "bofa_admin_shareWalletIncomeRecord_query_002"

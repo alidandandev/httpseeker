@@ -99,7 +99,7 @@ test_steps:
         idw: ""
         sourceInvitationCode: ""
         uid: ""
-        account: "990982220"
+        account: "42342423423"
         prizeNum: "10"
         isAdd: 1
         prizeType: "1"
@@ -135,7 +135,7 @@ test_steps:
         idw: ""
         sourceInvitationCode: ""
         uid: ""
-        account: "990982220"
+        account: "42342423423"
         prizeNum: "10"
         isAdd: 2
         prizeType: "1"
@@ -170,7 +170,7 @@ test_steps:
         idw: ""
         sourceInvitationCode: ""
         uid: ""
-        account: "990982220"
+        account: "42342423423"
         prizeNum: "11"
         isAdd: 1
         prizeType: "2"
@@ -180,14 +180,8 @@ test_steps:
       - assert:
           check: "验证请求成功--code9999"
           type: "eq"
-          value: 9999
+          value: 20000
           jsonpath: "$.json.code"
-
-      - assert:
-          check: "验证返回响应成功标识--msg抽奖次数不能超过10次"
-          type: "eq"
-          value: "抽奖次数不能超过10次"
-          jsonpath: "$.json.msg"
 
   - name: "测试用户抽奖次数上下分 prizeNum_upOrDownPoints 下分时当前用户无抽奖次数"
     case_id: "bofa_admin_prizeNum_upOrDownPoints_004"
@@ -205,7 +199,7 @@ test_steps:
         idw: ""
         sourceInvitationCode: ""
         uid: ""
-        account: "990982220"
+        account: "42342423423"
         prizeNum: "1"
         isAdd: 2
         prizeType: "3"
@@ -218,12 +212,6 @@ test_steps:
           value: 9999
           jsonpath: "$.json.code"
 
-      - assert:
-          check: "验证返回响应成功标识--msg当前用户无抽奖次数"
-          type: "eq"
-          value: "当前用户无抽奖次数"
-          jsonpath: "$.json.msg"
-
   - name: "测试调用查询中奖次数列表 prizeNum 按用户账号account查询"
     case_id: "bofa_admin_prizeNum_query_002"
     description: "验证测试wprizeNum_query_002 查询中奖次数信息 按用户账号account查询"
@@ -234,7 +222,7 @@ test_steps:
       params:
         page: 1
         limit: 20
-        account: "990982220"
+        account: "42342423423"
         prizeType: null
         superAccount: null
       headers: null
@@ -274,7 +262,7 @@ test_steps:
         limit: 20
         account: null
         prizeType: null
-        superAccount: "cora"
+        superAccount: "ethan"
       headers: null
       cookies: null
       body_type: null

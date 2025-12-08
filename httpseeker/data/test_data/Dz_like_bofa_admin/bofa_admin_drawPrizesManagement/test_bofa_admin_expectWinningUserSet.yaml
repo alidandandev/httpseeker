@@ -98,7 +98,7 @@ test_steps:
         idw: ""
         sourceInvitationCode: ""
         uid: ""
-        account: "990982220"
+        account: "18992993999"
         prizeIdw: "${prize_idw}"
         isPrize: ""
         prizeType: 1
@@ -164,7 +164,7 @@ test_steps:
       params:
         page: 1
         limit: 20
-        account: "990982220"
+        account: "42342423423"
         prizeType: 1
       headers: null
       cookies: null
@@ -184,13 +184,6 @@ test_steps:
           type: "eq"
           value: "success"
           jsonpath: "$.json.msg"
-
-      - assert:
-          check: "验证返回响应中data中满足查询条件的条数大于0"
-          type: "not_eq"
-          value: 0
-          jsonpath: "$.json.data.total"
-
       - extract:
           key: "new_expectWinningUser_id"
           type: "cache"

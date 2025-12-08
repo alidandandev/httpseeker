@@ -287,7 +287,7 @@ test_steps:
       cookies: null
       body_type: "json"
       body:
-        userCreditDtoList: [{"account": "${user_account_0}","credit": 200,"isAdd": 1},{"account": "${user_account_1}","credit": 200,"isAdd": 1},{"account": "${user_account_2}","credit": 100,"isAdd": 1}]
+        userCreditDtoList: [{"account": "${user_account_0}","credit": 20,"isAdd": 1},{"account": "${user_account_1}","credit": 10,"isAdd": 1},{"account": "${user_account_2}","credit": 10,"isAdd": 1}]
       files: null
 
     teardown:
@@ -315,7 +315,7 @@ test_steps:
       cookies: null
       body_type: "json"
       body:
-        userCreditDtoList: [{"account": "${user_account_0}","credit": 190,"isAdd": 2},{"account": "${user_account_1}","credit": 190,"isAdd": 2},{"account": "${user_account_2}","credit": 90,"isAdd": 2}]
+        userCreditDtoList: [{"account": "${user_account_0}","credit": 10,"isAdd": 2},{"account": "${user_account_1}","credit": 20,"isAdd": 2},{"account": "${user_account_2}","credit": 30,"isAdd": 2}]
       files: null
 
     teardown:

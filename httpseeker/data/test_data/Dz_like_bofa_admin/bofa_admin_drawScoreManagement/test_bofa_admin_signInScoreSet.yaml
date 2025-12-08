@@ -124,7 +124,7 @@ test_steps:
     description: "验证测试对新增登录积分设置 scorePrize进行修改"
 
     request:
-      method: "PUT"
+      method: "POST"
       url: "/cdb/dzscore/signInSet"
       params: null
       headers: null
@@ -175,5 +175,5 @@ test_steps:
       - assert:
           check: "验证返回响应 该操作未授权--msg"
           type: "eq"
-          value: "该操作未授权"
+          value: "暂无权限"
           jsonpath: "$.json.msg"

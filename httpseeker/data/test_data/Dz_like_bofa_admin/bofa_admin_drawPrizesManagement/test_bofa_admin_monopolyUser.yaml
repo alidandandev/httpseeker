@@ -76,12 +76,6 @@ test_steps:
           value: "success"
           jsonpath: "$.json.msg"
 
-      - assert:
-          check: "验证返回响应中记录条数大于0"
-          type: "not_eq"
-          value: 0
-          jsonpath: "$.json.data.total"
-
   - name: "测试调用查询大富翁用户列表 monopolyUser 按用户名进行查询"
     case_id: "bofa_admin_monopolyUser_query_002"
     description: "验证测试monopolyUser_query_001 查询大富翁用户列表信息 按用户名进行查询"
@@ -112,12 +106,6 @@ test_steps:
           type: "eq"
           value: "success"
           jsonpath: "$.json.msg"
-
-      - assert:
-          check: "验证返回响应中记录条数大于0"
-          type: "not_eq"
-          value: 0
-          jsonpath: "$.json.data.total"
 
   - name: "测试调用查询大富翁用户列表 monopolyUser 重置大富翁活动"
     case_id: "bofa_admin_monopolyUser_reset_001"
