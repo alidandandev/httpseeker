@@ -124,7 +124,7 @@ test_steps:
     description: "验证测试对新增登录积分设置 scorePrize进行修改"
 
     request:
-      method: "PUT"
+      method: "POST"
       url: "/cdb/dzscore/signInSet"
       params: null
       headers: null
