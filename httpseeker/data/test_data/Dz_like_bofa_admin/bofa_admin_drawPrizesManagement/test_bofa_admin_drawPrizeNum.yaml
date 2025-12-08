@@ -209,7 +209,7 @@ test_steps:
       - assert:
           check: "验证请求成功--code9999"
           type: "eq"
-          value: 20000
+          value: 9999
           jsonpath: "$.json.code"
 
   - name: "测试调用查询中奖次数列表 prizeNum 按用户账号account查询"
