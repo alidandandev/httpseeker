@@ -164,7 +164,7 @@ test_steps:
       params:
         page: 1
         limit: 20
-        account: "990982220"
+        account: "42342423423"
         prizeType: 1
       headers: null
       cookies: null

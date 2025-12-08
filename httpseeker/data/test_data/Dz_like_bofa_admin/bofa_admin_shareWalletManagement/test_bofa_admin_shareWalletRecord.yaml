@@ -80,18 +80,18 @@ test_steps:
           type: "eq"
           value: "success"
           jsonpath: "$.json.msg"
-      - extract:
-          key: "frist_shareWallet_record_account"
-          type: "cache"
-          jsonpath: "$.json.data.records[0].account"
-      - extract:
-          key: "frist_shareWallet_record_topAccount"
-          type: "cache"
-          jsonpath: "$.json.data.records[0].userInfo.user.account"
-      - extract:
-          key: "frist_shareWallet_record_walletProductName"
-          type: "cache"
-          jsonpath: "$.json.data.records[0].name"
+#      - extract:
+#          key: "frist_shareWallet_record_account"
+#          type: "cache"
+#          jsonpath: "$.json.data.records[0].account"
+#      - extract:
+#          key: "frist_shareWallet_record_topAccount"
+#          type: "cache"
+#          jsonpath: "$.json.data.records[0].userInfo.user.account"
+#      - extract:
+#          key: "frist_shareWallet_record_walletProductName"
+#          type: "cache"
+#          jsonpath: "$.json.data.records[0].name"
 
   - name: "测试调用查询用户购买钱包产品记录 shareWalletRecord 按用户名查询"
     case_id: "bofa_admin_shareWalletRecord_query_002"

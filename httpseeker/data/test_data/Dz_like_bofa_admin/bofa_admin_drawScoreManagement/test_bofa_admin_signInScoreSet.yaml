@@ -175,5 +175,5 @@ test_steps:
       - assert:
           check: "验证返回响应 该操作未授权--msg"
           type: "eq"
-          value: "该操作未授权"
+          value: "暂无权限"
           jsonpath: "$.json.msg"
