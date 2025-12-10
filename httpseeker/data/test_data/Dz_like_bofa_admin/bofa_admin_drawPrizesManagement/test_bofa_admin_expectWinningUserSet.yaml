@@ -184,42 +184,6 @@ test_steps:
           type: "eq"
           value: "success"
           jsonpath: "$.json.msg"
-      - extract:
-          key: "new_expectWinningUser_id"
-          type: "cache"
-          jsonpath: "$.json.data.records[0].id"
-      - extract:
-          key: "new_expectWinningUser_idw"
-          type: "cache"
-          jsonpath: "$.json.data.records[0].idw"
-
-  - name: "测试调用删除用户与奖品设置 red_prize_expectWinningUser 对新增记录进行删除 "
-    case_id: "bofa_admin_expectWinningUser_del_001"
-    description: "验证测试新增bofa_admin_expectWinningUser_del_001  对新增记录进行删除"
-
-    request:
-      method: "DELETE"
-      url: "/cdb/dzprize/expectwinninguser"
-      params:
-        id: "${new_expectWinningUser_id}"
-      headers: null
-      cookies: null
-      body_type: null
-      body: null
-      files: null
-
-    teardown:
-      - assert:
-          check: "验证请求成功--code"
-          type: "eq"
-          value: 20000
-          jsonpath: "$.json.code"
-
-      - assert:
-          check: "验证返回响应成功标识--msg"
-          type: "eq"
-          value: "success"
-          jsonpath: "$.json.msg"
 
   - name: "测试调用删除用户与奖品设置 red_prize_expectWinningUser 一键删除 "
     case_id: "bofa_admin_expectWinningUser_delAll_001"

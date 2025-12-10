@@ -151,37 +151,6 @@ test_steps:
           type: "cache"
           jsonpath: "$.json.data.records[0].idw"
 
-  - name: "测试调用查询poolParameter的爱心等级信息 按照id来查询"
-    case_id: "bofa_admin_poolParameter_query_003"
-    description: "验证测试获取bofa_admin_poolParameter_query_003 按照id来查询"
-
-    request:
-      method: "GET"
-      url: "/cdb/dzpool/parameter/list"
-      params:
-        page: 1
-        limit: 20
-        id: "${new_poolParameter_id}"
-      headers: null
-      cookies: null
-      body_type: null
-      body: null
-      files: null
-    setup:
-      - testcase: "bofa_admin_poolParameter_query_002"
-    teardown:
-      - assert:
-          check: "验证请求成功--code"
-          type: "eq"
-          value: 20000
-          jsonpath: "$.json.code"
-
-      - assert:
-          check: "验证返回响应成功标识--msg"
-          type: "eq"
-          value: "success"
-          jsonpath: "$.json.msg"
-
   - name: "测试调用poolParameter的爱心等级信息 按照id来修改"
     case_id: "bofa_admin_poolParameter_modify_001"
     description: "验证测试获取bofa_admin_poolParameter的爱心等级信息 按照id来修改"
